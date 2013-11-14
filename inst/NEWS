@@ -1,0 +1,72 @@
+Package: TMLE.NPVI
+===================
+Version: 0.6.3 [2013-10-11]
+o Documentation up to date.
+o Package passes R CMD check.
+o Added a package vignette.
+
+Version: 0.6.2 [2013-09-10]
+o Improved documentation.
+
+Version: 0.6.1 [2013-06-20]
+o Added argument 'f' to 'tmle.npvi'.
+
+Version: 0.6.0 [2013-05-29]
+o Now supporting multivariate 'W'.
+
+Version: 0.5.3 [2013-04-18]
+o More updates for compatibility with SuperLearner v >= 2.0
+
+Version: 0.5.2 [2011-09-20]
+o Updated calls to "SuperLearner" for compatibility with v >= 2.0
+
+Version: 0.5.1 [2011-05-06]
+o SuperLearning works again.
+
+Version: 0.5.0 [2011-05-06]
+o Tabulated version works.
+
+Version: 0.4.2 [2011-02-23]
+o Major updates to NPVI class definition.  'psi', EIC and 'epsilon' 
+  are now estimated automatically at initialization and at each update
+o Thresholding for 'g', 'mu', 'theta' is now performed systematically
+  within the corresponding 'set' functions.
+o CLEANUP: rewrote NPVI.update using side functions 'estimateDev*' to 
+  estimate 'gradients'.
+
+Version: 0.4.1 [2011-02-16]
+o Merged classes NPVI and TMLE.NPVI into NPVI.
+o Renamed package into TMLE.NPVI
+o Renamed core classes accordingly.
+
+Version: 0.4.0 [2011-02-15]
+o Parameters ('g', 'mu', 'theta') can be thresholded.
+o Improved "parsimonious" simulation scheme.
+o Exact updating equations implemented (instead of approximations
+  for small epsilon).
+o 'Theta' can be updated using the corresponding 'clever covariate'.
+
+Version: 0.3.1 [2010-12-02]
+o Fitted objects are now much lighter.
+
+Version: 0.3.0 [2010-11-29]
+o Improved estimation and update of the parameter.
+
+Version: 0.2.1 [2010-08-03]
+o Updated man pages.
+o Passes R CMD check.
+
+Version: 0.2.0 [2010-08-03]
+o Added support for stantard (ie non-"super") learning.
+o Added parameter 'theta0'.
+
+Version: 0.1.2 [2010-07-28]
+o Fixed (known) bug in prediction of 'fitMuAux'.
+
+Version: 0.1.1 [2010-07-18]
+o Added test scripts for simulated data to inst/testScripts/simulatedData.
+
+Version: 0.1.0 [2010-07-13]
+o Passes R CMD check.
+o Created.
+

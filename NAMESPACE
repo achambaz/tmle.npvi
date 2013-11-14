@@ -1,0 +1,14 @@
+import(R.utils, MASS)
+importFrom(sgeostat, in.chull)
+
+export(as.character.NPVI,
+       extractW, extractXW,
+       getHistory.NPVI,
+       getLightFit,
+       getObs, getObs.NPVI,
+       getPsi, getPsi.NPVI,
+       getPsiSd, getPsiSd.NPVI, 
+       getSample,
+       setConfLevel, setConfLevel.NPVI,
+       tmle.npvi)
+
