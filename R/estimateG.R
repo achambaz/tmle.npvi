@@ -42,7 +42,7 @@
 #
 #*/###########################################################################
 estimateG <- function(obs, flavor=c("learning", "superLearning"), learnG,
-                      light=TRUE, ..., verbose=FALSE) {
+                      light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,6 +61,14 @@ estimateG <- function(obs, flavor=c("learning", "superLearning"), learnG,
     throw("Argument 'learnG' should be of mode '", learnMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  ## Argument 'SuperLearner.'
+  if (flavor=="superLearning") {
+    if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
+      throw("Argument 'SuperLearner.' should be a function")
+    }
+  }
+
+  
   ## Argument 'verbose'
   verbose <- Arguments$getVerbose(verbose);
 
@@ -71,8 +79,6 @@ estimateG <- function(obs, flavor=c("learning", "superLearning"), learnG,
     logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in SuperLearner
     SL.library.g <- learnG;
 
-    ## To please R CMD CHECK
-    SuperLearner. <- NULL; rm(SuperLearner.)
     fitG <- SuperLearner.(Y=(obsD[, "X"]==0)+0, X=extractW(obsD), ## obsD[, "W", drop=FALSE]
                           SL.library=SL.library.g, verbose=logSL,
                           family=binomial(), ...)

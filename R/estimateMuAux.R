@@ -43,7 +43,7 @@
 #
 #*/###########################################################################
 estimateMuAux <- function(obs, flavor=c("learning", "superLearning"), learnMuAux,
-                       light=TRUE, ..., verbose=FALSE) {
+                       light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -62,6 +62,14 @@ estimateMuAux <- function(obs, flavor=c("learning", "superLearning"), learnMuAux
     throw("Argument 'learnMuAux' should be of mode '", learnMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  ## Argument 'SuperLearner.'
+  if (flavor=="superLearning") {
+    if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
+      throw("Argument 'SuperLearner.' should be a function")
+    }
+  }
+
+  
   ## Argument 'verbose'
   verbose <- Arguments$getVerbose(verbose);
 
@@ -76,8 +84,6 @@ estimateMuAux <- function(obs, flavor=c("learning", "superLearning"), learnMuAux
     ## WW <- obsD[idx, "W", drop=FALSE]
     WW <- extractW(obsD[idx, ])
 
-    ## To please R CMD CHECK
-    SuperLearner. <- NULL; rm(SuperLearner.)
     fitMuAux <- SuperLearner.(Y=obsD[idx, "X"], X=WW,
                               SL.library=SL.library.muAux, verbose=logSL,
                               family=gaussian(), ...);

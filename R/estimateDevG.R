@@ -47,7 +47,7 @@
 #
 #*/###########################################################################
 estimateDevG <- function(gW, obs, eic1, flavor=c("learning", "superLearning"), learnDevG,
-                         light=TRUE, ..., verbose=FALSE) {
+                         light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -72,6 +72,14 @@ estimateDevG <- function(gW, obs, eic1, flavor=c("learning", "superLearning"), l
     throw("Argument 'learnDevG' should be of mode '", learnDevMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  ## Argument 'SuperLearner.'
+  if (flavor=="superLearning") {
+    if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
+      throw("Argument 'SuperLearner.' should be a function")
+    }
+  }
+
+  
   ## Argument 'verbose'
   verbose <- Arguments$getVerbose(verbose);
 
@@ -83,8 +91,6 @@ estimateDevG <- function(gW, obs, eic1, flavor=c("learning", "superLearning"), l
     ZdevG <- eic1 * ( (obsD[, "X"]==0) - gW );
     SL.library.devG <- learnDevG;
 
-    ## To please R CMD CHECK
-    SuperLearner. <- NULL; rm(SuperLearner.)
     fitDevG <- SuperLearner.(Y=ZdevG, X=extractW(obsD), ## obsD[, "W", drop=FALSE]
                              SL.library=SL.library.devG, verbose=logSL,
                              family=gaussian(), ...)

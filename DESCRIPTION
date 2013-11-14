@@ -1,7 +1,7 @@
 Package: tmle.npvi
 Type: Package
 Title: Targeted Minimum Loss Estimation (TMLE) of a non-parametric variable importance measure of a continuous exposure.
-Version: 0.6.4
+Version: 0.6.5
 Date: 2013-11-14
 Author: Antoine Chambaz, Pierre Neuvial
 Maintainer: Pierre Neuvial <pierre.neuvial@genopole.cnrs.fr>

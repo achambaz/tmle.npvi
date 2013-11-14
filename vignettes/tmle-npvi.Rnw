@@ -242,7 +242,7 @@ options are given in the documentation of the \verb|tmle.npvi| function.
 
 
 <<>>=
-npvi <- tmle.npvi(obs, f=identity, flavor="learning", nodes=1)
+npvi <- tmle.npvi(obs, f=identity, flavor="learning")
 npvi
 @ 
 
@@ -289,7 +289,7 @@ ylim <- range(c(confInt, hp, ics+hp), na.rm=TRUE)
 
 xs <- (1:length(hs))-1
 plot(xs, hp, ylim=ylim, pch=pch, xlab="Iteration", ylab=expression(psi[n]),
-     xaxp=c(0,2,2))
+     xaxp=c(0, length(hs)-1, length(hs)-1))
 dummy <- sapply(seq(along=xs), function(x) lines(c(xs[x],xs[x]), hp[x]+ics[, x]))
 
 abline(h=confInt, col="blue")

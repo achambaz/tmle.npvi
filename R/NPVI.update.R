@@ -63,8 +63,9 @@ setMethodS3("update", "NPVI", function(object,
                                        bound=1e-1, B=1e4,
                                        light=TRUE, 
                                        cleverCovTheta=TRUE,
-                                       exact=TRUE, trueGMu=NULL, ...,
-                                       verbose=FALSE) {
+                                       exact=TRUE, trueGMu=NULL,
+                                       SuperLearner.=SuperLearner.,
+                                       ..., verbose=FALSE) {
 
   this <- object; ## to please R CMD CHECK 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -121,21 +122,16 @@ setMethodS3("update", "NPVI", function(object,
   ## Incrementing the current value of 'step'
   this$.step <- getStep(this)+1;
 
-  verbose && cat(verbose, "Iteration ", getStep(this), "\n");
-
+  ## Argument 'SuperLearner.'
   if (flavor=="superLearning") {
-    test <- exists("SuperLearner.", mode="function", envir=.GlobalEnv)
-    if (!test) {
-      if (is.null(cvControl)) {
-        cvControl <- SuperLearner.CV.control(V=10L)
-      }
-      SuperLearner. <- function(...) {
-        warning("Setting 'V=10' in 'SuperLearner.'")
-        SuperLearner(cvControl=SuperLearner.CV.control(V=10), ...)
-      }
-      assign("SuperLearner.", SuperLearner., envir=.GlobalEnv)
+    if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
+      throw("Argument 'SuperLearner.' should be a function")
     }
   }
+
+  
+  verbose && cat(verbose, "Iteration ", getStep(this), "\n");
+
 
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Retrieve elements of 'this'
@@ -224,7 +220,8 @@ setMethodS3("update", "NPVI", function(object,
     updateEpsilon(this, cleverCovTheta=FALSE, bound=bound);
     div <- abs(getEpsilon(this))*partialDiv
     thetaXW <- theta(obs[, c("X", "W")])
-    devTheta <- estimateDevTheta(thetaXW, obsT, flavor=flavor, learnDevTheta=learnDevTheta, light=light, ..., verbose=verbose);
+    devTheta <- estimateDevTheta(thetaXW, obsT, flavor=flavor, learnDevTheta=learnDevTheta, light=light,
+                                 SuperLearner.=SuperLearner., ..., verbose=verbose);
     updateTheta(this, devTheta, cleverCovTheta=cleverCovTheta, exact=exact);
   }
 
@@ -290,11 +287,15 @@ setMethodS3("update", "NPVI", function(object,
     
     ## Update 'mu' *before* 'g' as 'mu' depends on (the existing) 'g'.
     muW <- mu(extractW(obs))
-    devMu <- estimateDevMu(muW, obsT, eic1, flavor=flavor, learnDevMu=learnDevMu, light=light, ..., verbose=verbose);
+    devMu <- estimateDevMu(muW, obsT, eic1, flavor=flavor, learnDevMu=learnDevMu, light=light,
+                           SuperLearner.=SuperLearner.,
+                           ..., verbose=verbose);
     updateMu(this, devMu, exact=exact, effICW=effICW);
 
     gW <- g(extractW(obs))
-    devG <- estimateDevG(gW, obsT, eic1, flavor=flavor, learnDevG=learnDevG, light=light, ..., verbose=verbose);
+    devG <- estimateDevG(gW, obsT, eic1, flavor=flavor, learnDevG=learnDevG, light=light,
+                         SuperLearner.=SuperLearner.,
+                         ..., verbose=verbose);
     updateG(this, devG, exact=exact, effICW=effICW);
 
     ## Update 'sigma2'

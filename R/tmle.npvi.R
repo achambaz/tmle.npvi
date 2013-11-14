@@ -173,6 +173,7 @@ tmle.npvi <- structure(
       if (flavor=="superLearning") {
         library(SuperLearner)
         if (is.null(cvControl)) {
+          warning("Setting 'V=10' in 'SuperLearner.'")
           cvControl <- SuperLearner.CV.control(V=10L)
         }
         if (nodes==1) {
@@ -181,16 +182,15 @@ tmle.npvi <- structure(
           }
         } else {
           tf <- tempfile("snitch.Rout")
-          cl <- parallel::makeCluster(nodes, type="SOCK", outfile=tf) # can use different types here
-          assign("cl_tmle", cl, envir=.GlobalEnv)
+          cl <- parallel::makeCluster(nodes, type="PSOCK", outfile=tf) # can use different types here
           parallel::clusterSetRNGStream(cl, iseed=2343)
           parallel::clusterExport(cl, SL.library)
           SuperLearner. <- function(...) {
             snowSuperLearner(cluster=cl, cvControl=cvControl, ...)
           }
         }
-        assign("SuperLearner.", SuperLearner., envir=.GlobalEnv)
       } else {
+        SuperLearner. <- NULL
         if (nodes>1) {
           warning("Parallel computing not available with 'learning' option")
         }
@@ -215,6 +215,7 @@ tmle.npvi <- structure(
            bound=bound, B=B,
            light=light,
            trueGMu=trueGMu, 
+           SuperLearner.=SuperLearner.,
            verbose=verbose);
       ## rm(learnG);
       conv <- getConv(npvi);
@@ -231,7 +232,9 @@ tmle.npvi <- structure(
         update(npvi, flavor=flavor, learnDevG=learnDevG,
                learnDevMu=learnDevMu, learnDevTheta=learnDevTheta,
                bound=bound, B=B, cleverCovTheta=cleverCovTheta,
-               exact=exact, trueGMu=trueGMu, verbose=verbose);
+               exact=exact, trueGMu=trueGMu,
+               SuperLearner.=SuperLearner.,
+               verbose=verbose);
 
         ## check convergence
         updateConv(npvi, B=B)
@@ -310,7 +313,7 @@ tmle.npvi <- structure(
       ##
 
       ## Running the TMLE procedure
-      npvi <- tmle.npvi(obs, f=identity, flavor="learning", nodes=1)
+      npvi <- tmle.npvi(obs, f=identity, flavor="learning")
 
       ## Summarizing its results
       npvi
@@ -329,7 +332,8 @@ tmle.npvi <- structure(
       ylim <- range(c(confInt, hp, ics+hp), na.rm=TRUE)
       
       xs <- (1:length(hs))-1
-      plot(xs, hp, ylim=ylim, pch=pch, xlab="Iteration", ylab=expression(psi[n]))
+      plot(xs, hp, ylim=ylim, pch=pch, xlab="Iteration", ylab=expression(psi[n]),
+           xaxp=c(0, length(hs)-1, length(hs)-1))
       dummy <- sapply(seq(along=xs), function(x) lines(c(xs[x],xs[x]), hp[x]+ics[, x]))
       
       abline(h=confInt, col=4)

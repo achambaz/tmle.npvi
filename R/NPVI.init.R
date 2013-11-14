@@ -59,6 +59,7 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
                                      bound=1e-1, B=1e4,
                                      light=TRUE, 
                                      trueGMu=NULL,
+                                     SuperLearner.=NULL,
                                      ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -115,6 +116,13 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
       throw("Argument 'trueGMu$muAux' should be a function, not a ", mode(trueMuAux))
     }
   }
+
+  ## Argument 'SuperLearner.'
+  if (flavor=="superLearning") {
+    if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
+      throw("Argument 'SuperLearner.' should be a function")
+    }
+  }
   
   ## Argument 'verbose'
   verbose <- Arguments$getVerbose(verbose);
@@ -123,19 +131,6 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
   ## retrieving 'obs'
   obs <- getObs(this, tabulate=FALSE);
 
-  if (flavor=="superLearning") {
-    test <- exists("SuperLearner.", mode="function", envir=.GlobalEnv)
-    if (!test) {
-      if (is.null(cvControl)) {
-        cvControl <- SuperLearner.CV.control(V=10L)
-      }
-      SuperLearner. <- function(...) {
-        warning("Setting 'V=10' in 'SuperLearner.'")
-        SuperLearner(cvControl=cvControl, ...)
-      }
-      assign("SuperLearner.", SuperLearner., envir=.GlobalEnv)
-    }
-  }
   
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## learning
@@ -144,8 +139,12 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
   verbose && enter(verbose, "Estimating relevant features of the distribution");
   
   if (!useTrueGMu) {
-    g <- estimateG(obs, flavor=flavor, learnG=learnG, light=light, ..., verbose=verbose);
-    muAux <- estimateMuAux(obs, flavor=flavor, learnMuAux=learnMuAux, light=light, ..., verbose=verbose);
+    g <- estimateG(obs, flavor=flavor, learnG=learnG, light=light,
+                   SuperLearner.=SuperLearner.,
+                   ..., verbose=verbose);
+    muAux <- estimateMuAux(obs, flavor=flavor, learnMuAux=learnMuAux, light=light,
+                           SuperLearner.=SuperLearner.,
+                           ..., verbose=verbose);
   } else {
     g <- trueG
     muAux <- trueMuAux
@@ -153,7 +152,9 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
   initializeG(this, g);
   initializeMu(this, muAux, g);
 
-  theta <- estimateTheta(obs, flavor=flavor, learnTheta=learnTheta, light=light, ..., verbose=verbose);
+  theta <- estimateTheta(obs, flavor=flavor, learnTheta=learnTheta, light=light,
+                         SuperLearner.=SuperLearner.,
+                         ..., verbose=verbose);
   initializeTheta(this, theta);
 
   sigma2 <- mean(obs[, "X"]^2);

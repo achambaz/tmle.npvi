@@ -42,7 +42,7 @@
 #
 #*/###########################################################################
 estimateTheta <- function(obs, flavor=c("learning", "superLearning"), learnTheta,
-                          light=TRUE, ..., verbose=FALSE) {
+                          light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,6 +61,14 @@ estimateTheta <- function(obs, flavor=c("learning", "superLearning"), learnTheta
     throw("Argument 'learnTheta' should be of mode '", learnMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  ## Argument 'SuperLearner.'
+  if (flavor=="superLearning") {
+    if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
+      throw("Argument 'SuperLearner.' should be a function")
+    }
+  }
+
+  
   ## Argument 'verbose'
   verbose <- Arguments$getVerbose(verbose);
 
@@ -71,8 +79,6 @@ estimateTheta <- function(obs, flavor=c("learning", "superLearning"), learnTheta
     SL.library.theta <- learnTheta;
     obsD <- as.data.frame(obs)
 
-    ## To please R CMD CHECK
-    SuperLearner. <- NULL; rm(SuperLearner.)
     fitTheta <- SuperLearner.(Y=obsD[, "Y"], X=extractXW(obsD), ## obsD[, c("X", "W")]
                               SL.library=SL.library.theta, verbose=logSL,
                               family=gaussian(), ...)
