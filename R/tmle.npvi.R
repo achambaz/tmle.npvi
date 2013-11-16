@@ -46,7 +46,7 @@ tmle.npvi <- structure(
      libDir=NULL,
 ### A \code{path} indicating the location of the "superLearning" or "learning"
 ### libraries, depending on the chosen \code{flavor}.  If \code{NULL} (default
-### value) then provides the path to the package's default library.
+### value) then the package's default library is used.
      bound=1,
 ### A  positive  \code{numeric} (defaults  to  \code{1}),  upper-bound on  the
 ### absolute value of the fluctuation parameter.
@@ -150,13 +150,14 @@ tmle.npvi <- structure(
       
       libDirRef <- system.file(file.path("testScripts", flavor), package="tmle.npvi")
       if (is.null(libDir)) {
-        ## get ours:
-        libDir <- libDirRef
+        ## get our library:
+        eval(expression(data(lib)), list(lib=paste0(flavor, "Lib")))
       } else {
         ## check theirs
         if (libDir=="" | !file.exists(libDir)) {
           throw("Please provide path to a correct directory (see ", libDirRef, " as an example)")
         }
+        sourceDirectory(libDir, envir=globalenv())
       }
       ## To please R CMD CHECK
       learnG <- NULL; rm(learnG);
@@ -166,9 +167,6 @@ tmle.npvi <- structure(
       learnDevMu <- NULL; rm(learnDevMu);
       learnDevTheta <- NULL; rm(learnDevTheta);
       SL.library <- NULL; rm(SL.library);
-
-      sourceDirectory(libDir, envir=globalenv())
-      ## sourceDirectory(libDir)
 
       if (flavor=="superLearning") {
         library(SuperLearner)
