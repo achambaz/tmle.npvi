@@ -1,5 +1,5 @@
-SL.DSA <- function
 ### Prediction algorithm wrapper for SuperLearner
+SL.DSA <- function
 (Y, X, newX, family, obsWeights, maxsize = ncol(X),
  maxorderint = 1, maxsumofpow = 1, Dmove = TRUE, Smove = TRUE,
  vfold = 5, ...) {
@@ -25,8 +25,8 @@ SL.DSA <- function
 }
 environment(SL.DSA) <- asNamespace("SuperLearner")
 
-SL.DSA.2 <- function
 ### Prediction algorithm wrapper for SuperLearner
+SL.DSA.2 <- function
 (..., X, maxsize = 2 * ncol(X), maxorderint = 2,
  maxsumofpow = 2, Smove = FALSE, vfold = 10) {
 ###seealso<< SL.DSA, predict.SL.DSA
@@ -38,8 +38,8 @@ SL.DSA.2 <- function
 environment(SL.DSA.2) <- asNamespace("SuperLearner")
 
 
-predict.SL.DSA <- function
 ### Prediction algorithm wrapper for SuperLearner
+predict.SL.DSA <- function
 (object, newdata, family, X = NULL, Y = NULL, ...) {
   tryCatch(require(DSA), warning = function(...) {
 ###seealso<< SL.DSA, SL.DSA.2
@@ -55,9 +55,9 @@ predict.SL.DSA <- function
 environment(predict.SL.DSA) <- asNamespace("SuperLearner")
 
 
-SL.glm.condExpX2givenW <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{X^2} given \eqn{W}.
+SL.glm.condExpX2givenW <- function
 (Y, X, newX, family, obsWeights, ...) {
   varNames <- names(X)
   theFormula <- paste(varNames, collapse=" + ")
@@ -78,9 +78,9 @@ SL.glm.condExpX2givenW <- function
 environment(SL.glm.condExpX2givenW) <- asNamespace("SuperLearner")
 
 
-predict.SL.glm.condExpX2givenW <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{X^2} given \eqn{W}.
+predict.SL.glm.condExpX2givenW <- function
 (object, newdata, ...) {
   out <- predict(object = object$object, newdata = newdata, 
                  type = "response")
@@ -90,9 +90,9 @@ predict.SL.glm.condExpX2givenW <- function
 environment(predict.SL.glm.condExpX2givenW) <- asNamespace("SuperLearner")
 
 
-SL.glm.condExpXYgivenW <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{XY} given \eqn{W}.
+SL.glm.condExpXYgivenW <- function
 (Y, X, newX, family, obsWeights, ...) {
 ###seealso predict.SL.glm.condExpXYgivenW
   varNames <- names(X)
@@ -113,9 +113,8 @@ SL.glm.condExpXYgivenW <- function
 }
 environment(SL.glm.condExpXYgivenW) <- asNamespace("SuperLearner")
 
-
-predict.SL.glm.condExpXYgivenW <- function
 ### Prediction algorithm wrapper for SuperLearner
+predict.SL.glm.condExpXYgivenW <- function
 (object, newdata, ...) {
 ###seealso SL.glm.condExpXYgivenW
   out <- predict(object = object$object, newdata = newdata, 
@@ -126,9 +125,9 @@ predict.SL.glm.condExpXYgivenW <- function
 environment(predict.SL.glm.condExpXYgivenW) <- asNamespace("SuperLearner")
 
 
-SL.glm.g <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional probability of \eqn{X=0} given \eqn{W}.
+SL.glm.g <- function
 (Y, X, newX, family, obsWeights, ...) {
 ###seealso predict.SL.glm.g
   varNames <- names(X)
@@ -148,8 +147,8 @@ SL.glm.g <- function
 }
 environment(SL.glm.g) <- asNamespace("SuperLearner")
 
-predict.SL.glm.g <- function
 ### Prediction algorithm wrapper for SuperLearner
+predict.SL.glm.g <- function
 (object, newdata, ...) {
   ###seealso SL.glm.g
     out <- predict(object = object$object, newdata = newdata, 
@@ -160,9 +159,9 @@ predict.SL.glm.g <- function
 environment(predict.SL.glm.g) <- asNamespace("SuperLearner")
 
 
-SL.glm.theta <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{Y} given \eqn{(X,W)}.
+SL.glm.theta <- function
 (Y, X, newX, family, obsWeights, ...) {
   varNames <- names(X)
   theFormula <- paste(varNames, collapse="*")
@@ -182,8 +181,8 @@ SL.glm.theta <- function
 environment(SL.glm.theta) <- asNamespace("SuperLearner")
 
 
-predict.SL.glm.theta <- function
 ### Prediction algorithm wrapper for SuperLearner
+predict.SL.glm.theta <- function
 (object, newdata, ...) {
     out <- predict(object = object$object, newdata = newdata, 
         type = "response")

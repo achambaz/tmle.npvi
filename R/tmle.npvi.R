@@ -159,7 +159,12 @@ tmle.npvi <- structure(
       libDirRef <- system.file(file.path("testScripts", flavor), package="tmle.npvi")
       if (is.null(libDir)) {
         ## get our library:
-        eval(expression(data(lib)), list(lib=paste0(flavor, "Lib")))
+        ## eval(expression(data(lib)), list(lib=paste0(flavor, "Lib")))
+        if (flavor=="superLearning") {
+          data(superLearningLib)
+        } else {
+          data(learningLib)
+        }
       } else {
         ## check theirs
         if (libDir=="" | !file.exists(libDir)) {

@@ -1,6 +1,6 @@
-learnCondExpX2givenW <- function
 ### Function for  the estimation of  the conditional expectation  of \eqn{X^2}
 ### given \eqn{W} when \code{flavor} is set to "learning".
+learnCondExpX2givenW <- function
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
@@ -32,9 +32,9 @@ learnCondExpX2givenW <- function
 }
 
 
-learnCondExpXYgivenW <- function
 ### Function for  the estimation of  the conditional expectation  of \eqn{XY}
 ### given \eqn{W} when \code{flavor} is set to "learning".
+learnCondExpXYgivenW <- function
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
@@ -65,10 +65,10 @@ learnCondExpXYgivenW <- function
 ### Returns the fitted object.
 }
 
-learnDevG <- function
 ### Function   for  the   estimation   of  the   conditional  expectation   of
 ### \code{effIC1*((X==0)-gW)}  given  \eqn{W}  when  \code{flavor} is  set  to
 ### "learning".
+learnDevG <- function
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
@@ -117,10 +117,10 @@ verbose=FALSE,
 ### Returns the fitted object.
 }
 
-learnDevMu <- function
 ### Function   for  the   estimation   of  the   conditional  expectation   of
 ### \code{(X-muW)*effIC1}   given  \eqn{W}  when   \code{flavor}  is   set  to
 ### "learning".
+learnDevMu <- function
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
@@ -170,10 +170,10 @@ verbose=FALSE,
 }
 
 
-learnDevTheta <- function
 ### Function   for  the   estimation   of  the   conditional  expectation   of
 ### \code{(Y-thetaXW)^2}  given  \eqn{(X,W)}  when  \code{flavor}  is  set  to
 ### "learning".
+learnDevTheta <- function
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
@@ -218,10 +218,10 @@ verbose=FALSE,
 ### Returns the fitted object.
 }
 
-learnG <- function
 ### Function  for   the  estimation   of  the  conditional   probability  that
 ### \eqn{X=x_0} (the reference value for \eqn{X}) given \eqn{W}, version based
 ### on 'glm'.
+learnG <- function
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
@@ -260,9 +260,9 @@ learnG <- function
 }
 
 
-learnMuAux <- function
 ### Function  for the  estimation of  the conditional  expectation  of \eqn{X}
 ### given \eqn{(X\neq x_0, W)}, version based on 'glm'.
+learnMuAux <- function
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the  \code{function} \code{tmle.npvi}, where only observations
@@ -295,9 +295,9 @@ learnMuAux <- function
 ### Returns the fitted object.
 }
 
-learnTheta <- function
 ### Function  for the  estimation of  the conditional  expectation  of \eqn{Y}
 ### given \eqn{(X, W)}, version based on 'glm'.
+learnTheta <- function
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the  \code{function} \code{tmle.npvi}, where only observations
