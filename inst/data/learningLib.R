@@ -260,7 +260,7 @@ learnG <- function
 }
 
 
-learnMuAux <- function(obs, light=TRUE, ...) {
+learnMuAux <- function
 ### Function  for the  estimation of  the conditional  expectation  of \eqn{X}
 ### given \eqn{(X\neq x_0, W)}, version based on 'glm'.
 (obs,

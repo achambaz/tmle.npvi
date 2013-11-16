@@ -147,6 +147,14 @@ tmle.npvi <- structure(
       }
       
       
+      ## To please R CMD CHECK
+      learnG <- NULL; rm(learnG);
+      learnMuAux <- NULL; rm(learnMuAux);
+      learnTheta <- NULL; rm(learnTheta);
+      learnDevG <- NULL; rm(learnDevG);
+      learnDevMu <- NULL; rm(learnDevMu);
+      learnDevTheta <- NULL; rm(learnDevTheta);
+      SL.library <- NULL; rm(SL.library);
       
       libDirRef <- system.file(file.path("testScripts", flavor), package="tmle.npvi")
       if (is.null(libDir)) {
@@ -159,14 +167,6 @@ tmle.npvi <- structure(
         }
         sourceDirectory(libDir, envir=globalenv())
       }
-      ## To please R CMD CHECK
-      learnG <- NULL; rm(learnG);
-      learnMuAux <- NULL; rm(learnMuAux);
-      learnTheta <- NULL; rm(learnTheta);
-      learnDevG <- NULL; rm(learnDevG);
-      learnDevMu <- NULL; rm(learnDevMu);
-      learnDevTheta <- NULL; rm(learnDevTheta);
-      SL.library <- NULL; rm(SL.library);
 
       if (flavor=="superLearning") {
         library(SuperLearner)
