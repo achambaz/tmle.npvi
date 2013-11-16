@@ -1,9 +1,9 @@
-### Prediction algorithm wrapper for SuperLearner
 SL.DSA <- function
+### Prediction algorithm wrapper for SuperLearner
 (Y, X, newX, family, obsWeights, maxsize = ncol(X),
  maxorderint = 1, maxsumofpow = 1, Dmove = TRUE, Smove = TRUE,
  vfold = 5, ...) {
-  ###seealso<< SL.DSA.2, predict.SL.DSA
+  ##seealso<< SL.DSA.2, predict.SL.DSA
   tryCatch(require(DSA), warning = function(...) {
     stop("you have selected DSA as a library algorithm but do not have the DSA package installed")
   })
@@ -25,11 +25,12 @@ SL.DSA <- function
 }
 environment(SL.DSA) <- asNamespace("SuperLearner")
 
-### Prediction algorithm wrapper for SuperLearner
+
 SL.DSA.2 <- function
+### Prediction algorithm wrapper for SuperLearner
 (..., X, maxsize = 2 * ncol(X), maxorderint = 2,
  maxsumofpow = 2, Smove = FALSE, vfold = 10) {
-###seealso<< SL.DSA, predict.SL.DSA
+  ##seealso<< SL.DSA, predict.SL.DSA
   out <- SL.DSA(..., X = X, maxsize = maxsize, maxorderint = maxorderint,
                 maxsumofpow = maxsumofpow, Smove = Smove, vfold = vfold)
   return(out)
@@ -38,11 +39,12 @@ SL.DSA.2 <- function
 environment(SL.DSA.2) <- asNamespace("SuperLearner")
 
 
-### Prediction algorithm wrapper for SuperLearner
+
 predict.SL.DSA <- function
+### Prediction algorithm wrapper for SuperLearner
 (object, newdata, family, X = NULL, Y = NULL, ...) {
+  ##seealso<< SL.DSA, SL.DSA.2
   tryCatch(require(DSA), warning = function(...) {
-###seealso<< SL.DSA, SL.DSA.2
     stop("you have selected DSA as a library algorithm but do not have the DSA package installed")
   })
   pred <- predict(object = object$object, newdata = newdata)
@@ -55,9 +57,9 @@ predict.SL.DSA <- function
 environment(predict.SL.DSA) <- asNamespace("SuperLearner")
 
 
+SL.glm.condExpX2givenW <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{X^2} given \eqn{W}.
-SL.glm.condExpX2givenW <- function
 (Y, X, newX, family, obsWeights, ...) {
   varNames <- names(X)
   theFormula <- paste(varNames, collapse=" + ")
@@ -78,9 +80,9 @@ SL.glm.condExpX2givenW <- function
 environment(SL.glm.condExpX2givenW) <- asNamespace("SuperLearner")
 
 
+predict.SL.glm.condExpX2givenW <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{X^2} given \eqn{W}.
-predict.SL.glm.condExpX2givenW <- function
 (object, newdata, ...) {
   out <- predict(object = object$object, newdata = newdata, 
                  type = "response")
@@ -90,11 +92,11 @@ predict.SL.glm.condExpX2givenW <- function
 environment(predict.SL.glm.condExpX2givenW) <- asNamespace("SuperLearner")
 
 
+SL.glm.condExpXYgivenW <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{XY} given \eqn{W}.
-SL.glm.condExpXYgivenW <- function
 (Y, X, newX, family, obsWeights, ...) {
-###seealso predict.SL.glm.condExpXYgivenW
+  ##seealso predict.SL.glm.condExpXYgivenW
   varNames <- names(X)
   theFormula <- paste(varNames, collapse=" + ")
   theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
@@ -113,10 +115,11 @@ SL.glm.condExpXYgivenW <- function
 }
 environment(SL.glm.condExpXYgivenW) <- asNamespace("SuperLearner")
 
-### Prediction algorithm wrapper for SuperLearner
+
 predict.SL.glm.condExpXYgivenW <- function
+### Prediction algorithm wrapper for SuperLearner
 (object, newdata, ...) {
-###seealso SL.glm.condExpXYgivenW
+  ##seealso SL.glm.condExpXYgivenW
   out <- predict(object = object$object, newdata = newdata, 
                  type = "response")
   return(out)
@@ -125,11 +128,11 @@ predict.SL.glm.condExpXYgivenW <- function
 environment(predict.SL.glm.condExpXYgivenW) <- asNamespace("SuperLearner")
 
 
+SL.glm.g <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional probability of \eqn{X=0} given \eqn{W}.
-SL.glm.g <- function
 (Y, X, newX, family, obsWeights, ...) {
-###seealso predict.SL.glm.g
+  ##seealso predict.SL.glm.g
   varNames <- names(X)
   theFormula <- paste(varNames, collapse=" + ")
   theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
@@ -147,10 +150,11 @@ SL.glm.g <- function
 }
 environment(SL.glm.g) <- asNamespace("SuperLearner")
 
-### Prediction algorithm wrapper for SuperLearner
+
 predict.SL.glm.g <- function
+### Prediction algorithm wrapper for SuperLearner
 (object, newdata, ...) {
-  ###seealso SL.glm.g
+  ##seealso SL.glm.g
     out <- predict(object = object$object, newdata = newdata, 
         type = "response")
     return(out)
@@ -159,9 +163,9 @@ predict.SL.glm.g <- function
 environment(predict.SL.glm.g) <- asNamespace("SuperLearner")
 
 
+SL.glm.theta <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{Y} given \eqn{(X,W)}.
-SL.glm.theta <- function
 (Y, X, newX, family, obsWeights, ...) {
   varNames <- names(X)
   theFormula <- paste(varNames, collapse="*")
@@ -181,8 +185,9 @@ SL.glm.theta <- function
 environment(SL.glm.theta) <- asNamespace("SuperLearner")
 
 
-### Prediction algorithm wrapper for SuperLearner
+
 predict.SL.glm.theta <- function
+### Prediction algorithm wrapper for SuperLearner
 (object, newdata, ...) {
     out <- predict(object = object$object, newdata = newdata, 
         type = "response")
@@ -209,22 +214,22 @@ library(e1071)
 ## library(DSA)
 ## library(glmnet)
 
-learnTheta <- c("SL.glm.theta", "SL.polymars", SL.library);
+learnTheta.library <- c("SL.glm.theta", "SL.polymars", SL.library);
 
-learnG <- c("SL.glm.g", SL.library);
+learnG.library <- c("SL.glm.g", SL.library);
 
-learnMuAux <- c(SL.library);
+learnMuAux.library <- c(SL.library);
 
-learnDevG <- c(SL.library)
+learnDevG.library <- c(SL.library)
 
-learnDevMu <- c(SL.library)
+learnDevMu.library <- c(SL.library)
 
-learnDevTheta <- c(SL.library)
+learnDevTheta.library <- c(SL.library)
 
-learnCondExpXYgivenW <- c("SL.glm.condExpXYgivenW", SL.library)
+learnCondExpXYgivenW.library <- c("SL.glm.condExpXYgivenW", SL.library)
 
-learnCondExpX2givenW <- c("SL.glm.condExpX2givenW", SL.library)
+learnCondExpX2givenW.library <- c("SL.glm.condExpX2givenW", SL.library)
 
-SL.library <- unique(c(learnTheta, learnG, learnMuAux,
-                       learnDevTheta, learnDevG, learnDevMu,
-                       learnCondExpXYgivenW, learnCondExpX2givenW))
+SL.library <- unique(c(learnTheta.library, learnG.library, learnMuAux.library,
+                       learnDevTheta.library, learnDevG.library, learnDevMu.library,
+                       learnCondExpXYgivenW.library, learnCondExpX2givenW.library))
