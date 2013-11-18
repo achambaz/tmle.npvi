@@ -337,3 +337,16 @@ learnTheta <- function
   return(foo)
 ### Returns the fitted object.
 }
+
+### List of default learning algorithms to use in \code{tmle.npvi} when \code{flavor} is set to "learning".
+learningLib <- list(learnCondExpX2givenW=learnCondExpX2givenW,
+                    learnCondExpXYgivenW=learnCondExpXYgivenW,
+                    learnDevG=learnDevG,
+                    learnDevMu=learnDevMu,
+                    learnDevTheta=learnDevTheta,
+                    learnG=learnG,
+                    learnMuAux=learnMuAux,
+                    learnTheta=learnTheta)
+
+rm(learnCondExpX2givenW,    learnCondExpXYgivenW,    learnDevG,    learnDevMu,
+   learnDevTheta, learnG, learnMuAux, learnTheta)

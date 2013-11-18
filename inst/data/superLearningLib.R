@@ -219,22 +219,38 @@ library(e1071)
 ## library(DSA)
 ## library(glmnet)
 
-learnTheta <- c("SL.glm.theta", "SL.polymars", SL.library);
+learnTheta.library <- c("SL.glm.theta", "SL.polymars", SL.library);
 
-learnG <- c("SL.glm.g", SL.library);
+learnG.library <- c("SL.glm.g", SL.library);
 
-learnMuAux <- c(SL.library);
+learnMuAux.library <- c(SL.library);
 
-learnDevG <- c(SL.library)
+learnDevG.library <- c(SL.library)
 
-learnDevMu <- c(SL.library)
+learnDevMu.library <- c(SL.library)
 
-learnDevTheta <- c(SL.library)
+learnDevTheta.library <- c(SL.library)
 
-learnCondExpXYgivenW <- c("SL.glm.condExpXYgivenW", SL.library)
+learnCondExpXYgivenW.library <- c("SL.glm.condExpXYgivenW", SL.library)
 
-learnCondExpX2givenW <- c("SL.glm.condExpX2givenW", SL.library)
+learnCondExpX2givenW.library <- c("SL.glm.condExpX2givenW", SL.library)
 
-SL.library <- unique(c(learnTheta, learnG, learnMuAux,
-                       learnDevTheta, learnDevG, learnDevMu,
-                       learnCondExpXYgivenW, learnCondExpX2givenW))
+
+### List of default libraries of algorithms to use in \code{tmle.npvi} when \code{flavor} is set to "learning".
+superLearningLib <- list(learnCondExpX2givenW=learnCondExpX2givenW.library,
+                         learnCondExpXYgivenW=learnCondExpXYgivenW.library,
+                         learnDevG=learnDevG.library,
+                         learnDevMu=learnDevMu.library,
+                         learnDevTheta=learnDevTheta.library,
+                         learnG=learnG.library,
+                         learnMuAux=learnMuAux.library,
+                         learnTheta=learnTheta.library)
+
+### Default library of algorithms to use in \code{tmle.npvi} when argument \code{flavor} is set to "superLearning". 
+SL.library <- unique(c(learnTheta.library, learnG.library, learnMuAux.library,
+                       learnDevTheta.library, learnDevG.library, learnDevMu.library,
+                       learnCondExpXYgivenW.library, learnCondExpX2givenW.library))
+
+rm(learnTheta.library,           learnG.library,           learnMuAux.library,
+   learnDevTheta.library,          learnDevG.library,         learnDevMu.library,
+   learnCondExpXYgivenW.library, learnCondExpX2givenW.library)

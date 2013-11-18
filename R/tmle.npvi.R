@@ -151,11 +151,16 @@ tmle.npvi <- structure(
       libDirRef <- system.file(file.path("testScripts", flavor), package="tmle.npvi")
       if (is.null(libDir)) {
         ## get our library:
-        ## eval(expression(data(lib)), list(lib=paste0(flavor, "Lib")))
         if (flavor=="superLearning") {
           data(superLearningLib)
+          warning("Attaching 'superLearningLib' list.")
+          attach(superLearningLib)
+          on.exit(detach(superLearningLib))
         } else {
           data(learningLib)
+          warning("Attaching 'learningLib' list.")
+          attach(learningLib)
+          on.exit(detach(learningLib))
         }
       } else {
         ## check theirs
@@ -249,7 +254,6 @@ tmle.npvi <- structure(
       if (nodes>1&flavor=="superLearning") {
         parallel::stopCluster(cl)
       }
-      
       
       ## history <- getHistory(npvi)
       return(npvi)
