@@ -10,6 +10,7 @@ learnCondExpX2givenW <- function
 ### be reduced  in size (for  a faster execution). Currently  implemented only
 ### for flavor \code{learning}.
  ) {
+  ##seealso<< learnG, learnMuAux, learnTheta, learnCondExpXYgivenW, learnDevG, learnDevMu, learnDevTheta
   W <- extractW(obs)
   varNames <- colnames(W)
   theFormula <- paste(varNames, collapse=" + ")
@@ -44,6 +45,7 @@ learnCondExpXYgivenW <- function
 ### be reduced  in size (for  a faster execution). Currently  implemented only
 ### for flavor \code{learning}.
 ) {
+  ##seealso<< learnG, learnMuAux, learnTheta, learnCondExpX2givenW, learnDevG, learnDevMu, learnDevTheta
   W <- extractW(obs)
   varNames <- colnames(W)
   theFormula <- paste(varNames, collapse=" + ")
@@ -89,6 +91,7 @@ verbose=FALSE,
  ...
 ### Additional arguments possibly needed.
  ) {
+  ##seealso<< learnG, learnMuAux, learnTheta, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevMu, learnDevTheta
   W <- extractW(obs)
   X <- obs[, "X"];
   Z <- effIC1 * ( (X==0) - gW );
@@ -141,6 +144,7 @@ verbose=FALSE,
  ...
 ### Additional arguments possibly needed.
 ) {
+  ##seealso<< learnG, learnMuAux, learnTheta, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevG, learnDevTheta
   W <- extractW(obs)
   Z <- (obs[, "X"]-muW) * effIC1;
 
@@ -191,6 +195,7 @@ verbose=FALSE,
  ...
 ### Additional arguments possibly needed.
 ) {
+  ##seealso<< learnG, learnMuAux, learnTheta, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevG, learnDevMu
   obsZ <- cbind(obs, Z=thetaXW);
   verbose && str(verbose, obsZ);
 
@@ -235,6 +240,8 @@ learnG <- function
  ...
 ### Additional arguments possibly needed. 
  ) {
+  ##seealso<< learnMuAux, learnTheta, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevG, learnDevMu, learnDevTheta
+  
   ##
   ## 'glm' version 
   ##
@@ -274,7 +281,8 @@ learnMuAux <- function
 ### for flavor \code{learning}.
  ...
 ### Additional arguments possibly needed.
-) { 
+) {
+  ##seealso<< learnG, learnTheta, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevG, learnDevMu, learnDevTheta
   varNames <- setdiff(colnames(obs), c("X", "Y"))
   theFormula <- paste(varNames, collapse=" + ")
   theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
@@ -309,7 +317,8 @@ learnTheta <- function
 ### for flavor \code{learning}.
  ...
 ### Additional arguments possibly needed.
-) { 
+) {
+  ##seealso<< learnG, learnMuAux, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevG, learnDevMu, learnDevTheta
   varNames <- setdiff(colnames(obs), "Y")
   theFormula <- paste(varNames, collapse="*")
   theFormula <- paste("Y ~", theFormula, sep=" ")

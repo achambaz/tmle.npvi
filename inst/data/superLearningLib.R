@@ -1,5 +1,5 @@
 SL.DSA <- function
-### Prediction algorithm wrapper for SuperLearner
+### Prediction algorithm wrapper for SuperLearner.
 (Y, X, newX, family, obsWeights, maxsize = ncol(X),
  maxorderint = 1, maxsumofpow = 1, Dmove = TRUE, Smove = TRUE,
  vfold = 5, ...) {
@@ -27,7 +27,7 @@ environment(SL.DSA) <- asNamespace("SuperLearner")
 
 
 SL.DSA.2 <- function
-### Prediction algorithm wrapper for SuperLearner
+### Prediction algorithm wrapper for SuperLearner.
 (..., X, maxsize = 2 * ncol(X), maxorderint = 2,
  maxsumofpow = 2, Smove = FALSE, vfold = 10) {
   ##seealso<< SL.DSA, predict.SL.DSA
@@ -41,7 +41,7 @@ environment(SL.DSA.2) <- asNamespace("SuperLearner")
 
 
 predict.SL.DSA <- function
-### Prediction algorithm wrapper for SuperLearner
+### Prediction algorithm wrapper for SuperLearner.
 (object, newdata, family, X = NULL, Y = NULL, ...) {
   ##seealso<< SL.DSA, SL.DSA.2
   tryCatch(require(DSA), warning = function(...) {
@@ -61,6 +61,7 @@ SL.glm.condExpX2givenW <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{X^2} given \eqn{W}.
 (Y, X, newX, family, obsWeights, ...) {
+  ##seealso<< learnCondExpX2givenW, predict.SL.glm.condExpX2givenW
   varNames <- names(X)
   theFormula <- paste(varNames, collapse=" + ")
   theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
@@ -84,6 +85,7 @@ predict.SL.glm.condExpX2givenW <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{X^2} given \eqn{W}.
 (object, newdata, ...) {
+  ##seealso<< SL.glm.condExpX2givenW
   out <- predict(object = object$object, newdata = newdata, 
                  type = "response")
   return(out)
@@ -96,7 +98,7 @@ SL.glm.condExpXYgivenW <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{XY} given \eqn{W}.
 (Y, X, newX, family, obsWeights, ...) {
-  ##seealso predict.SL.glm.condExpXYgivenW
+  ##seealso<< learnCondExpXYgivenW, predict.SL.glm.condExpXYgivenW
   varNames <- names(X)
   theFormula <- paste(varNames, collapse=" + ")
   theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
@@ -117,9 +119,9 @@ environment(SL.glm.condExpXYgivenW) <- asNamespace("SuperLearner")
 
 
 predict.SL.glm.condExpXYgivenW <- function
-### Prediction algorithm wrapper for SuperLearner
+### Prediction algorithm wrapper for SuperLearner.
 (object, newdata, ...) {
-  ##seealso SL.glm.condExpXYgivenW
+  ##seealso<< SL.glm.condExpXYgivenW
   out <- predict(object = object$object, newdata = newdata, 
                  type = "response")
   return(out)
@@ -132,7 +134,7 @@ SL.glm.g <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional probability of \eqn{X=0} given \eqn{W}.
 (Y, X, newX, family, obsWeights, ...) {
-  ##seealso predict.SL.glm.g
+  ##seealso<< learnG, predict.SL.glm.g
   varNames <- names(X)
   theFormula <- paste(varNames, collapse=" + ")
   theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
@@ -152,9 +154,9 @@ environment(SL.glm.g) <- asNamespace("SuperLearner")
 
 
 predict.SL.glm.g <- function
-### Prediction algorithm wrapper for SuperLearner
+### Prediction algorithm wrapper for SuperLearner.
 (object, newdata, ...) {
-  ##seealso SL.glm.g
+  ##seealso<< SL.glm.g
     out <- predict(object = object$object, newdata = newdata, 
         type = "response")
     return(out)
@@ -167,6 +169,7 @@ SL.glm.theta <- function
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{Y} given \eqn{(X,W)}.
 (Y, X, newX, family, obsWeights, ...) {
+  ##seealso<< learnTheta, predict.SL.glm.theta
   varNames <- names(X)
   theFormula <- paste(varNames, collapse="*")
   theFormula <- paste("Y ~", theFormula, sep=" ")
@@ -187,8 +190,9 @@ environment(SL.glm.theta) <- asNamespace("SuperLearner")
 
 
 predict.SL.glm.theta <- function
-### Prediction algorithm wrapper for SuperLearner
+### Prediction algorithm wrapper for SuperLearner.
 (object, newdata, ...) {
+  ##seealso<< SL.glm.theta
     out <- predict(object = object$object, newdata = newdata, 
         type = "response")
     return(out)
@@ -205,6 +209,7 @@ environment(predict.SL.glm.theta) <- asNamespace("SuperLearner")
 ## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm", "SL.glmnet");
 ## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm", "SL.DSA")
 ## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.glmnet");
+
 SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm")
 
 library(SuperLearner)
