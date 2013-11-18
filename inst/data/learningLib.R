@@ -348,5 +348,5 @@ learningLib <- list(learnCondExpX2givenW=learnCondExpX2givenW,
                     learnMuAux=learnMuAux,
                     learnTheta=learnTheta)
 
-rm(learnCondExpX2givenW,    learnCondExpXYgivenW,    learnDevG,    learnDevMu,
-   learnDevTheta, learnG, learnMuAux, learnTheta)
+## rm(learnCondExpX2givenW,    learnCondExpXYgivenW,    learnDevG,    learnDevMu,
+##    learnDevTheta, learnG, learnMuAux, learnTheta)

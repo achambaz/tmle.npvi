@@ -152,11 +152,18 @@ tmle.npvi <- structure(
       if (is.null(libDir)) {
         ## get our library:
         if (flavor=="superLearning") {
+          ## To please R CMD CHECK
+          superLearningLib <- NULL; rm(learningLib);
+          SL.library <- NULL; rm(SL.library);
+          
           data(superLearningLib)
           warning("Attaching 'superLearningLib' list.")
           attach(superLearningLib)
           on.exit(detach(superLearningLib))
         } else {
+          ## To please R CMD CHECK
+          learningLib <- NULL; rm(learningLib);
+          
           data(learningLib)
           warning("Attaching 'learningLib' list.")
           attach(learningLib)
@@ -177,9 +184,6 @@ tmle.npvi <- structure(
       learnDevG <- NULL; rm(learnDevG);
       learnDevMu <- NULL; rm(learnDevMu);
       learnDevTheta <- NULL; rm(learnDevTheta);
-      learningLib <- NULL; rm(learningLib);
-      superLearningLib <- NULL; rm(learningLib);
-      SL.library <- NULL; rm(SL.library);
 
       
       if (flavor=="superLearning") {
