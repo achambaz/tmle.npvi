@@ -177,6 +177,8 @@ tmle.npvi <- structure(
       learnDevG <- NULL; rm(learnDevG);
       learnDevMu <- NULL; rm(learnDevMu);
       learnDevTheta <- NULL; rm(learnDevTheta);
+      learningLib <- NULL; rm(learningLib);
+      superLearningLib <- NULL; rm(learningLib);
       SL.library <- NULL; rm(SL.library);
 
       
