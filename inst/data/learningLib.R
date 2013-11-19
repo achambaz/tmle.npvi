@@ -338,6 +338,15 @@ learnTheta <- function
 ### Returns the fitted object.
 }
 
+toto <- function
+### Test
+(x
+### Arg
+ ) {
+  cos(x)
+  ### Value
+}
+
 ### List of default learning algorithms to use in \code{tmle.npvi} when \code{flavor} is set to "learning".
 learningLib <- list(learnCondExpX2givenW=learnCondExpX2givenW,
                     learnCondExpXYgivenW=learnCondExpXYgivenW,
@@ -348,8 +357,10 @@ learningLib <- list(learnCondExpX2givenW=learnCondExpX2givenW,
                     learnMuAux=learnMuAux,
                     learnTheta=learnTheta)
 
-rm(learnCondExpX2givenW,    learnCondExpXYgivenW,    learnDevG,    learnDevMu,
-   learnDevTheta, learnG, learnMuAux, learnTheta)
+## run 'makeInstall' once with the instruction below commented to make sure the proper Rd files are generated
 
-TRUE
+## rm(learnCondExpX2givenW,    learnCondExpXYgivenW,    learnDevG,    learnDevMu,
+##    learnDevTheta, learnG, learnMuAux, learnTheta)
+
+
 

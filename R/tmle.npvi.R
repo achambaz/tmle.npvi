@@ -185,6 +185,7 @@ tmle.npvi <- structure(
       learnDevMu <- NULL; rm(learnDevMu);
       learnDevTheta <- NULL; rm(learnDevTheta);
 
+      toto(pi)
       
       if (flavor=="superLearning") {
         library(SuperLearner)
@@ -213,8 +214,6 @@ tmle.npvi <- structure(
           warning("Parallel computing not available with 'learning' option")
         }
       }
-      
-
       
       ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       ## Declaration
