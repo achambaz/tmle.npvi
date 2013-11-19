@@ -186,7 +186,7 @@ tmle.npvi <- structure(
       learnDevTheta <- NULL; rm(learnDevTheta);
 
       toto(pi)
-      
+
       if (flavor=="superLearning") {
         library(SuperLearner)
         if (is.null(cvControl)) {
