@@ -153,7 +153,7 @@ tmle.npvi <- structure(
         ## get our library:
         if (flavor=="superLearning") {
           ## To please R CMD CHECK
-          superLearningLib <- NULL; rm(learningLib);
+          superLearningLib <- NULL; rm(superLearningLib);
           SL.library <- NULL; rm(SL.library);
           
           data(superLearningLib)
@@ -199,6 +199,8 @@ tmle.npvi <- structure(
         } else {
           tf <- tempfile("snitch.Rout")
           cl <- parallel::makeCluster(nodes, type="PSOCK", outfile=tf) # can use different types here
+          on.exit(parallel::stopCluster(cl))
+          ##
           parallel::clusterSetRNGStream(cl, iseed=2343)
           parallel::clusterExport(cl, SL.library)
           SuperLearner. <- function(...) {
@@ -257,9 +259,6 @@ tmle.npvi <- structure(
         conv <- getConv(npvi)
       }
 
-      if (nodes>1&flavor=="superLearning") {
-        parallel::stopCluster(cl)
-      }
       
       ## history <- getHistory(npvi)
       return(npvi)
