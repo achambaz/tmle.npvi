@@ -338,14 +338,6 @@ learnTheta <- function
 ### Returns the fitted object.
 }
 
-toto <- function
-### Test
-(x
-### Arg
- ) {
-  cos(x)
-  ### Value
-}
 
 ### List of default learning algorithms to use in \code{tmle.npvi} when \code{flavor} is set to "learning".
 learningLib <- list(learnCondExpX2givenW=learnCondExpX2givenW,
