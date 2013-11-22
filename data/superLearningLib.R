@@ -246,13 +246,9 @@ superLearningLib <- list(learnCondExpX2givenW=learnCondExpX2givenW.library,
                          learnMuAux=learnMuAux.library,
                          learnTheta=learnTheta.library)
 
-### Default library of algorithms to use in \code{tmle.npvi} when argument \code{flavor} is set to "superLearning". 
-SL.library <- unique(c(learnTheta.library, learnG.library, learnMuAux.library,
-                       learnDevTheta.library, learnDevG.library, learnDevMu.library,
-                       learnCondExpXYgivenW.library, learnCondExpX2givenW.library))
 
 rm(learnTheta.library,           learnG.library,           learnMuAux.library,
    learnDevTheta.library,          learnDevG.library,         learnDevMu.library,
-   learnCondExpXYgivenW.library, learnCondExpX2givenW.library)
+   learnCondExpXYgivenW.library, learnCondExpX2givenW.library, SL.library)
 
 

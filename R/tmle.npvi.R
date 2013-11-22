@@ -1,6 +1,7 @@
 tmle.npvi <- structure(
     function
-### Carries  out the  targeted  minimum loss  estimation  (TMLE) of a non-parametric variable importance measure of a continuous exposure.
+### Carries   out  the   targeted  minimum   loss  estimation   (TMLE)   of  a
+### non-parametric variable importance measure of a continuous exposure.
     (obs,
 ### A \code{n x p} \code{matrix} of observations, with \eqn{p \ge 3}.
 ### \itemize{ \item{Column \code{"X"} corresponds to the continuous
@@ -15,13 +16,17 @@ tmle.npvi <- structure(
 ### A \code{function} involved in the  definition of the parameter of interest
 ### \eqn{\psi},  which must  satisfy  \eqn{f(0)=0} (see  Details). Defaults  to
 ### \code{identity}.
-     flavor=c("superLearning", "learning"),
+     flavor=c("learning", "superLearning"),
 ### Indicates whether the construction of the relevant features of \eqn{P_n^0}
 ### and \eqn{P_n^k}, the (non-targeted  yet) initial and (targeted) successive
 ### updated estimators of the true distribution of \eqn{(W,X,Y)} relies on the
-### Super Learning methodology (option  "superLearning", default value) or not
-### (option "learning").  In the  former case, the \code{SuperLearner} package
-### is loaded.
+### Super  Learning  methodology   (option  "superLearning")  or  not  (option
+### "learning", default  value).  In the former  case, the \code{SuperLearner}
+### package is loaded.
+     lib=list(),
+### A \code{list}  providing the function \code{tmle.npvi}  with the necessary
+### algorithms  involved in  the estimation  of the  features of  interest. If
+### empty (default) then the default algorithms are used. See \code{Details}.
      nodes=1L,
 ### An \code{integer},  which indicates how  many nodes should be  involved in
 ### the  computation  of  the  TMLE  when it  relies  on  the  "superLearning"
@@ -43,10 +48,6 @@ tmle.npvi <- structure(
 ### A  \code{logical},  indicating  whether  the  one-step  (if  \code{FALSE},
 ### default value) or the  two-step (if \code{TRUE}) updating procedure should
 ### be carried out.
-     libDir=NULL,
-### A \code{path} indicating the location of the "superLearning" or "learning"
-### libraries, depending on the chosen \code{flavor}.  If \code{NULL} (default
-### value) then the package's default library is used.
      bound=1,
 ### A  positive  \code{numeric} (defaults  to  \code{1}),  upper-bound on  the
 ### absolute value of the fluctuation parameter.
@@ -130,6 +131,14 @@ tmle.npvi <- structure(
       ## \code{psi}.}
       ##}
       ##
+      ##If \code{lib} is an empty list (\code{list()}, default value) then the
+      ##default   algorithms   for  the   chosen   \code{flavor}  are   loaded
+      ##(\code{learningLib}  when  \code{flavor}   is  set  to  "learning"  or
+      ##\code{superLearningLib} when \code{flavor} is set to "superLearning").
+      ##A  valid  \code{lib} argument  must  mimick  the  structure of  either
+      ##\code{learningLib}    or    \code{superLearningLib},   depending    on
+      ##\code{flavor}.
+      ##
       ##The  "superLearning"  \code{flavor}  requires the  \code{SuperLearner}
       ##package  and, by  default, the  \code{DSA},  \code{e1071}, \code{gam},
       ##\code{glmnet}, \code{polspline} and \code{randomForest} packages.
@@ -138,6 +147,17 @@ tmle.npvi <- structure(
       ##package \code{sgeostat} is required.
       
       ## Arguments
+      mode <- mode(lib)
+      if (mode != "list") {
+        throw("Argument 'lib' should be a 'list'");
+      }
+      test <- setdiff(names(lib), paste0("learn", c("G", "MuAux", "Theta",
+                                                    "DevG", "DevMu", "DevTheta",
+                                                    "condExpX2givenW", "condExpXYgivenW")))
+      if (length(test)) {
+        throw("Missing element in argument 'lib':", test);
+      }
+      
       flavor <- match.arg(flavor)
       nodes <- Arguments$getInteger(nodes)
       family <- match.arg(family)
@@ -147,17 +167,14 @@ tmle.npvi <- structure(
       }
       
       
-      
-      libDirRef <- system.file(file.path("testScripts", flavor), package="tmle.npvi")
-      if (is.null(libDir)) {
+      if (length(lib)==0) {
         ## get our library:
         if (flavor=="superLearning") {
           ## To please R CMD CHECK
           superLearningLib <- NULL; rm(superLearningLib);
-          SL.library <- NULL; rm(SL.library);
           
           data(superLearningLib)
-          warning("Attaching 'superLearningLib' list.")
+          ## warning("Attaching 'superLearningLib' list.")
           attach(superLearningLib)
           on.exit(detach(superLearningLib))
         } else {
@@ -165,18 +182,12 @@ tmle.npvi <- structure(
           learningLib <- NULL; rm(learningLib);
           
           data(learningLib)
-          warning("Attaching 'learningLib' list.")
+          ## warning("Attaching 'learningLib' list.")
           attach(learningLib)
           on.exit(detach(learningLib))
         }
-      } else {
-        ## check theirs
-        if (libDir=="" | !file.exists(libDir)) {
-          throw("Please provide path to a correct directory (see ", libDirRef, " as an example)")
-        }
-        sourceDirectory(libDir, envir=globalenv())
       }
-
+      
       ## To please R CMD CHECK
       learnG <- NULL; rm(learnG);
       learnMuAux <- NULL; rm(learnMuAux);
@@ -185,6 +196,11 @@ tmle.npvi <- structure(
       learnDevMu <- NULL; rm(learnDevMu);
       learnDevTheta <- NULL; rm(learnDevTheta);
 
+      ##sideeffects<< When  using one  of the default  libraries 'learningLib'
+      ##(when \code{flavor} is set  to "learning") or 'superLearningLib' (when
+      ##\code{flavor}   is  set   to  "superLearning"),   one  of   the  lists
+      ##'learningLib' or 'superLearningLib' is attached.
+      
       if (flavor=="superLearning") {
         library(SuperLearner)
         if (is.null(cvControl)) {
@@ -200,6 +216,7 @@ tmle.npvi <- structure(
           cl <- parallel::makeCluster(nodes, type="PSOCK", outfile=tf) # can use different types here
           on.exit(parallel::stopCluster(cl))
           ##
+          SL.library <- unique(unlist(superLearningLib))
           parallel::clusterSetRNGStream(cl, iseed=2343)
           parallel::clusterExport(cl, SL.library)
           SuperLearner. <- function(...) {

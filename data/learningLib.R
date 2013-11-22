@@ -352,8 +352,7 @@ learningLib <- list(learnCondExpX2givenW=learnCondExpX2givenW,
 ## run 'makeInstall' with the instruction below commented to make sure the proper Rd files are generated
 ## then run 'R CMD build' with the instruction below uncommented
 
-rm(learnCondExpX2givenW,    learnCondExpXYgivenW,    learnDevG,    learnDevMu,
-   learnDevTheta, learnG, learnMuAux, learnTheta)
+rm(learnCondExpX2givenW,    learnCondExpXYgivenW,    learnDevG,    learnDevMu, learnDevTheta, learnG, learnMuAux, learnTheta)
 
 
 
