@@ -1,5 +1,5 @@
 tmle.npvi <- structure(
-    function
+    function#Targeted Minimum Loss Estimation of NPVI
 ### Carries   out  the   targeted  minimum   loss  estimation   (TMLE)   of  a
 ### non-parametric variable importance measure of a continuous exposure.
     (obs,

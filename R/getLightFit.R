@@ -1,4 +1,4 @@
-getLightFit <- function(
+getLightFit <- function(#Makes Lighter Fitted Object
 ### Makes a lighter version of a fitted object by removing elements containing data.     
     fit
 ### A fitted object.

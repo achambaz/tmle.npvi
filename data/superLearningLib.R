@@ -1,4 +1,4 @@
-SL.DSA <- function
+SL.DSA <- function#SL Prediction Algorithm Wrapper
 ### Prediction algorithm wrapper for SuperLearner.
 (Y, X, newX, family, obsWeights, maxsize = ncol(X),
  maxorderint = 1, maxsumofpow = 1, Dmove = TRUE, Smove = TRUE,
@@ -26,7 +26,7 @@ SL.DSA <- function
 environment(SL.DSA) <- asNamespace("SuperLearner")
 
 
-SL.DSA.2 <- function
+SL.DSA.2 <- function#SL Prediction Algorithm Wrapper
 ### Prediction algorithm wrapper for SuperLearner.
 (..., X, maxsize = 2 * ncol(X), maxorderint = 2,
  maxsumofpow = 2, Smove = FALSE, vfold = 10) {
@@ -40,7 +40,7 @@ environment(SL.DSA.2) <- asNamespace("SuperLearner")
 
 
 
-predict.SL.DSA <- function
+predict.SL.DSA <- function#SL Prediction Algorithm Wrapper
 ### Prediction algorithm wrapper for SuperLearner.
 (object, newdata, family, X = NULL, Y = NULL, ...) {
   ##seealso<< SL.DSA, SL.DSA.2
@@ -57,7 +57,7 @@ predict.SL.DSA <- function
 environment(predict.SL.DSA) <- asNamespace("SuperLearner")
 
 
-SL.glm.condExpX2givenW <- function
+SL.glm.condExpX2givenW <- function#SL  Wrapper for Estimation of Cond. Expect. of X^2 Given W
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{X^2} given \eqn{W}.
 (Y, X, newX, family, obsWeights, ...) {
@@ -81,7 +81,7 @@ SL.glm.condExpX2givenW <- function
 environment(SL.glm.condExpX2givenW) <- asNamespace("SuperLearner")
 
 
-predict.SL.glm.condExpX2givenW <- function
+predict.SL.glm.condExpX2givenW <- function#SL  Wrapper for Estimation of Cond. Expect. of X^2 Given W
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{X^2} given \eqn{W}.
 (object, newdata, ...) {
@@ -94,7 +94,7 @@ predict.SL.glm.condExpX2givenW <- function
 environment(predict.SL.glm.condExpX2givenW) <- asNamespace("SuperLearner")
 
 
-SL.glm.condExpXYgivenW <- function
+SL.glm.condExpXYgivenW <- function#SL  Wrapper for Estimation of Cond. Expect. of XY Given W
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{XY} given \eqn{W}.
 (Y, X, newX, family, obsWeights, ...) {
@@ -118,7 +118,7 @@ SL.glm.condExpXYgivenW <- function
 environment(SL.glm.condExpXYgivenW) <- asNamespace("SuperLearner")
 
 
-predict.SL.glm.condExpXYgivenW <- function
+predict.SL.glm.condExpXYgivenW <- function#SL  Wrapper for Estimation of Cond. Expect. of XY Given W
 ### Prediction algorithm wrapper for SuperLearner.
 (object, newdata, ...) {
   ##seealso<< SL.glm.condExpXYgivenW
@@ -130,7 +130,7 @@ predict.SL.glm.condExpXYgivenW <- function
 environment(predict.SL.glm.condExpXYgivenW) <- asNamespace("SuperLearner")
 
 
-SL.glm.g <- function
+SL.glm.g <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Given W
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional probability of \eqn{X=0} given \eqn{W}.
 (Y, X, newX, family, obsWeights, ...) {
@@ -153,7 +153,7 @@ SL.glm.g <- function
 environment(SL.glm.g) <- asNamespace("SuperLearner")
 
 
-predict.SL.glm.g <- function
+predict.SL.glm.g <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Given W
 ### Prediction algorithm wrapper for SuperLearner.
 (object, newdata, ...) {
   ##seealso<< SL.glm.g
@@ -165,7 +165,7 @@ predict.SL.glm.g <- function
 environment(predict.SL.glm.g) <- asNamespace("SuperLearner")
 
 
-SL.glm.theta <- function
+SL.glm.theta <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Given W
 ### Prediction algorithm  wrapper for SuperLearner, for the  estimation of the
 ### conditional expectation of \eqn{Y} given \eqn{(X,W)}.
 (Y, X, newX, family, obsWeights, ...) {
@@ -189,7 +189,7 @@ environment(SL.glm.theta) <- asNamespace("SuperLearner")
 
 
 
-predict.SL.glm.theta <- function
+predict.SL.glm.theta <- function#SL  Wrapper for Estimation of Cond. Expect. of Y Given (X,W)
 ### Prediction algorithm wrapper for SuperLearner.
 (object, newdata, ...) {
   ##seealso<< SL.glm.theta

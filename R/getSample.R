@@ -1,5 +1,5 @@
 getSample <- structure(
-    function
+    function#Generates Simulated Data
 ### Generates a  run of  simulated observations of  the form  \eqn{(W,X,Y)} to
 ### investigate  the  "effect"  of  \eqn{X}  on \eqn{Y}  taking  \eqn{W}  into
 ### account.

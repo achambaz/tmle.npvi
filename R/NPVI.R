@@ -210,7 +210,7 @@ setMethodS3("getConfLevel", "NPVI", function(this, ...) {
   this$.conf.level;
 })
 
-setMethodS3("getHistory", "NPVI", function(
+setMethodS3("getHistory", "NPVI", function(#Returns History of TMLE Procedure
   ### Returns the 'history' of the TMLE procedure.
   this,
 ### An object of class \code{TMLE.NPVI}.
@@ -341,7 +341,7 @@ setMethodS3("updateHistory", "NPVI", function(this, ...) {
   this$.history <- history;
 })
 
-setMethodS3("getPsi", "NPVI", function(
+setMethodS3("getPsi", "NPVI", function(#Returns Current Estimator
 ### Returns the current value of the estimator.
     this,
 ### An object of class \code{TMLE.NPVI}.
@@ -356,7 +356,7 @@ setMethodS3("getPsi", "NPVI", function(
   ### iid copies of \eqn{(X,W)} under \eqn{P_n^k}.
 })
 
-setMethodS3("getPsiSd", "NPVI", function(
+setMethodS3("getPsiSd", "NPVI", function(#Returns Current Estimated Standard Deviation of the Estimator 
 ### Returns the current value of the estimated standard deviation of the current estimator. 
     this,
 ### An object of class \code{TMLE.NPVI}.
@@ -545,7 +545,7 @@ setMethodS3("setDivergence", "NPVI", function(this, div, ...) {
   this$.div <- div;
 })
 
-setMethodS3("setConfLevel", "NPVI", function(
+setMethodS3("setConfLevel", "NPVI", function(#Sets Confidence Level
 ### Sets the confidence level of a \code{TMLE.NPVI} object.
     this,
 ### An object of class \code{TMLE.NPVI}.
@@ -706,7 +706,7 @@ setMethodS3("getFY", "NPVI", function(this, tabulate, ...) {
 
 
 
-setMethodS3("getObs", "NPVI", function(
+setMethodS3("getObs", "NPVI", function(#Retrieves the Observations
 ### Retrieves the \code{matrix} of observations involved in the TMLE procedure.
     this,
 ### An object of class \code{TMLE.NPVI}.
@@ -953,7 +953,7 @@ setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
   this$.sigma2 <- sigma2;
 })
 
-setMethodS3("as.character", "NPVI", function(
+setMethodS3("as.character", "NPVI", function(#Returns a Description
 ### Returns a short string describing the NPVI object.
     x,
 ### An object of class \code{TMLE.NPVI}.

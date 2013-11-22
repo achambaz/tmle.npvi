@@ -3,7 +3,7 @@ extract <- function(mat, exclude) {
   mat[, theVar, drop=FALSE]
 }
 
-extractW <- function(
+extractW <- function(#Extracts W Columns from Matrix of Observations
 ### Extracts the \code{W} column(s) from a \code{matrix} of observations.
     mat
 ### A   \code{matrix}  of   observations,  as   the  \code{obs}   argument  of
@@ -15,7 +15,7 @@ extractW <- function(
 ### and \code{Y} columns. 
 }
 
-extractXW <- function(
+extractXW <- function(#Removes the Y Column from Matrix of Observations
 ### Removes the \code{Y} column from a \code{matrix} of observations.
     mat
 ### A   \code{matrix}  of   observations,  as   the  \code{obs}   argument  of
