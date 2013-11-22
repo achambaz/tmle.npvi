@@ -1,5 +1,8 @@
 Package: TMLE.NPVI
 ===================
+Version: 0.7.0 [2013-11-22]
+o Learning and SuperLearning libraries now in 'data/'.
+
 Version: 0.6.3 [2013-10-11]
 o Documentation up to date.
 o Package passes R CMD check.
