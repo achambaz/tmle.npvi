@@ -1,47 +1,3 @@
-###########################################################################/**
-# @RdocFunction estimateMuAux
-# @alias estimateMuAux
-#
-# @title "Estimates parameter 'muAux' from the observations"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{obs}{A @matrix of observations with 3 columns:
-#     \describe{
-#       \item{Y}{expression level}
-#       \item{X}{DNA copy number}
-#       \item{W}{DNA methylation level.}
-#     }
-#   }
-#   \item{flavor}{A @character, the type of estimation to be performed.
-#     Two flavors are supported: "learning" and "superLearning".}
-#   \item{learnMuAux}{If \code{flavor=="learning"}, a function for learning
-#     parameter \var{mu'=mu/(1-g)}, where \var{mu=E(X|W)} and \var{P(X=0|W)}. If
-#     \code{flavor=="superLearning"}, a library of learning functions to be
-#     passed to \code{SuperLearner::SuperLearner} for learning parameter
-#     \var{mu'=mu/(1-g)}.}
-#   \item{\dots}{Further arguments to be passed to 'learnMuAux' for the
-#     "learning" flavor, and to 'SuperLearner' for the "superLearning"
-#     flavor.}
-# }
-#
-# \value{
-#  Returns the estimated \var{muAux}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "initialize.NPVI"
-#   @seeclass "NPVI"
-# }
-#
-#*/###########################################################################
 estimateMuAux <- function(obs, flavor=c("learning", "superLearning"), learnMuAux,
                        light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -101,11 +57,7 @@ estimateMuAux <- function(obs, flavor=c("learning", "superLearning"), learnMuAux
 
 ############################################################################
 ## HISTORY:
-## 2011-09-23
-## o Now estimating only 'muAux' (thus independently of 'g').
-## 2011-04-22
-## o Call to new function 'validateArgumentObs'
-## 2011-02-17
+## 2014-02-07
 ## o Created.
 ############################################################################
 

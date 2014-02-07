@@ -1,93 +1,11 @@
-###########################################################################/**
-# @RdocMethod getThetamin
-# @alias getThetamin
-#
-# @title "Returns the value of parameter thetamin"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @scalar, the value of parameter \var{thetamin}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getThetamin", "NPVI", function(this, ...) {
   this$.thetamin;
 })
 
-###########################################################################/**
-# @RdocMethod getThetamax
-# @alias getThetamax
-#
-# @title "Returns the value of parameter thetamax"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @scalar, the value of parameter \var{thetamax}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getThetamax", "NPVI", function(this, ...) {
   this$.thetamax;
 })
 
-
-###########################################################################/**
-# @RdocMethod getTheta
-# @alias getTheta
-#
-# @title "Returns the value of parameter theta"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @function, the value of parameter \var{theta}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getTheta", "NPVI", function(this, tabulate, ...) {
   if (missing(tabulate)) {
     tabulate <- getTabulate(this);
@@ -99,36 +17,6 @@ setMethodS3("getTheta", "NPVI", function(this, tabulate, ...) {
   } 
 })
 
-###########################################################################/**
-# @RdocMethod setTheta
-# @alias setTheta
-#
-# @title "Sets the value of parameter theta"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#  \item{theta}{A @function that estimates the conditional expectation of
-#    the expression level given DNA copy number and DNA methylation: E(Y|X,W).
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the estimated \var{theta}, after
-#  thresholding based on thetamin and thetamax. 
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-#   @seeMethod getTheta
-# }
-#
-#*/###########################################################################
 setMethodS3("setTheta", "NPVI", function(this, theta, ...) {
   ## Argument 'theta':
   if ((!is.null(theta))  && (mode(theta)!="function")) {
@@ -156,39 +44,6 @@ setMethodS3("setTheta", "NPVI", function(this, theta, ...) {
   this$.theta0 <- thresholdedTheta0;
 })
 
-
-
-
-###########################################################################/**
-# @RdocMethod setThetaTab
-# @alias setThetaTab
-#
-# @title "Sets the value of parameter theta"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{theta}{A @function that estimates the conditional expectation of
-#    the expression level given DNA copy number and DNA methylation: E(Y|X,W).}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the tabulated version of the estimated \var{theta}, after
-#  thresholding based on thetamin and thetamax.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-#   @seeMethod getTheta
-# }
-#
-#*/###########################################################################
 setMethodS3("setThetaTab", "NPVI", function(this, theta, theta0, ...) {
   ## Argument 'theta':
   if ((!is.null(theta))  && (mode(theta)!="function")) {
@@ -220,34 +75,6 @@ setMethodS3("setThetaTab", "NPVI", function(this, theta, theta0, ...) {
   this$.theta0tab <- thresholdedTheta0
 })
 
-
-###########################################################################/**
-# @RdocMethod getTheta0
-# @alias getTheta0
-#
-# @title "Returns the value of parameter theta0"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @function, the value of parameter \var{theta0}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getTheta0", "NPVI", function(this, tabulate, ...) {
   if (missing(tabulate)) {
     tabulate <- getTabulate(this);
@@ -259,41 +86,6 @@ setMethodS3("getTheta0", "NPVI", function(this, tabulate, ...) {
   }
 })
 
-###########################################################################/**
-# @RdocMethod initializeTheta
-# @alias initializeTheta
-#
-# @title "Initializes the estimation of parameter theta"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{theta}{A @function that estimates the conditional expectation of
-#    the expression level given DNA copy number and DNA methylation: E(Y|X,W).}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the input function \var{theta}, after
-#  thresholding based on thetamin and thetamax.
-# }
-#
-# \details{
-#   Argument 'theta' is a function of the _true_ observations (X,W), not
-#   a function of indices.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "init"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("initializeTheta", "NPVI", function(this, theta, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -329,89 +121,11 @@ setMethodS3("initializeTheta", "NPVI", function(this, theta, ...) {
   setThetaTab(this, thetatab, theta0tab);
 })
 
-
-
-###########################################################################/**
-# @RdocMethod updateTheta
-# @alias updateTheta
-#
-# @title "Updates the current value of parameter theta"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{dev}{A @function, the "derivative" of parameter \var{theta}
-#     at its current estimated value.}
-#   \item{cleverCovTheta}{If @TRUE, theta is updated using the corresponding
-#     "clever covariate".}
-#   \item{exact}{If @TRUE, theta is updated using the exact relationship between
-#     theta_epsilon and theta. If @FALSE, a first-order Taylor expression wrt epsilon
-#     is used. If \var{cleverCovTheta} is @TRUE, then by definition \var{exact} is
-#     forced to @TRUE in the updating process of \var{theta}.}
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the updated \var{theta}, after
-#  thresholding based on thetamin and thetamax.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "estimateEpsilon"
-#   @seemethod "updateEstimation"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("updateTheta", "NPVI", function(this, dev, cleverCovTheta, exact=TRUE, ...) {
   updateThetaNonTab(this, dev, cleverCovTheta, exact=exact, ...)
   updateThetaTab(this, dev, cleverCovTheta, exact=exact, ...)
 })
 
-###########################################################################/**
-# @RdocMethod updateThetaNonTab
-# @alias updateThetaNonTab
-#
-# @title "Updates the non-tabulated version of parameter theta"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{dev}{A @function, the "derivative" of parameter \var{theta}
-#     at its current estimated value.}
-#   \item{cleverCovTheta}{If @TRUE, theta is updated using the corresponding
-#     "clever covariate".}
-#   \item{exact}{If @TRUE, theta is updated using the exact relationship between
-#     theta_epsilon and theta. If @FALSE, a first-order Taylor expression wrt epsilon
-#     is used. If \var{cleverCovTheta} is @TRUE, then by definition \var{exact} is
-#     forced to @TRUE in the updating process of \var{theta}.}
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the updated \var{theta}, after
-#  thresholding based on thetamin and thetamax.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "estimateEpsilon"
-#   @seemethod "updateEstimation"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("updateThetaNonTab", "NPVI", function(this, dev, cleverCovTheta, exact=TRUE, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -473,45 +187,6 @@ setMethodS3("updateThetaNonTab", "NPVI", function(this, dev, cleverCovTheta, exa
   setTheta(this, theta1)
 })
 
-
-###########################################################################/**
-# @RdocMethod updateThetaTab
-# @alias updateThetaTab
-#
-# @title "Updates the tabulated version of parameter theta"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{dev}{A @function, the "derivative" of parameter \var{theta}
-#     at its current estimated value.}
-#   \item{cleverCovTheta}{If @TRUE, theta is updated using the corresponding
-#     "clever covariate".}
-#   \item{exact}{If @TRUE, theta is updated using the exact relationship between
-#     theta_epsilon and theta. If @FALSE, a first-order Taylor expression wrt epsilon
-#     is used. If \var{cleverCovTheta} is @TRUE, then by definition \var{exact} is
-#     forced to @TRUE in the updating process of \var{theta}.}
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the updated \var{theta}, after
-#  thresholding based on thetamin and thetamax.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "estimateEpsilon"
-#   @seemethod "updateEstimation"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("updateThetaTab", "NPVI", function(this, dev, cleverCovTheta, exact=TRUE, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -609,13 +284,9 @@ setMethodS3("updateThetaTab", "NPVI", function(this, dev, cleverCovTheta, exact=
   setThetaTab(this, theta1tab, theta01tab);
 })
 
-
 ############################################################################
 ## HISTORY:
-## 2011-05-03
-## o Made two different methods for updating tabulated and non-tabulated
-##   versions of 'theta'.
-## 2011-05-02
+## 2014-02-07
 ## o Created.
 ############################################################################
 

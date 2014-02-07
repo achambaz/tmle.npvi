@@ -1,44 +1,3 @@
-###########################################################################/**
-# @RdocFunction simulateParsimoniouslyXgivenW
-#
-# @title "Draw X conditionally on W and (X_1,...,X_n) from a distribution of
-#         the form
-#           sum_i^n p_i Dirac(X_i)
-#         where the vector (p_i) is such that the latter conditional
-#         distribution has a given conditional mean and a given conditional
-#         variance. "
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{W}{A @vector of W draws. }
-#   \item{condMeanX}{A @vector of conditional means. }
-#   \item{sigma2}{A @numeric equal to the wished mean of squared X.}
-#   \item{obs}{A @matrix of observations with 3 columns:
-#     \describe{
-#       \item{Y}{expression level}
-#       \item{X}{DNA copy number}
-#       \item{W}{DNA methylation level.}
-#     }
-#   }
-#   \item{r}{An @integer, wished number of p_i different from zero. }
-# }
-#
-# \value{
-#   Returns a...
-# }
-#
-# @author
-#
-# \seealso{
-#   @see "simulateData"  and "simulateParsimoniouslyYgivenXW"
-# }
-#
-#*/###########################################################################
 simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters, r=3) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -240,16 +199,7 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
 
 ############################################################################
 ## HISTORY:
-## 2011-05-18
-## o Modified criterion to go away from tails: *weighted* sum of ranks.
-## 2011-04-08
-## o Modified function 'getSimulationScheme', so that 'drawFromSimulationScheme'
-##   now outputs indices
-## 2011-03-17
-## o Modified function 'drawFromSimulationScheme'
-## 2011-02-08
-## o Modified list of arguments of function.
-## 2011-02-05
+## 2014-02-07
 ## o Created.
 ############################################################################
- 
+

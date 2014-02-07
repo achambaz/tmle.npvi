@@ -1,60 +1,3 @@
-###########################################################################/**
-# @RdocClass NPVI
-#
-# @title "The NPVI class"
-#
-# \description{
-#  @classhierarchy
-#
-# This class represents parameter estimates of the relationship between 
-# copy number (X) and expression (Y), accounting for DNA methylation (W)
-# in terms of non-parametric variable importance (NPVI).
-#
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{obs}{A @matrix of observations with 3 columns:
-#     \describe{
-#       \item{Y}{expression level}
-#       \item{X}{DNA copy number}
-#       \item{W}{DNA methylation level.}
-#     }
-#   }
-#   \item{family}{A @character, describing how X should be conditionally simulated
-#     given W. Currently two options: 'parsimonious' and 'gaussian'.}
-#   \item{\dots}{Not used.}
-#   \item{verbose}{If @TRUE, extra information is output.}
-# }
-#
-# \details{
-#   Objects of class NPVI contain the following slots:
-#   \describe{
-#     \item{g}{A @function that estimates the conditional probability of
-#       neutral copy number (X==0) given the DNA methylation level: P(X=0|W)}
-#     \item{mu}{A @function that estimates the conditional expectation of
-#       the DNA copy number given the DNA methylation level: E(X|W)}
-#     \item{theta}{A @function that estimates the conditional expectation of
-#       the expression level given DNA copy number and DNA methylation: E(Y|X,W)}
-#     \item{sigma2}{A @numeric, the squared expectation of DNA copy number
-#       relative to the neutral state: E(X^2).}
-#     \item{psi}{A @numeric, the parameter estimate}
-#     \item{psiPn}{A @numeric, an alternative parameter estimate (invalid until final step).}
-#     \item{gmin, gmax, mumin, mumax, thetamin, thetamax}{Thresholds to pass to 'threshold'.}
-#     \item{efficientInfluenceCurve}{The estimated efficient influence
-#       curve of parameter \var{psi}, in the form of a @matrix with 3
-#       columns: the two components of the curve, and their sum.}
-#     \item{epsilon}{A @numeric @vector of length 2, the estimated magnitude
-#       of parameter updates that has been used for \acronym{TML} estimation.}
-# }
-# \section{Fields and Methods}{
-#  @allmethods "public"
-# }
-#
-# @author
-#*/########################################################################### 
-
 setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL, c("W", "X", "Y"))),
                                   f=identity,
                                   gmin=0.01, gmax=1-gmin, mumin=-Inf,
@@ -163,33 +106,6 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
 })
 
 
-###########################################################################/**
-# @RdocMethod getFlavor
-# @alias getFlavor
-#
-# @title "Returns the estimation 'flavor' of the NPVI @object"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character @value, the 'flavor' used for the esimation.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getFlavor", "NPVI", function(this, ...) {
   this$.flavor;
 })
@@ -284,35 +200,6 @@ setMethodS3("getHistory", "NPVI", function(#Returns History of TMLE Procedure
 ###   }
 })
 
-###########################################################################/**
-# @RdocMethod updateHistory
-# @alias updateHistory
-#
-# @title "Updates the 'history' of the NPVI @object"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  An object of class NPVI where one column containing the current values of
-#  \var{epsilon}, \var{logLikIncr}, \var{epsilonTheta},
-#  \var{logLikIncrTheta}, \var{psi} has been added to the 'history' @matrix.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("updateHistory", "NPVI", function(this, ...) {
   history <- getHistory(this);
   psi <- getPsi(this);
@@ -405,35 +292,6 @@ setMethodS3("getSicAlt", "NPVI", function(this, ...) {
 })
 
 
-###########################################################################/**
-# @RdocMethod getPsiPn
-# @alias getPsiPn
-#
-# @title "Returns an alternative estimated value of psi"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @numeric, the value of the 'estimate' of \var{psi} such that
-#  the empirical measure applied to the first component of the efficient
-#  influence curve at the current P equal zero. 
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getPsiPn", "NPVI", function(this, name, ...) {
   this$.psiPn;
 })
@@ -442,99 +300,14 @@ setMethodS3("getPsiPnSd", "NPVI", function(this, name, ...) {
   this$.psiPn.sd;
 })
 
-###########################################################################/**
-# @RdocMethod getStep
-# @alias getStep
-#
-# @title "Returns the 'step' of the TMLE NPVI procedure."
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @integer, the 'step' of the TMLE NPVI procedure.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getStep", "NPVI", function(this, name, ...) {
   this$.step;
 })
 
-###########################################################################/**
-# @RdocMethod getDivergence
-# @alias getDivergence
-#
-# @title "Returns  the 'divergence'  of the current  estimated data-generating
-#  distribution   relative   to   the   previous   estimated   data-generating
-#  distribution, expressed in terms of total variation.
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @numeric, the 'divergence'.  
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getDivergence", "NPVI", function(this, name, ...) {
   this$.div;
 })
 
-###########################################################################/**
-# @RdocMethod getDivergence
-# @alias getDivergence
-#
-# @title "Returns  the 'divergence'  of the current  estimated data-generating
-#  distribution   relative   to   the   previous   estimated   data-generating
-#  distribution, expressed in terms of total variation.
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @numeric, the 'divergence'.  
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("setDivergence", "NPVI", function(this, div, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -566,34 +339,6 @@ setMethodS3("setConfLevel", "NPVI", function(#Sets Confidence Level
   this$.conf.level <- conf.level;
 })
 
-
-###########################################################################/**
-# @RdocMethod getFW
-# @alias getFW
-#
-# @title "Builds wrapper function 'fW'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @function, which returns true observations 'W'.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getFW", "NPVI", function(this, tabulate, ...) {
   if (missing(tabulate)) {
     tabulate <- getTabulate(this)
@@ -615,33 +360,6 @@ setMethodS3("getFW", "NPVI", function(this, tabulate, ...) {
 })
 
 
-###########################################################################/**
-# @RdocMethod getFX
-# @alias getFX
-#
-# @title "Builds wrapper function 'fX'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @function, which returns true observations 'X'.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getFX", "NPVI", function(this, tabulate, ...) {
   if (missing(tabulate)) {
     tabulate <- getTabulate(this)
@@ -659,33 +377,6 @@ setMethodS3("getFX", "NPVI", function(this, tabulate, ...) {
   fX
 })
 
-###########################################################################/**
-# @RdocMethod getFY
-# @alias getFY
-#
-# @title "Builds wrapper function 'fY'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @function, which returns true observations 'Y'.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getFY", "NPVI", function(this, tabulate, ...) {
   if (missing(tabulate)) {
     tabulate <- getTabulate(this)
@@ -702,9 +393,6 @@ setMethodS3("getFY", "NPVI", function(this, tabulate, ...) {
   }
   fY
 })
-
-
-
 
 setMethodS3("getObs", "NPVI", function(#Retrieves the Observations
 ### Retrieves the \code{matrix} of observations involved in the TMLE procedure.
@@ -735,137 +423,20 @@ setMethodS3("getObs", "NPVI", function(#Retrieves the Observations
 ### version of it.
 })
 
-
-
-
-
-
-###########################################################################/**
-# @RdocMethod getFamily
-# @alias getFamily
-#
-# @title "Returns the 'family' of the procedure"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @character, the value of parameter \var{family}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getFamily", "NPVI", function(this, ...) {
   this$.family;
 })
 
-###########################################################################/**
-# @RdocMethod setFamily
-# @alias setFamily
-#
-# @title "Sets the value of the 'family' parameter of the procedure"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Set the @character value of parameter \var{family}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("setFamily", "NPVI", function(this, family=c("parsimonious", "gaussian"), ...) {
   ## Argument
   family <- match.arg(family);
   this$.family <- family;
 })
 
-
-###########################################################################/**
-# @RdocMethod getTabulate
-# @alias getTabulate
-#
-# @title "Returns the 'tabulate' parameter."
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @logical, indicating whether resort to tabulating or not.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getTabulate", "NPVI", function(this, ...) {
   this$.tabulate;
 })
 
-
-
-
-###########################################################################/**
-# @RdocMethod getHTheta
-# @alias getHTheta
-#
-# @title "Returns the function HTheta"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @function, the value of parameter \var{HTheta}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getHTheta", "NPVI", function(this, tabulate, ...) {
   if (missing(tabulate)) {
     tabulate <- getTabulate(this)
@@ -883,66 +454,10 @@ setMethodS3("getHTheta", "NPVI", function(this, tabulate, ...) {
   HTheta;
 })
 
-###########################################################################/**
-# @RdocMethod getSigma2
-# @alias getSigma2
-#
-# @title "Returns the value of parameter sigma2"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @numeric, the value of parameter \var{sigma2}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getSigma2", "NPVI", function(this, ...) {
   this$.sigma2;
 })
 
-###########################################################################/**
-# @RdocMethod setSigma2
-# @alias setSigma2
-#
-# @title "Sets the value of parameter sigma2"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{sigma2}{A @numeric, the squared expectation of DNA copy number
-#     relative to the neutral state: E(X^2).}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the estimated \var{sigma2}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-#   @seeMethod getSigma2
-# }
-#
-#*/###########################################################################
 setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -1043,39 +558,6 @@ setMethodS3("as.character", "NPVI", function(#Returns a Description
 ### }
 }, private=TRUE)
 
-
-###########################################################################/**
-# @RdocMethod updateSigma2
-# @alias updateSigma2
-#
-# @title "Updates the current estimation of parameter sigma2"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{dev}{A @numeric, the "derivative" of parameter \var{sigma2}
-#     at its current estimated value.}
-#   \item{eps}{A @numeric, the "magnitude" of the increment to be performed.}
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the updated \var{sigma2}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "estimateEpsilon"
-#   @seemethod "update"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("updateSigma2", "NPVI", function(this, dev, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -1092,45 +574,6 @@ setMethodS3("updateSigma2", "NPVI", function(this, dev, ...) {
   setSigma2(this, sigma21)
 })
 
-###########################################################################/**
-# @RdocMethod updateEfficientInfluenceCurve
-# @alias updateEfficientInfluenceCurve
-#
-# @title "Returns the estimated efficient influence curve of parameter psi"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{obs}{A @matrix of observations with 3 columns:
-#     \describe{
-#       \item{Y}{expression level}
-#       \item{X}{DNA copy number}
-#       \item{W}{DNA methylation level.}
-#     }
-#   }
-#   \item{\dots}{Not used.}
-#   \item{verbose}{If @TRUE, extra information is output.}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the estimated efficient influence
-#  curve of parameter \var{psi}, in the form of a @matrix with 3 columns:
-#  the two components of the curve, and their sum.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "estimateEpsilon"
-#   @seemethod "update"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("updateEfficientInfluenceCurve", "NPVI", function(this, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Retrieve arguments
@@ -1168,47 +611,6 @@ setMethodS3("updateEfficientInfluenceCurve", "NPVI", function(this, ..., verbose
   this$.efficientInfluenceCurve <- cbind(eic1, eic2, eic);
 })
 
-###########################################################################/**
-# @RdocMethod estimateEpsilon
-# @alias estimateEpsilon
-#
-# @title "Estimates the fluctuation parameter"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{obs}{A @matrix of observations with 3 columns:
-#     \describe{
-#       \item{Y}{expression level}
-#       \item{X}{DNA copy number}
-#       \item{W}{DNA methylation level.}
-#     }
-#   }
-#   \item{cleverCovTheta}{If @TRUE, theta is updated using the corresponding
-#     "clever covariate".}
-#   \item{bound}{A @numeric, upper bound for the magnitude of the change
-#     in the estimated parameter}
-#   \item{\dots}{Not used.}
-#   \item{verbose}{If @TRUE, extra information is output.}
-# }
-#
-# \value{
-#  Returns the estimated flucuation parameter. 
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "updateEfficientInfluenceCurve"
-#   @seemethod "update"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("estimateEpsilon", "NPVI", function(this, cleverCovTheta, bound=1e-1, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -1258,42 +660,6 @@ setMethodS3("estimateEpsilon", "NPVI", function(this, cleverCovTheta, bound=1e-1
   eps;
 })
 
-###########################################################################/**
-# @RdocMethod estimateEpsilonTheta
-# @alias estimateEpsilonTheta
-#
-# @title "Estimates the fluctuation parameter when fluctuating 'theta'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{obs}{A @matrix of observations with 3 columns:
-#     \describe{
-#       \item{Y}{expression level}
-#       \item{X}{DNA copy number}
-#       \item{W}{DNA methylation level.}
-#     }
-#   }
-#   \item{\dots}{Not used.}
-#   \item{verbose}{If @TRUE, extra information is output.}
-# }
-#
-# \value{
-#  Returns the estimated flucuation parameter when fluctuating 'theta'.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "update"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("estimateEpsilonTheta", "NPVI", function(this, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -1316,35 +682,6 @@ setMethodS3("estimateEpsilonTheta", "NPVI", function(this, ..., verbose=FALSE) {
   eps
 })
 
-###########################################################################/**
-# @RdocMethod updateEpsilon
-# @alias updateEpsilon
-#
-# @title "Updates the estimate of the fluctuation parameter.
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Arguments to be passed to 'estimateEpsilon'.}
-#   \item{verbose}{If @TRUE, extra information is output.}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the estimated flucuation parameter.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "update"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("updateEpsilon", "NPVI", function(this, ..., verbose=FALSE) {
   eps <- estimateEpsilon(this, ..., verbose=verbose)
 
@@ -1353,38 +690,6 @@ setMethodS3("updateEpsilon", "NPVI", function(this, ..., verbose=FALSE) {
   this$.epsilon <- eps;
 })
 
-###########################################################################/**
-# @RdocMethod updateEpsilonTheta
-# @alias updateEpsilonTheta
-#
-# @title "Updates the estimate of the fluctuation parameter when
-#   fluctuating 'theta'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-#   \item{verbose}{If @TRUE, extra information is output.}
-# }
-#
-# \value{
-#  Returns a NPVI @object where the estimated flucuation parameter
-#  when fluctuating 'theta' has been updated
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "estimateEpsilon"
-#   @seemethod "update"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("updateEpsilonTheta", "NPVI", function(this, ..., verbose=FALSE) {
   epsTheta <- estimateEpsilonTheta(this, ..., verbose=verbose)
 
@@ -1393,245 +698,30 @@ setMethodS3("updateEpsilonTheta", "NPVI", function(this, ..., verbose=FALSE) {
   this$.epsilonTheta <- epsTheta;
 })
 
-
-###########################################################################/**
-# @RdocMethod getEpsilon
-# @alias getEpsilon
-#
-# @title "Returns the fluctuation parameter for \acronym{TMLE}"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @numeric, the fluctuation parameter(s) for \acronym{TMLE}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @see "update.NPVI"
-#   @see "updateEpsilon.NPVI"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getEpsilon", "NPVI", function(this, ...) {
   this$.epsilon
 })
 
-###########################################################################/**
-# @RdocMethod getEpsilonTheta
-# @alias getEpsilonTheta
-#
-# @title "Returns the fluctuation parameter for \acronym{TMLE} when
-#   fluctuating parameter 'theta'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @numeric, the fluctuation parameter for \acronym{TMLE}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @see "update.NPVI"
-#   @see "updateEpsilon.NPVI"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getEpsilonTheta", "NPVI", function(this, ...) {
   this$.epsilonTheta
 })
 
-
-###########################################################################/**
-# @RdocMethod getLogLikIncr
-# @alias getLogLikIncr
-#
-# @title "Returns the increase in log-likelihood induced by parameter
-#   updates in Targeted Maximum Likelihood Estimation"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @numeric, the increase in log-likelihood induced by parameter
-#  updates in \acronym{TMLE}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @see "update.NPVI"
-#   @see "updateEfficientInfluenceCurve.NPVI"
-#   @see "updateEpsilon.NPVI"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getLogLikIncr", "NPVI", function(this, ...) {
   this$.logLikIncr
 })
 
-
-###########################################################################/**
-# @RdocMethod getLogLikIncrTheta
-# @alias getLogLikIncrTheta
-#
-# @title "Returns the increase in log-likelihood induced by parameter
-#   updates in Targeted Maximum Likelihood Estimation"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @numeric, the increase in log-likelihood induced when
-#  fluctuating \var{theta} in \acronym{TMLE}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @see "update.NPVI"
-#   @see "updateEfficientInfluenceCurve.NPVI"
-#   @see "updateEpsilon.NPVI"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getLogLikIncrTheta", "NPVI", function(this, ...) {
   this$.logLikIncrTheta
 })
 
-
-###########################################################################/**
-# @RdocMethod getEfficientInfluenceCurve
-# @alias getEfficientInfluenceCurve
-#
-# @title "Returns the estimated value of the efficient influence curve
-#   that has been used for parameter updates by Targeted Maximum Likelihood
-#   Estimation"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @numeric, the estimated value of the efficient influence curve
-#   that has been used for parameter updates.
-# }
-#
-# @author
-#
-# \seealso{
-#   @see "update.NPVI"
-#   @see "updateEfficientInfluenceCurve.NPVI"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getEfficientInfluenceCurve", "NPVI", function(this, ...) {
   this$.efficientInfluenceCurve;
 })
 
-###########################################################################/**
-# @RdocMethod getWeightsW
-# @alias getWeightsW
-#
-# @title "Returns the value of parameter 'weightsW'."
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{\dots}{Not used.}
-# }
-#
-# \value{
-#  Returns a @vector, the value of parameter \var{weightsW}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("getWeightsW", "NPVI", function(this, ...) {
   this$.weightsW
 })
 
-
-
-###########################################################################/**
-# @RdocMethod setWeightsW
-# @alias setWeightsW
-#
-# @title "Sets the value of parameter 'weightsW'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{mu}{A @vector of non-negative weights (it is not necessary that it sums to 1). }
-# }
-#
-# \value{  Returns  a NPVI  @object  containing  the  updated vector of
-#         weights for marginal simulation of W. }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-#   @seeMethod getWeightsW
-# }
-#
-#*/###########################################################################
 setMethodS3("setWeightsW", "NPVI", function(this, weightsW, ...) {
   ## Argument 'weightsW':
   weightsW <- Arguments$getNumerics(weightsW, range=c(0, Inf))
@@ -1642,36 +732,6 @@ setMethodS3("setWeightsW", "NPVI", function(this, weightsW, ...) {
   this$.weightsW <- weightsW
 })
 
-###########################################################################/**
-# @RdocMethod updateWeightsW
-# @alias updateWeightsW
-#
-# @title "Updates the current value of parameter 'weightsW'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{effICW}{A @function, the conditional expectation given W of
-#      projection of efficient influence curve on functions of (W,X). }
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the updated \var{weightsW}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "estimateEpsilon"
-#   @seemethod "update"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("updateWeightsW", "NPVI", function(this, effICW, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -1759,56 +819,9 @@ setMethodS3("updateConv", "NPVI", function(x, B, ...) {
   this$.conv <- conv
 })
 
-
-
 ############################################################################
 ## HISTORY:
-## 2011-05-18
-## o Added standard deviation of EIC and divergence to history
-## o Added functions 'setDivergence' and 'getDivergence'
-## 2011-05-02
-## o Made distinct files for functions related to g, mu and theta.
-## o Added parameter 'weightsW'
-## 2011-04-22
-## o Moved function 'updatePsi' to its own file.
-## o Introduced 'tabulate' parameter...
-## o Call to new function 'validateArgumentObs'
-## 2011-03-21
-## o Added 'family' parameter and related functions 'getFamily', 'setFamily',
-##   'getObs', and modified accordingly functions 'getG' and 'setG' etc.
-## o Added methods 'getGW', 'getMuW', and 'getThetaXW'.
-## o Removed 'obs' and 'family' from arguments of 'updatePsi'
-## 2011-02-28
-## o Added element 'step' and corresponding method to structure.
-## 2011-02-17
-## o Added element 'history' and corresponding methods.
-## o Added methods 'updatePsi', 'setG', 'setMu', 'setTheta'.
-## o Major updates to class definition.
-## 2011-02-16
-## o Merged classes NPVI and TMLE.NPVI.
-## o Removed 'paramList' from class NPVI.
-## o Renamed EstimateECM into NPVI.
-## 2011-02-08
-## o Added parameters 'gmax', 'mumin', 'mumax', 'thetamin', 'thetamax',
-## the related functions, and adapted code accordingly.
-## 2011-02-04
-## o Added 'getPsiPn'
-## 2011-01-31
-## o Added 'logLikIncr'
-## 2011-01-24
-## o Removed parameter 'theta0'
-## 2011-01-20
-## o modified method 'estimateEpsilon' (taking argument 'cleverCovTheta' into account)
-## o added method 'estimateEpsilonTheta'
-## o added function and method related to 'HTheta'
-## 2010-12-31
-## o added thresholding procedure of 'g'
-## 2010-11-29
-## o 'estimateInfluenceCurve' now returns a matrix with the components
-##   D1, D2 and D1+D2.
-## 2010-08-03
-## o Added parameter 'theta0'.
-## 2010-07-07
+## 2014-02-07
 ## o Created.
 ############################################################################
 

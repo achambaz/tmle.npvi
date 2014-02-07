@@ -1,34 +1,3 @@
-###########################################################################/**
-# @RdocFunction simulateParsimoniouslyYgivenXW
-#
-# @title "Draw Y conditionally on  (X,W) and (Y_1,...,Y_n) from a distribution
-#         of the  form sum_i^n p_i Dirac(Y_i)  where the vector  (p_i) is such
-#         that  the latter  conditional distribution  has a  given conditional
-#         mean. "
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{T}{A @vector of conditional means. }
-#   \item{Y}{The @vector of true observed Y's.}
-#   }
-# }
-#
-# \value{
-#   Returns a...
-# }
-#
-# @author
-#
-# \seealso{
-#   @see "simulateData" and "simulateParsimoniouslyXgivenW"
-# }
-#
-#*/###########################################################################
 simulateParsimoniouslyYgivenXW <- function(T, Y) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -112,7 +81,7 @@ simulateParsimoniouslyYgivenXW <- function(T, Y) {
 
 ############################################################################
 ## HISTORY:
-## 2011-05-18
+## 2014-02-07
 ## o Created.
 ############################################################################
- 
+

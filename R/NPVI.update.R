@@ -1,59 +1,3 @@
-###########################################################################/**
-# @set "class=NPVI"
-# @RdocMethod update
-#
-# @title "Returns an updated estimate using Targeted Maximum Likelikood
-#   Estimation (TMLE)"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{flavor}{A @character, the type of estimation to be performed.
-#     Two flavors are supported: "learning" and "superLearning".}
-#   \item{learnDevG{If \code{\flavor=="learning"}, a function for learning
-#     the direction in which parameter \var{g} should be updated. If
-#     \code{\flavor=="superLearning"}, a library of learning functions to
-#     be passed to \code{SuperLearner::SuperLearner} for learning the 
-#     direction in which parameter \var{g} should be updated.}
-#   \item{learnDevMu}{If \code{\flavor=="learning"}, a function for learning
-#     the direction in which parameter \var{mu} should be updated. If
-#     \code{\flavor=="superLearning"}, a library of learning functions to
-#     be passed to \code{SuperLearner::SuperLearner} for learning the 
-#     direction in which parameter \var{mu} should be updated.}
-#   \item{learnDevTheta}{If \code{\flavor=="learning"}, a function for learning
-#     the direction in which parameter \var{theta} should be updated. If
-#     \code{\flavor=="superLearning"}, a library of learning functions to
-#     be passed to \code{SuperLearner::SuperLearner} for learning the 
-#     direction in which parameter \var{theta} should be updated.}
-#   \item{bound}{A @numeric, upper bound for the magnitude of the change
-#     in the estimated parameter. This argument is passed on to \code{updateEpsilon}}
-#   \item{B}{A @numeric @value, the number of observations to be simulated.}
-#   \item{light}{If @TRUE, minimal information is stored for each fitted
-#     model.  Currently only implemented for flavor 'learning'.}
-#   \item{cleverCovTheta}{If @TRUE, theta is updated using the corresponding
-#     "clever covariate".}
-#   \item{\dots}{Arguments to be passed to 'estimateDev*' functions.}
-#   \item{verbose}{If @TRUE, extra information is output.}
-# }
-#
-# \value{
-#  Returns a NPVI @object, containing the updated estimate of parameter \var{psi}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "estimateEpsilon"
-#   @see "SuperLearner::SuperLearner"
-#   @see "initializeEstimation"
-#   @seeclass
-# }
-#
-#*/###########################################################################
 setMethodS3("update", "NPVI", function(object,
                                        flavor=c("learning", "superLearning"),
                                        cvControl=NULL,
@@ -328,43 +272,7 @@ setMethodS3("update", "NPVI", function(object,
 
 ############################################################################
 ## HISTORY:
-## 2011-05-18
-## o BUG FIX: the updated versions of 'theta', 'theta0' and 'psi' were not
-## taken into account for the estimation of weights when cleverCov=TRUE.
-## o 'effICW' is now thresholded to make sure that all weights are >0.
-## 2011-02-28
-## o Added update of 'step' element of structure.
-## 2011-02-23
-## o CLEANUP: rewrote NPVI.update using side functions 'estimateDev*' to
-## estimate 'gradients'.
-## 2011-02-15
-## o Renamed EstimateECM into NPVI.
-## 2011-02-08
-## o Added parameters 'gmax', 'mumin', 'mumax', 'thetamin', 'thetamax'.
-## 2011-02-07
-## o Added parameter 'family' to list of arguments.
-## 2011-02-04
-## o Added 'psiPn'
-## o Added option 'useTrueGMu'
-## 2011-01-31
-## o Added 'logLikIncr'
-## 2011-01-24
-## o Added argument 'exact' in order to exploit the "exact" version of the
-##   updating process.
-## 2011-01-20
-## o Added argument 'cleverCovTheta' to use a "clever covariate" for updating
-##   theta.
-## 2010-12-31
-## o Added argument 'gmin' for thresholding
-## 2010-12-02
-## o Added argument 'light' to store minimal information for fitted objects.
-## 2010-11-29
-## o Gradient learning now based only on the relevant part of the efficient
-## influence curve.
-## o Now using 'simulateData' to estimate psi.
-## 2010-11-24
-## o theta0 is now updated.
-## 2010-05-01
+## 2014-02-07
 ## o Created.
 ############################################################################
 

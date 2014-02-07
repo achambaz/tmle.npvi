@@ -1,55 +1,3 @@
-###########################################################################/**
-# @RdocFunction simulateData
-#
-# @title "Simulates observations (to be used in the estimation of \var{psi})"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{B}{A @numeric, number of observations to be generated}
-#   \item{obs}{A @matrix of observations with 3 columns:
-#     \describe{
-#       \item{Y}{expression level}
-#       \item{X}{DNA copy number}
-#       \item{W}{DNA methylation level.}
-#     }
-#   }
-#   \item{g}{A @function that estimates the conditional probability of
-#     neutral copy number (X==0) given the DNA methylation level: P(X=0|W)}
-#   \item{mu}{A @function that estimates the conditional expectation of
-#     the DNA copy number given the DNA methylation level: E(X|W)}
-#   \item{sigma2}{A @numeric, the squared expectation of DNA copy number
-#     relative to the neutral state: E(X^2).}
-#   \item{family}{A @character, the distribution family of errors in the
-#     simulation scheme. Either 'parsimonious' or  'gaussian'. If 'parsimonious' then
-#     the conditional distribution of X given W and X!=0 is a mixture of Dirac masses
-#     at three different observed Xs. If 'gaussian' then the latter conditional distribution
-#     is Gaussian. In either cased, the conditional distributions meets the constraints
-#     on the conditional mean and variance.}
-#   \item{verbose}{If @TRUE, extra information is output.}
-# }
-#
-# \value{
-#   Returns a @matrix of observations with 3 columns:
-#   \describe{
-#    \item{Y}{expression level}
-#    \item{X}{DNA copy number}
-#    \item{W}{DNA methylation level.}
-#   }
-# }
-#
-# @author
-#
-# \seealso{
-#   @see "getSample"
-#   @see "NPVI"
-# }
-#
-#*/###########################################################################
 simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -167,16 +115,7 @@ simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(
 
 ############################################################################
 ## HISTORY:
-## 2011-04-08
-## o Adapted for 'parsimonious' case;
-##   in particular, changed arguments of function!
-## 2011-03-23
-## o Renamed Argument 'O' into 'obs'.
-## 2010-12-08
-## o Arguments are now validated.
-## o Now Var(X|W) depends on W.  It is sigma2/1-g(0|W)
-##   instead of sigma2/1-E[g(0|W)]
-## 2010-11-26
+## 2014-02-07
 ## o Created.
 ############################################################################
 

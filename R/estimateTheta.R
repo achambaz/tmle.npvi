@@ -1,46 +1,3 @@
-###########################################################################/**
-# @RdocMethod estimateTheta
-# @alias estimateTheta
-#
-# @title "Estimates parameter 'theta' from the observations"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{obs}{A @matrix of observations with 3 columns:
-#     \describe{
-#       \item{Y}{expression level}
-#       \item{X}{DNA copy number}
-#       \item{W}{DNA methylation level.}
-#     }
-#   }
-#   \item{flavor}{A @character, the type of estimation to be performed.
-#     Two flavors are supported: "learning" and "superLearning".}
-#   \item{learnTheta}{If \code{\flavor=="learning"}, a function for learning
-#     parameter \var{theta(X,W)=E[Y|X,W]}. If \code{\flavor=="superLearning"}, a library of
-#     learning functions to be passed to \code{SuperLearner::SuperLearner}
-#     for learning parameter \var{theta}.}
-#   \item{\dots}{Further arguments to be passed to 'learnTheta' for the
-#     "learning" flavor, and to 'SuperLearner' for the "superLearning"
-#     flavor.}
-# }
-#
-# \value{
-#  Returns the estimated \var{theta}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seemethod "initialize.NPVI"
-#   @seeclass "NPVI"
-# }
-#
-#*/###########################################################################
 estimateTheta <- function(obs, flavor=c("learning", "superLearning"), learnTheta,
                           light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -96,9 +53,7 @@ estimateTheta <- function(obs, flavor=c("learning", "superLearning"), learnTheta
 
 ############################################################################
 ## HISTORY:
-## 2011-04-22
-## o Call to new function 'validateArgumentObs'
-## 2011-02-17
+## 2014-02-07
 ## o Created.
 ############################################################################
 

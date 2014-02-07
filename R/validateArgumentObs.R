@@ -1,28 +1,3 @@
-###########################################################################/**
-# @RdocFunction validateArgumentObs
-#
-# @title "Validates argument 'obs'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{obs}{A @matrix of observations or indices (when 'family' is 'parsimonious').}
-#   \item{allowIntegers}{A @logical (default 'TRUE'). If 'FALSE', 'obs[, "X"]' must have
-#      positive mass in 0.}
-# }
-#
-# \value{
-#  Returns the (possibly slightly modified) input @matrix.
-# }
-#
-# @author
-#
-#
-#*/###########################################################################
 validateArgumentObs <- function(obs, allowIntegers=TRUE) {
   ## if (!is.matrix(obs)) {
   ##   throw("Argument 'obs' should be a matrix");
@@ -60,7 +35,7 @@ validateArgumentObs <- function(obs, allowIntegers=TRUE) {
 
 ############################################################################
 ## HISTORY:
-## 2011-04-22
+## 2014-02-07
 ## o Created.
 ############################################################################
 

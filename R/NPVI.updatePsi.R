@@ -1,33 +1,3 @@
-###########################################################################/**
-# @RdocMethod updatePsi
-# @alias updatePsi
-# 
-# @title "Estimates 'psi'"
-#
-# \description{
-#  @get "title".
-# }
-#
-# @synopsis
-#
-# \arguments{
-#   \item{B}{A @numeric @value, the number of observations to be simulated.}
-#   \item{\dots}{Not used.}
-#   \item{verbose}{If @TRUE, extra information is output.}
-# }
-#
-# \value{
-#  Returns a NPVI @object containing the estimated \var{psi}.
-# }
-#
-# @author
-#
-# \seealso{
-#   @seeclass
-# }
-#
-#*/###########################################################################
-
 setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -73,10 +43,9 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   rm(obsB)
 })
 
-
 ############################################################################
 ## HISTORY:
-## 2011-04-22
+## 2014-02-07
 ## o Created.
 ############################################################################
 

@@ -470,23 +470,7 @@ getSample <- structure(
 
 ############################################################################
 ## HISTORY:
-## 2011-09-23
-## o 'muAux' is now part of the output.
-## 2011-04-22
-## o Call to new function 'validateArgumentObs'
-## 2011-04-08
-## o Function now also outputs 'theta0'
-## 2010-12-30
-## o We also compute and return the true theta, g, mu, efficient influence curve
-## 2010-12-08
-## o Arguments are now validated.
-## o P(U|X,W) is now renormalized.
-## 2010-11-24
-## o Fixed a bug in estimation of true psi.
-## 2010-07-09
-## o Now estimates (and returns) an estimate of the true parameter
-##   directly based on the simulation run.
-## 2010-05-01
+## 2014-02-07
 ## o Created.
 ############################################################################
 
