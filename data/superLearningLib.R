@@ -236,7 +236,7 @@ learnCondExpXYgivenW.library <- c("SL.glm.condExpXYgivenW", SL.library)
 learnCondExpX2givenW.library <- c("SL.glm.condExpX2givenW", SL.library)
 
 
-### List of default libraries of algorithms to use in \code{tmle.npvi} when \code{flavor} is set to "learning".
+### List of default libraries of algorithms to use in \code{tmle.npvi} when \code{flavor} is set to "superLearning".
 superLearningLib <- list(learnCondExpX2givenW=learnCondExpX2givenW.library,
                          learnCondExpXYgivenW=learnCondExpXYgivenW.library,
                          learnDevG=learnDevG.library,

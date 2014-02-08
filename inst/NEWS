@@ -1,5 +1,12 @@
-Package: TMLE.NPVI
+Package: tmle.npvi
 ===================
+Version: 0.8.1 [2014-02-08]
+o Now using lazy-loading of learning libraries instead of assigning
+  objects to the global environment.   
+
+Version: 0.8.0 [2014-02-07]
+o Passes R CMD check --as-cran
+
 Version: 0.7.0 [2013-11-22]
 o Learning and SuperLearning libraries now in 'data/'.
 

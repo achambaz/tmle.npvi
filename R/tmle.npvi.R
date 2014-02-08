@@ -170,37 +170,12 @@ tmle.npvi <- structure(
       if (length(lib)==0) {
         ## get our library:
         if (flavor=="superLearning") {
-          ## To please R CMD CHECK
-          superLearningLib <- NULL; rm(superLearningLib);
-          
-          data(superLearningLib)
-          ## warning("Attaching 'superLearningLib' list.")
-          attach(superLearningLib)
-          on.exit(detach(superLearningLib))
+          lib <- superLearningLib
         } else {
-          ## To please R CMD CHECK
-          learningLib <- NULL; rm(learningLib);
-          
-          data(learningLib)
-          ## warning("Attaching 'learningLib' list.")
-          attach(learningLib)
-          on.exit(detach(learningLib))
+          lib <- learningLib
         }
       }
-      
-      ## To please R CMD CHECK
-      learnG <- NULL; rm(learnG);
-      learnMuAux <- NULL; rm(learnMuAux);
-      learnTheta <- NULL; rm(learnTheta);
-      learnDevG <- NULL; rm(learnDevG);
-      learnDevMu <- NULL; rm(learnDevMu);
-      learnDevTheta <- NULL; rm(learnDevTheta);
-
-      ##sideeffects<< When  using one  of the default  libraries 'learningLib'
-      ##(when \code{flavor} is set  to "learning") or 'superLearningLib' (when
-      ##\code{flavor}   is  set   to  "superLearning"),   one  of   the  lists
-      ##'learningLib' or 'superLearningLib' is attached.
-      
+       
       if (flavor=="superLearning") {
         library(SuperLearner)
         if (is.null(cvControl)) {
@@ -243,7 +218,7 @@ tmle.npvi <- structure(
       ## Initialization
       ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       init(npvi, flavor=flavor,
-           learnG=learnG, learnMuAux=learnMuAux, learnTheta=learnTheta,
+           learnG=lib$learnG, learnMuAux=lib$learnMuAux, learnTheta=lib$learnTheta,
            bound=bound, B=B,
            light=light,
            trueGMu=trueGMu, 
@@ -261,8 +236,10 @@ tmle.npvi <- structure(
         kk <- kk+1
 
         ## k^th update
-        update(npvi, flavor=flavor, learnDevG=learnDevG,
-               learnDevMu=learnDevMu, learnDevTheta=learnDevTheta,
+        update(npvi, flavor=flavor, learnDevG=lib$learnDevG,
+               learnDevMu=lib$learnDevMu, learnDevTheta=lib$learnDevTheta,
+               learnCondExpX2givenW=lib$learnCondExpX2givenW,
+               learnCondExpXYgivenW=lib$learnCondExpXYgivenW,
                bound=bound, B=B, cleverCovTheta=cleverCovTheta,
                exact=exact, trueGMu=trueGMu,
                SuperLearner.=SuperLearner.,

@@ -4,6 +4,8 @@ setMethodS3("update", "NPVI", function(object,
                                        learnDevG=NULL,
                                        learnDevMu=NULL,
                                        learnDevTheta=NULL,
+                                       learnCondExpX2givenW=NULL,
+                                       learnCondExpXYgivenW=NULL,
                                        bound=1e-1, B=1e4,
                                        light=TRUE, 
                                        cleverCovTheta=TRUE,
@@ -175,10 +177,6 @@ setMethodS3("update", "NPVI", function(object,
     ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     ## Update estimation of 'g' and 'mu'
     ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    
-    ## To please R CMD CHECK
-    learnCondExpX2givenW <- NULL; rm(learnCondExpX2givenW)
-    learnCondExpXYgivenW <- NULL; rm(learnCondExpXYgivenW)
 
     if (flavor=="learning") {
       condExpX2givenW <- learnCondExpX2givenW(obsT, light=light); ## a 'true' function
