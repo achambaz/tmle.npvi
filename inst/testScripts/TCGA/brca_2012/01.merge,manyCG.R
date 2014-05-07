@@ -61,7 +61,6 @@ mgnames <- unique(unlist(strsplit(geneNames, ";")))
 str(mgnames)
 ## chr [1:13956] "ATP2A1" "SLMAP" "MEOX2" "HOXD3" "PANX1" "COX8C" ...
 
-
 ## - - - - - - - - - - - - - - - - - - - - - - -
 ## 2. Copy number
 ## - - - - - - - - - - - - - - - - - - - - - - -
@@ -140,7 +139,7 @@ if (FALSE) { ## sanity check
 }
 
 ## - - - - - - - - - - - - - - - - - - - - - - -
-## 4. Data export
+## 4. Data export: one gene
 ## - - - - - - - - - - - - - - - - - - - - - - -
 gid <- gids[1]
 
@@ -168,4 +167,85 @@ str(obs)
 
 saveObject(obs, file="obs,ATAD3A,2.xdr")
 
+## - - - - - - - - - - - - - - - - - - - - - - -
+## 5. Data export: many genes
+## - - - - - - - - - - - - - - - - - - - - - - -
 
+## choose one chromosome
+chr <- 1:24
+
+## Retrieve gene names and positions from biomaRt
+if (!require("biomaRt")) {
+  source("http://bioconductor.org/biocLite.R")
+  biocLite("biomaRt")
+}
+library("biomaRt")
+ensembl <- useMart("ensembl",dataset="hsapiens_gene_ensembl")
+bdat <- getBM(attributes=c("hgnc_symbol", "chromosome_name", "start_position", "end_position"),
+      filters=c("chromosome_name"),
+      values=list(1:24), mart=ensembl)
+names(bdat) <- c("name", "chr", "start", "end") 
+head(bdat, 10)
+
+geneNames <- bdat[["name"]]
+inter <- intersect(geneNames, gids)
+
+length(inter)
+## [1] 11314
+length(gids)
+## [1] 11943
+
+idxs <- match(inter, geneNames)
+stopifnot(all(!is.na(idxs)))
+bdat <- bdat[idxs, ]
+
+## choose one chromosome
+ch <- 21
+bdatCC <- subset(bdat, (chr==ch) & (name!=""))
+dim(bdatCC)
+
+outPath <- "geneData/tcga_brca_2012"
+outPath <- Arguments$getWritablePath(outPath)
+    
+for (ii in 1:nrow(bdatCC)) {
+  gid <- bdatCC[ii, "name"]
+  pos <- bdatCC[ii, "start"]
+  me <- match(gid, gids)
+  if (is.na(me)) {
+    warning("Gene name not found: ", gid)
+  }  
+
+  ## gene expression
+  idxE <- eg[me]
+  geneExpr <- exprMat[idxE, ep]
+
+  ## DNA copy number
+  idxC <- cg[match(gid, gids)]
+  copyNumber <- cnMat[idxC, cp]
+
+  ## methylation
+  idxM <- mg[match(gid, gids)]
+  idxsM <- as.numeric(unlist(strsplit(y[idxM, 2], " ")))
+  methyl <- methMat[idxsM, mp, drop=FALSE]
+  dim(methyl)
+  stopifnot(identical(names(copyNumber), colnames(methyl)))
+  
+  rownames(methyl) <- paste("W", 1:nrow(methyl), sep="")
+
+  obs <- cbind(Y=geneExpr, X=copyNumber, W=t(methyl))
+  str(obs)
+
+  ## pairs(obs)
+
+  filename <- sprintf("obs,%s,chr%s,%s.xdr", gid, ch, pos)
+  pathname <- file.path(outPath, filename)
+  
+  saveObject(obs, file=pathname)
+}
+
+## discretization of copy numbers
+thr <- 2e-2
+nz <- apply(cnMat[, cp], 1, function(x) sum(abs(x)<=thr))
+summary(nz)
+## Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+##  49.0   111.0   180.0   162.2   200.0   257.0
