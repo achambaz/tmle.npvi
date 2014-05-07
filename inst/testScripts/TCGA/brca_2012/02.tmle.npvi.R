@@ -7,7 +7,8 @@ path <- Arguments$getReadablePath(path)
 files <- list.files(path)
 
 TMLE <- vector("list", length(files))
-for (ii in 1:2) {# length(files)) {
+names(TMLE) <- unlist(strsplit(files, split=".xdr"))
+for (ii in 1:1) {# length(files)) {
   ## loading the data
   pathname <- file.path(path, files[ii])
   obs <- loadObject(pathname)
@@ -15,11 +16,11 @@ for (ii in 1:2) {# length(files)) {
   whichSmall <- which(abs(obs[, "X"]) <= 2e-2)
   obs[whichSmall, "X"] <- 0
   ##
-  tmle <- try(tmle.npvi(obs, f=identity, flavor="superLearning"))
+  tmle <- try(tmle.npvi(obs, f=identity, flavor="learning"))
   if (inherits(tmle, "try-error")) {
     TMLE[[ii]] <- NA
   } else {
     TMLE[[ii]] <- tmle
   }
 }
-names(TMLE) <- unlist(strsplit(files, split=".xdr"))
+
