@@ -7,7 +7,7 @@ path <- Arguments$getReadablePath(path)
 files <- list.files(path)
 
 where <- unlist(strsplit(Sys.info()["nodename"], split="\\."))[1]
-if (where=="grizzlybear") {
+if (where!="ondine") {
   cArgs <- commandArgs()
   chunk <- as.character(cArgs[5])
   idx <- eval(parse(text=sub("-", ":", chunk)))
@@ -15,6 +15,8 @@ if (where=="grizzlybear") {
   idx <- 1:length(files)
   chunk <- paste(as.character(idx[c(1, length(idx))]), collapse="-")
 }
+
+files.idx <- files[idx]
 
 descr <- list(thresh=2e-2,
               f=identity,
@@ -24,14 +26,14 @@ descr <- list(thresh=2e-2,
 
 fileout <- paste(descr$flavor, "chromosome21", chunk, "RData", sep=".")
 
-TMLE <- vector("list", length(files))
-names(TMLE) <- unlist(strsplit(files, split=".xdr"))
+TMLE <- vector("list", length(files.idx))
+names(TMLE) <- unlist(strsplit(files.idx, split=".xdr"))
 
 counter <- 0
-for (ii in idx) {
+for (ii in 1:length(files.idx)) {
   counter <- counter+1
   ## loading the data
-  pathname <- file.path(path, files[ii])
+  pathname <- file.path(path, files.idx[ii])
   obs <- loadObject(pathname)
   nbcov <- ncol(extractW(obs))
   ## thresholding copy number data
