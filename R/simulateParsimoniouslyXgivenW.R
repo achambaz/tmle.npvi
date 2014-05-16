@@ -125,7 +125,7 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     S <- rbind(A0[1:2]-A0[3], B0[1:2]-B0[3])
     probs <- try(solve(S) %*% c(a-A0[3], b-B0[3]))
     if (class(probs)=="try-error") {
-    ##      browser()
+      ## browser()
     }
     out <- c(probs, 1-sum(probs))
     return(out)
@@ -158,8 +158,8 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
   phi <- function(x, lambda, xmin=min(obsX), xmax=max(obsX)) {
     lambda*x^2 + (1-lambda)*(x*(xmax+xmin)-xmin*xmax)
   }
-  term1 <- (min(obsX)+max(obsX))*mean(parameters$muW) - mean(1-parameters$gW)*min(obsX)*max(obsX)
-  term2 <- mean(parameters$muW^2/(1-parameters$gW))
+  term1 <- (min(obsX)+max(obsX))*mean(parameters$muWB) - mean(1-parameters$gWB)*min(obsX)*max(obsX)
+  term2 <- mean(parameters$muWB^2/(1-parameters$gWB))
   lambda <- (term1-sigma2)/(term1-term2)
   if (lambda>1 | lambda<0) {## cannot happen in theory, but may occur due
                             ## to approximations (see the means above)

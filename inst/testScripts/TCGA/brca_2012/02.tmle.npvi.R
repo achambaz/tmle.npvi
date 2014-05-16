@@ -36,6 +36,9 @@ for (ii in 1:length(files.idx)) {
   pathname <- file.path(path, files.idx[ii])
   obs <- loadObject(pathname)
   nbcov <- ncol(extractW(obs))
+  if (nbcov==1) {
+    colnames(obs) <- c("Y", "X", "W")
+  }
   ## thresholding copy number data
   whichSmall <- which(abs(obs[, "X"]) <= descr$thresh)
   obs[whichSmall, "X"] <- 0
@@ -43,7 +46,7 @@ for (ii in 1:length(files.idx)) {
   tmle <- try(tmle.npvi(obs, f=descr$f, flavor=descr$flavor,
                         stoppingCriteria=descr$stoppingCriteria))
   if (inherits(tmle, "try-error")) {
-    TMLE[[ii]] <- NA
+    TMLE[[ii]] <- attr(tmle, "condition")
   } else {
     TMLE[[ii]] <- list(nbcov=nbcov,
                        hist=getHistory(tmle))

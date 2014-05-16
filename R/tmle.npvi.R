@@ -208,6 +208,10 @@ tmle.npvi <- structure(
       ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       ## Declaration
       ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      if (any(is.na(obs))) {
+        throw("The matrix 'obs' contains at least one 'NA'. This is not allowed.")
+      }
+
       npvi <- NPVI(obs=obs, f=f, family=family, tabulate=tabulate, 
                    gmin=gmin, gmax=gmax,
                    mumin=min(f(obs[, "X"])), mumax=max(f(obs[, "X"])),
