@@ -1,4 +1,6 @@
 import(R.utils, MASS)
+importFrom(R.methodsS3, setMethodS3, throw)
+importFrom(R.oo, setConstructorS3, extend, Object)
 importFrom(sgeostat, in.chull)
 
 export(as.character.NPVI,

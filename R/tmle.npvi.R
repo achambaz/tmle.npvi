@@ -80,6 +80,16 @@ tmle.npvi <- structure(
 ### of values  of the estimated probabilities  \eqn{P_n^k(X=0|W)} that \eqn{X}
 ### be  equal to  its  reference  value \code{0}  given  \eqn{W}. Defaults  to
 ### \code{95e-2}, and must be larger than \code{gmin}.
+     mumin=quantile(obs[, "X"], 0.01),
+### A  \code{numeric}, lower-bound  on the  range of  values of  the estimated
+### conditional  expectation \eqn{E_{P_n^k}(X|W)}  of  \eqn{X} given  \eqn{W}.
+### Defaults to  the first  percentile of \code{X},  and must be  smaller than
+### \code{mumax}.
+     mumax=quantile(obs[, "X"], 0.99),
+### A  \code{numeric}, upper-bound  on the  range of  values of  the estimated
+### conditional  expectation \eqn{E_{P_n^k}(X|W)}  of  \eqn{X} given  \eqn{W}.
+### Defaults  to the  99th  percentile of  \eqn{X},  and must  be larger  than
+### \code{mumin}.
      verbose=FALSE,
 ### Prescribes the amount of information  output by the function.  Defaults to
 ### \code{FALSE}.
