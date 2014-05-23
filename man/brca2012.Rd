@@ -1,26 +1,23 @@
-\name{brca2012}
-\alias{brca2012}
+\name{tcga2012brca}
+\alias{tcga2012brca}
 \docType{data}
-\title{
-Sample breast cancer data from TCGA
-}
+\title{Sample breast cancer data from TCGA}
 \description{
-  Expression, DNA copy number, and DNA methylation data for gene XXX in
+  Expression, DNA copy number, and DNA methylation data of 10 genes for
   463 breast cancer samples from TCGA.
 }
-}
-\usage{data(obs)}
+\usage{tcga2012brca}
 \format{
-A matrix with the
-  following columns:\description{
+A list of matrices.  Each matrix corresponds to a particular gene and
+has the following columns:\description{
     \item{\eqn{Y}}{gene expression level (outcome  variable)}
     \item{\eqn{X}}{DNA copy number (continuous exposure variable)}
-    \item{\eqn{W}}{DNA methylation (baseline   covariate)}
+    \item{\eqn{W1 \dots Wk}}{DNA methylation (k baseline covariates)}
   }
 }
 \details{
   These data were obtained using the scripts located in
-  \code{testScripts/TCGA/brca_2012}. 
+  \code{testScripts/tcga2012brca}. 
 }
 \source{
   Raw data may be retrieved from \url{https://tcga-data.nci.nih.gov/docs/publications/brca_2012/}
@@ -41,7 +38,7 @@ Cancer Genome Atlas Network. (2012). Comprehensive molecular portraits of human 
 
 \author{Antoine Chambaz, Pierre Neuvial}
 \examples{
-  obs <- data(brca2012)
+  data(tcga2012brca)
   pairs(obs)
   tmle.npvi(obs)
 }
