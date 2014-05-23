@@ -6,6 +6,11 @@ path <- "geneData/tcga_brca_2012"
 path <- Arguments$getReadablePath(path)
 files <- list.files(path)
 
+nas <- sapply(files[idxs], function(ff) {
+  obs <- loadObject(file.path(path, ff))
+  sum(is.na(obs))
+})
+
 where <- unlist(strsplit(Sys.info()["nodename"], split="\\."))[1]
 if (where!="ondine") {
   cArgs <- commandArgs()

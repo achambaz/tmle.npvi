@@ -1,5 +1,10 @@
 Package: tmle.npvi
 ===================
+Version: 0.8.2 [2014-05-23]
+o Added tcga12brca data set.
+o Updated DESCRIPTION as suggested by Henrik Bengtsson.
+o Enhanced scripts for TCGA data analysis.
+
 Version: 0.8.1 [2014-02-08]
 o Now using lazy-loading of learning libraries instead of assigning
   objects to the global environment.   

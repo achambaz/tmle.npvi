@@ -1,4 +1,14 @@
-library(R.utils)
+## Raw data may be retrieved from https://tcga-data.nci.nih.gov/docs/publications/brca_2012/:
+##
+## http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.methylation.27k.450k.466.zip
+## http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.GISTIC2.tar.gz
+## http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.exp.466.med.txt
+##
+## http://supportres.illumina.com/documents/myillumina/b78d361a-def5-4adb-ab38-e8990625f053/humanmethylation450_15017482_v1-2.csv
+
+dataSet <- "tcga12brca"
+
+library("R.utils")
 path <- "data"
 path <- Arguments$getReadablePath(path)
 
@@ -30,23 +40,11 @@ mpnames <- substr(mpnames, 1, 15)
 str(mpnames)
 
 ## 1b. annotation
-apath <- "annotationData/chipTypes/HumanMethylation450"
-apath <- Arguments$getReadablePath(apath)
 afilename <- "HumanMethylation450_15017482_v.1.2.csv"
-apathname <- file.path(apath, afilename)
+apathname <- file.path(path, afilename)
 
 adat <- read.table(apathname, sep=",", skip=7, quote="\"", nr=485577, header=TRUE, as.is=TRUE)
 names(adat)
-
-if (FALSE) { ## just in case
-  mgnames <- adat[["UCSC_RefGene_Name"]]
-  mgnames <- unique(unlist(strsplit(mgnames, ";")))
-
-  xfilename <- "HumanMethylation450,probeAnnotation,na36,PN20130301.xdr"
-  xpathname <- file.path(apath, xfilename)
-  dat <- loadObject(xpathname)
-  head(dat)
-}
 
 ## focus on probes that are in the microarray
 cgNames <- rownames(mdat)  ## names of probes on the microarray
@@ -79,7 +77,7 @@ cgnames <- cdat[["Gene Symbol"]]
 str(cgnames)
 
 ## - - - - - - - - - - - - - - - - - - - - - - -
-## 2. Expression
+## 3. Expression
 ## - - - - - - - - - - - - - - - - - - - - - - -
 ## expression gene and patient names
 epathname <- "data/BRCA.exp.466.med.txt"
@@ -119,11 +117,17 @@ x <- strsplit(geneNames, ";")
 x <- lapply(x, unique)
 xx <- sapply(x, paste, collapse=";")
 length(xx)
+
+## ad hoc:
 write.table(xx, file="toto.txt", row.names=FALSE, quote=FALSE, col.names=FALSE)
-system("./findGenesIndices.pl > tata.txt")
+pl <- system.file("testScripts/tcga12brca/findGenesIndices.pl", package="tmle.npvi")
+system(paste(pl, "> tata.txt"))
 y <- read.table("tata.txt", sep="\t", header=FALSE, as.is=TRUE)
 names(y) <- c("name", "char")
 head(y)
+file.remove("tata.txt")
+file.remove("toto.txt")
+## /ad hoc
 
 dim(y)
 length(intersect(y$name, gids))==length(gids)
@@ -171,8 +175,7 @@ saveObject(obs, file="obs,ATAD3A,2.xdr")
 ## 5. Data export: many genes
 ## - - - - - - - - - - - - - - - - - - - - - - -
 
-## choose one chromosome
-chr <- 1:24
+chr <- 1:22
 
 ## Retrieve gene names and positions from biomaRt
 if (!require("biomaRt")) {
@@ -183,7 +186,7 @@ library("biomaRt")
 ensembl <- useMart("ensembl",dataset="hsapiens_gene_ensembl")
 bdat <- getBM(attributes=c("hgnc_symbol", "chromosome_name", "start_position", "end_position"),
       filters=c("chromosome_name"),
-      values=list(1:24), mart=ensembl)
+      values=list(1:22), mart=ensembl)
 names(bdat) <- c("name", "chr", "start", "end") 
 head(bdat, 10)
 
@@ -199,48 +202,47 @@ idxs <- match(inter, geneNames)
 stopifnot(all(!is.na(idxs)))
 bdat <- bdat[idxs, ]
 
-## choose one chromosome
-ch <- 21
-bdatCC <- subset(bdat, (chr==ch) & (name!=""))
-dim(bdatCC)
-
-outPath <- "geneData/tcga_brca_2012"
+outPath <- file.path("geneData", dataSet)
 outPath <- Arguments$getWritablePath(outPath)
+  
+for (ch in chr) {
+  print(ch)
+  ## for one chromosome
+  bdatCC <- subset(bdat, (chr==ch) & (name!=""))
+  dim(bdatCC)
+
+  for (ii in 1:nrow(bdatCC)) {
+    gid <- bdatCC[ii, "name"]
+    pos <- bdatCC[ii, "start"]
+    me <- match(gid, gids)
+    if (is.na(me)) {
+      warning("Gene name not found: ", gid)
+      next;
+    }  
+
+    ## gene expression
+    idxE <- eg[me]
+    geneExpr <- exprMat[idxE, ep]
+
+    ## DNA copy number
+    idxC <- cg[match(gid, gids)]
+    copyNumber <- cnMat[idxC, cp]
+
+    ## methylation
+    idxM <- mg[match(gid, gids)]
+    idxsM <- as.numeric(unlist(strsplit(y[idxM, 2], " ")))
+    methyl <- methMat[idxsM, mp, drop=FALSE]
+    dim(methyl)
+    stopifnot(identical(names(copyNumber), colnames(methyl)))
+    rownames(methyl) <- paste("W", 1:nrow(methyl), sep="")
+    obs <- cbind(Y=geneExpr, X=copyNumber, W=t(methyl))
+    ## str(obs)
+    ## pairs(obs)
+    filename <- sprintf("chr%s,%06d,%s.xdr", ch, round(pos/1e3), gid)
+    pathname <- file.path(outPath, filename)
     
-for (ii in 1:nrow(bdatCC)) {
-  gid <- bdatCC[ii, "name"]
-  pos <- bdatCC[ii, "start"]
-  me <- match(gid, gids)
-  if (is.na(me)) {
-    warning("Gene name not found: ", gid)
-  }  
-
-  ## gene expression
-  idxE <- eg[me]
-  geneExpr <- exprMat[idxE, ep]
-
-  ## DNA copy number
-  idxC <- cg[match(gid, gids)]
-  copyNumber <- cnMat[idxC, cp]
-
-  ## methylation
-  idxM <- mg[match(gid, gids)]
-  idxsM <- as.numeric(unlist(strsplit(y[idxM, 2], " ")))
-  methyl <- methMat[idxsM, mp, drop=FALSE]
-  dim(methyl)
-  stopifnot(identical(names(copyNumber), colnames(methyl)))
-  
-  rownames(methyl) <- paste("W", 1:nrow(methyl), sep="")
-
-  obs <- cbind(Y=geneExpr, X=copyNumber, W=t(methyl))
-  str(obs)
-
-  ## pairs(obs)
-
-  filename <- sprintf("obs,%s,chr%s,%s.xdr", gid, ch, pos)
-  pathname <- file.path(outPath, filename)
-  
-  saveObject(obs, file=pathname)
+    saveObject(obs, file=pathname)
+  }
 }
 
 ## discretization of copy numbers
