@@ -39,7 +39,10 @@ Cancer Genome Atlas Network. (2012). Comprehensive molecular portraits of human 
 \author{Antoine Chambaz, Pierre Neuvial}
 \examples{
   data(tcga2012brca)
-  pairs(obs)
-  tmle.npvi(obs)
+  nms <- names(tcga2012brca)
+  ii <- 1
+  obs <- tcga2012brca[[ii]] 
+  pairs(obs, main=nms[ii])
+  res <- tmle.npvi(obs)
 }
 \keyword{datasets}
