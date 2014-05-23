@@ -6,7 +6,7 @@
 ##
 ## http://supportres.illumina.com/documents/myillumina/b78d361a-def5-4adb-ab38-e8990625f053/humanmethylation450_15017482_v1-2.csv
 
-dataSet <- "tcga12brca"
+dataSet <- "tcga2012brca"
 
 library("R.utils")
 path <- "data"
@@ -235,7 +235,11 @@ for (ch in chr) {
     methyl <- methMat[idxsM, mp, drop=FALSE]
     dim(methyl)
     stopifnot(identical(names(copyNumber), colnames(methyl)))
-    rownames(methyl) <- paste("W", 1:nrow(methyl), sep="")
+    if (nrow(methyl)==1) {
+      rownames(methyl) <- "W"
+    } else {
+      rownames(methyl) <- paste("W", 1:nrow(methyl), sep="")
+    }
     obs <- cbind(Y=geneExpr, X=copyNumber, W=t(methyl))
     ## str(obs)
     ## pairs(obs)

@@ -1,5 +1,8 @@
 Package: tmle.npvi
 ===================
+Version: 0.8.3 [2014-05-23]
+o Updated tcga12brca data set.
+
 Version: 0.8.2 [2014-05-23]
 o Added tcga12brca data set.
 o Updated DESCRIPTION as suggested by Henrik Bengtsson.
