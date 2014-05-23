@@ -5,20 +5,21 @@ path <- "geneData/tcga2012brca"
 path <- Arguments$getReadablePath(path)
 files <- list.files(path)
 
+where <- unlist(strsplit(Sys.info()["nodename"], split="\\."))[1]
+if (is.na(match(where, c("ondine", "MacBook-Air-de-Pierre")))) {
+  cArgs <- commandArgs()
+  chunk <- as.character(cArgs[5])
+  idx <- eval(parse(text=sub("-", ":", chunk)))
+} else {
+  idx <- (1:length(files))[1:2]
+  chunk <- paste(as.character(idx[c(1, length(idx))]), collapse="-")
+}
+
 nas <- sapply(files[idxs], function(ff) {
   obs <- loadObject(file.path(path, ff))
   sum(is.na(obs))
 })
 
-where <- unlist(strsplit(Sys.info()["nodename"], split="\\."))[1]
-if (where!="ondine") {
-  cArgs <- commandArgs()
-  chunk <- as.character(cArgs[5])
-  idx <- eval(parse(text=sub("-", ":", chunk)))
-} else {
-  idx <- 1:length(files)
-  chunk <- paste(as.character(idx[c(1, length(idx))]), collapse="-")
-}
 
 files.idx <- files[idx]
 
@@ -43,9 +44,11 @@ for (ii in 1:length(files.idx)) {
   if (nbcov==1) {
     colnames(obs) <- c("Y", "X", "W")
   }
+
   ## thresholding copy number data
   whichSmall <- which(abs(obs[, "X"]) <= descr$thresh)
   obs[whichSmall, "X"] <- 0
+
   ##
   tmle <- try(tmle.npvi(obs, f=descr$f, flavor=descr$flavor,
                         stoppingCriteria=descr$stoppingCriteria))
