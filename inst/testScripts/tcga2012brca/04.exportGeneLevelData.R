@@ -9,7 +9,7 @@ path <- Arguments$getReadablePath(path)
 
 files <- list.files(path, pattern=".*chr17,.*.xdr")
 
-idxs <- 1:30
+idxs <- 100:130
 
 filenames <- files[idxs]
 pathnames <- file.path(path, filenames)

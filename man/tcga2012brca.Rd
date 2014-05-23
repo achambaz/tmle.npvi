@@ -9,7 +9,7 @@
 \usage{tcga2012brca}
 \format{
 A list of matrices.  Each matrix corresponds to a particular gene and
-has the following columns:\description{
+has the following columns:\describe{
     \item{\eqn{Y}}{gene expression level (outcome  variable)}
     \item{\eqn{X}}{DNA copy number (continuous exposure variable)}
     \item{\eqn{W1 \dots Wk}}{DNA methylation (k baseline covariates)}
@@ -40,9 +40,14 @@ Cancer Genome Atlas Network. (2012). Comprehensive molecular portraits of human 
 \examples{
   data(tcga2012brca)
   nms <- names(tcga2012brca)
-  ii <- 1
-  obs <- tcga2012brca[[ii]] 
+  ii <- 12
+  obs <- tcga2012brca[[ii]]  ## TP53
   pairs(obs, main=nms[ii])
+
+  thr <- 0.02
+  whichSmall <- which(abs(obs[, "X"]) <= thr)
+  obs[whichSmall, "X"] <- 0
+
   res <- tmle.npvi(obs)
 }
 \keyword{datasets}

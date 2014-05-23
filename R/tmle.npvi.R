@@ -222,6 +222,13 @@ tmle.npvi <- structure(
         throw("The matrix 'obs' contains at least one 'NA'. This is not allowed.")
       }
 
+      p0min <- 0.1
+      n0min <- p0min*nrow(obs)
+      n0 <- sum(obs[, "X"]==0)
+      if (n0<n0min) {
+        warning("Only ", n0, " out of ", nrow(obs), " observations have 'X==0'. Should 'X' be thresholded?")
+      }
+      
       npvi <- NPVI(obs=obs, f=f, family=family, tabulate=tabulate, 
                    gmin=gmin, gmax=gmax,
                    mumin=min(f(obs[, "X"])), mumax=max(f(obs[, "X"])),
