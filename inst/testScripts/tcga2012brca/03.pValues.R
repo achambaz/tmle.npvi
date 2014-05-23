@@ -16,7 +16,8 @@ getPValue <- function( ## Calculates p-value from an object of type 'history'
 ### Returns the p-value of the two-sided test of ``\eqn{Psi(P_0)=Phi(P_0)}''.
 }
 
-path <- Arguments$getReadablePath("inst/testScripts/TCGA/brca_2012/")
+path <- Arguments$getReadablePath(system.file("testScripts/tcga2012brca/",
+                                              package="tmle.npvi"))
 PVAL <- NULL
 for (flavor in c("learning", "superLearning")) {
   pathname <- file.path(path, paste(flavor, "chromosome21", "xdr", sep="."))
@@ -32,7 +33,7 @@ for (flavor in c("learning", "superLearning")) {
   attributes(geneNames) <- NULL
 
   dev.new()
-  thr <- 1.5
+  thr <- 2
   ww <- which(yi>thr)
   
   ylim <- c(0, max(yi))
