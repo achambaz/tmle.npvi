@@ -1,8 +1,7 @@
-library(tmle.npvi)
-library("R.utils")
+library("tmle.npvi")
 log <- Arguments$getVerbose(-8, timestamp=TRUE)
 
-path <- "geneData/tcga_brca_2012"
+path <- "geneData/tcga2012brca"
 path <- Arguments$getReadablePath(path)
 files <- list.files(path)
 

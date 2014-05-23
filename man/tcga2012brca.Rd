@@ -3,8 +3,8 @@
 \docType{data}
 \title{Sample breast cancer data from TCGA}
 \description{
-  Expression, DNA copy number, and DNA methylation data of 10 genes for
-  463 breast cancer samples from TCGA.
+  Expression, DNA copy number, and DNA methylation data of 125
+  genes of chromosome 21 for 463 breast cancer samples from TCGA.
 }
 \usage{tcga2012brca}
 \format{
@@ -18,16 +18,18 @@ has the following columns:\describe{
 \details{
   These data were obtained using the scripts located in
   \code{testScripts/tcga2012brca}. 
+
+  Gene names and genomic coordinates are stored in the names of the list.
 }
 \source{
   Raw data may be retrieved from \url{https://tcga-data.nci.nih.gov/docs/publications/brca_2012/}
 
   \describe{
-\item{methylation}{http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.methylation.27k.450k.466.zip}
-\item{copy number data}{http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.GISTIC2.tar.gz}
-\item{expression}{http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.exp.466.med.txt}
-\item{annotation data for methylation probes}{
-http://supportres.illumina.com/documents/myillumina/b78d361a-def5-4adb-ab38-e8990625f053/humanmethylation450_15017482_v1-2.csv
+\item{methylation}{\url{http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.methylation.27k.450k.466.zip}}
+\item{copy number data}{\url{http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.GISTIC2.tar.gz}}
+\item{expression}{\url{http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.exp.466.med.txt}}
+\item{annotation data for methylation probes}{\url{
+http://supportres.illumina.com/documents/myillumina/b78d361a-def5-4adb-ab38-e8990625f053/humanmethylation450_15017482_v1-2.csv}
 }}}
 
 \references{Chambaz, A., Neuvial, P., & van der Laan, M. J. (2012).
@@ -41,7 +43,7 @@ Cancer Genome Atlas Network. (2012). Comprehensive molecular portraits of human 
   data(tcga2012brca)
   nms <- names(tcga2012brca)
   ii <- 12
-  obs <- tcga2012brca[[ii]]  ## TP53
+  obs <- tcga2012brca[[ii]]
   pairs(obs, main=nms[ii])
 
   thr <- 0.02

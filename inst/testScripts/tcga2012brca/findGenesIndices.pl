@@ -2,7 +2,7 @@
 use strict;
 
 my %hash = ();
-my $file = "toto.txt";
+my $file = $ARGV[0];
 
 open (my $fh, "<", $file) or die "Can't open the file $file: ";
 

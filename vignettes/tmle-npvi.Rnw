@@ -312,6 +312,35 @@ abline(h=confInt0, col="red")
   \label{fig:visu}
 \end{figure}
 
+\section{Analysis of TCGA data}
+
+The package includes real data, namely expression, DNA copy number, and DNA methylation data of 30 genes for 463 breast cancer samples from TCGA \cite{TCGA12}.  
+
+<<>>=
+data(tcga2012brca)
+@ 
+
+Gene names and genomic coordinates are stored in the names of the list:
+<<>>=
+nms <- names(tcga2012brca)
+print(nms)
+@ 
+
+The data set associated with gene TP53 includes 3 DNA methylation measures across the gene.  It can be analyzed as follows:
+
+<<>>=
+ii <- 12
+obs <- tcga2012brca[[ii]]
+pairs(obs, main=nms[ii])
+
+thr <- 0.02
+whichSmall <- which(abs(obs[, "X"]) <= thr)
+obs[whichSmall, "X"] <- 0
+
+res <- tmle.npvi(obs)
+res
+@ 
+
 \section{Session information}
 \label{sec:session-information}
 
@@ -338,6 +367,11 @@ Polley, E. and van~der Laan, M.~J. (2011).
 \newblock Comprehensive genomic characterization defines human glioblastoma
   genes and core pathways.
 \newblock {\em Nature}, 455:1061--1068.
+
+\bibitem[{The Cancer Genome Atlas (TGCA) research Network}, 2012]{TCGA12}
+{The Cancer Genome Atlas (TGCA) research Network} (2012).
+\newblock .
+\newblock {\em Nature}, 490:(7418), 61--70.
 
 \bibitem[van~der Laan et~al., 2007]{vanderlaan07}
 van~der Laan, M.~J., Polley, E.~C., and Hubbard, A.~E. (2007).

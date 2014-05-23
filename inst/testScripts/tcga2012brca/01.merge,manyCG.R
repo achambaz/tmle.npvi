@@ -118,15 +118,16 @@ x <- lapply(x, unique)
 xx <- sapply(x, paste, collapse=";")
 length(xx)
 
-## ad hoc:
-write.table(xx, file="toto.txt", row.names=FALSE, quote=FALSE, col.names=FALSE)
-pl <- system.file("testScripts/tcga12brca/findGenesIndices.pl", package="tmle.npvi")
-system(paste(pl, "> tata.txt"))
-y <- read.table("tata.txt", sep="\t", header=FALSE, as.is=TRUE)
+## a bit ad hoc
+tf1 <- tempfile()
+tf2 <- tempfile()
+tf2 <- tempfile(tmpdir=".")
+write.table(xx, file=tf1, row.names=FALSE, quote=FALSE, col.names=FALSE)
+pl <- system.file("testScripts/tcga2012brca/findGenesIndices.pl", package="tmle.npvi")
+system(paste(pl, tf1, ">", tf2))
+y <- read.table(tf2, sep="\t", header=FALSE, as.is=TRUE)
 names(y) <- c("name", "char")
 head(y)
-file.remove("tata.txt")
-file.remove("toto.txt")
 ## /ad hoc
 
 dim(y)
