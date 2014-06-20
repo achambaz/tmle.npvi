@@ -42,7 +42,7 @@ Cancer Genome Atlas Network. (2012). Comprehensive molecular portraits of human 
 \examples{
   data(tcga2012brca)
   nms <- names(tcga2012brca)
-  ii <- 12
+  ii <- grep("TP53", nms)
   obs <- tcga2012brca[[ii]]
   pairs(obs, main=nms[ii])
 
@@ -50,6 +50,7 @@ Cancer Genome Atlas Network. (2012). Comprehensive molecular portraits of human 
   whichSmall <- which(abs(obs[, "X"]) <= thr)
   obs[whichSmall, "X"] <- 0
 
-  res <- tmle.npvi(obs)
+  ## the code below takes ~20s which is above the acceptable limit for R CMD check
+  \dontrun{res <- tmle.npvi(obs)}
 }
 \keyword{datasets}
