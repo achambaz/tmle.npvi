@@ -8,10 +8,12 @@ path <- file.path(rootPath, dataSet)
 path <- Arguments$getReadablePath(path)
 
 files <- list.files(path, pattern=".*chr17,.*.xdr")
-idxs <- 100:130
+idxs <- 1:150
 
-files <- list.files(path, pattern=".*chr21,.*.xdr")
-idxs <- seq(along=files)
+if (FALSE) {
+  files <- list.files(path, pattern=".*chr21,.*.xdr")
+  idxs <- seq(along=files)
+}
 
 filenames <- files[idxs]
 pathnames <- file.path(path, filenames)

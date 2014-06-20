@@ -314,7 +314,7 @@ abline(h=confInt0, col="red")
 
 \section{Analysis of TCGA data}
 
-The package includes real data, namely expression, DNA copy number, and DNA methylation data of 30 genes for 463 breast cancer samples from TCGA \cite{TCGA12}.  
+The package includes real data, namely expression, DNA copy number, and DNA methylation data of 150 genes for 463 breast cancer samples from TCGA \cite{TCGA12}.  
 
 <<>>=
 data(tcga2012brca)
@@ -323,15 +323,20 @@ data(tcga2012brca)
 Gene names and genomic coordinates are stored in the names of the list:
 <<>>=
 nms <- names(tcga2012brca)
-print(nms)
+str(nms)
 @ 
 
 The data set associated with gene TP53 includes 3 DNA methylation measures across the gene.  It can be analyzed as follows:
 
 <<>>=
-ii <- 12
+ii <- grep("TP53", nms)
 obs <- tcga2012brca[[ii]]
+@ 
+
+<<fig=TRUE>>=
 pairs(obs, main=nms[ii])
+@
+
 
 thr <- 0.02
 whichSmall <- which(abs(obs[, "X"]) <= thr)
