@@ -15,7 +15,7 @@ if (is.na(match(where, c("ondine", "MacBook-Air-de-Pierre")))) {
   chunk <- paste(as.character(idx[c(1, length(idx))]), collapse="-")
 }
 
-nas <- sapply(files[idxs], function(ff) {
+nas <- sapply(files[idx], function(ff) {
   obs <- loadObject(file.path(path, ff))
   sum(is.na(obs))
 })

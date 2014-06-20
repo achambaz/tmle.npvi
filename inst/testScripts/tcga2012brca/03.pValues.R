@@ -1,4 +1,4 @@
-getPValue <- function( ## Calculates p-value from an object of type 'history'
+getPValue <- function(# Calculates p-value from an object of type 'history'
                       history,
 ### The \code{history} of a TMLE procedure.
                       nobs
@@ -43,7 +43,7 @@ for (flavor in c("learning", "superLearning")) {
   ##png(pathname, width=width, height=height)
   par(cex=2, mar=c(5, 4, 2, 0)+.2)
   plot(NA, xlim=xlim, ylim=ylim,
-       xlab="Genome position (Mb)", ylab="Test statistic",
+       xlab="Genome position (Mb)\n-chromosome21-", ylab="Test statistic",
        main=flavor)
   abline(h=thr, col=2)
   pusr <- par()$usr
