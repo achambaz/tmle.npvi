@@ -131,7 +131,13 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     return(out)
   }
 
-  getSimulationScheme <- function(labelW, m1, m2, X) {
+  getSimulationScheme <- function(labelW, m1, m2, X, nMax=100) {
+    X0 <- unique(quantile(X, type=1, probs=seq(0, 1, length=nMax)))
+    if (length(setdiff(X0, X))) {
+      throw("This should never happen with type 1 quantiles!")
+    }
+    X <- X0
+    
     getSimSch <- function(idx) {
       triangle <- getTriangle(m1[idx][1], m2[idx][1], X, X^2)
       if (length(X[triangle])==0) {

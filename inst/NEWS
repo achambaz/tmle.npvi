@@ -1,5 +1,8 @@
 Package: tmle.npvi
 ===================
+Version: 0.8.5 [2014-06-20]
+o Added parameter 'nMax' to speed up 'getSimulationScheme'.
+
 Version: 0.8.4 [2014-06-20]
 o Updated tcga12brca data set (now 150 genes on chr 17).
 
