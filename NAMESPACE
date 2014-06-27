@@ -1,7 +1,8 @@
-import(R.utils, MASS)
+import(R.utils)
 importFrom(R.methodsS3, setMethodS3, throw)
 importFrom(R.oo, setConstructorS3, extend, Object)
 importFrom(sgeostat, in.chull)
+importFrom(MASS, mvrnorm)
 
 export(as.character.NPVI,
        extractW, extractXW,

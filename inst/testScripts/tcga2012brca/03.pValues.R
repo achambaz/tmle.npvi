@@ -5,7 +5,7 @@ getPValue <- function(# Calculates p-value from an object of type 'history'
 ### An \code{integer}, the associated number of observations.
                       ){
   ##seealso<< tmle.npvi, getHistory, as.character.NPVI
-  
+  print(nrow(history))
   y <- history[nrow(history), ]
   psi <- y["psi"]
   phi <- y["phi"]

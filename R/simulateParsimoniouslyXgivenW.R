@@ -117,9 +117,9 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     best[1] <- which(A==leftA[Best[1]])[1]
     best[2] <- which(A==rightA[Best[2]])[1]
     best[3] <- getThirdVertex(best)
-    if (is.na(best[3])) {
-      best[3] <- best[1] ## anything would do because given probability 0
-    }
+    ## if (is.na(best[3])) {
+    ##   best[3] <- best[1] ## anything would do because given probability 0
+    ## }
     
     return(best)
   }
@@ -132,9 +132,9 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
         ## browser()
       }
     } else {
-      theSum <- sqrt( diff(A0[1:2])^2 + diff(BO[1:2])^2 )
-      theDiff <- ( (A0[1]-a)^2 + (BO[1]-b)^2  -
-                  (A0[2]-a)^2 + (BO[2]-b)^2 )/theSum
+      theSum <- sqrt( diff(A0[1:2])^2 + diff(B0[1:2])^2 )
+      theDiff <- ( (A0[1]-a)^2 + (B0[1]-b)^2  -
+                  (A0[2]-a)^2 + (B0[2]-b)^2 )/theSum
       probs <- 0.5*c(theSum+theDiff, theSum-theDiff)
     }
     out <- c(probs, 1-sum(probs))
@@ -160,6 +160,10 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     simulationScheme <- simSch[[as.character(labelW[xx[1]])]]
     Xs <- simulationScheme[1:3]
     ps <- simulationScheme[4:6]
+    if (ps[3]==0) {
+      Xs <- Xs[1:2]
+      ps <- ps[1:2]
+    }
     out <- Xs[findInterval(V[xx], cumsum(ps))+1]
     return(out)
   }
@@ -196,19 +200,17 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
   if (!all(tests)) {## if parsimonious method fails (should seldom happen...)
     ## throw("Parsimonious conditional simulation of X given W failed...\n")
     warning("Parsimonious conditional simulation of X given W under a slightly distorted version of the distribution.\nTry a larger 'nMax'...") 
-  } else {
-    labelW <- identifyUniqueEntries(W)
-    simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, obsXq)
-    V <- runif(length(labelW))
-    theXs <- tapply(1:length(labelW), labelW, drawFromSimulationScheme,
-                    simSch=simulationSchemes, V=V)
-    simulatedXs <- rep(NA, length(labelW))
-    for (lab in unique(labelW)) {
-      simulatedXs[which(labelW==lab)] <- theXs[[as.character(lab)]]
-    }
-    out <- simulatedXs
+  } 
+  labelW <- identifyUniqueEntries(W)
+  simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, obsXq)
+  V <- runif(length(labelW))
+  theXs <- tapply(1:length(labelW), labelW, drawFromSimulationScheme,
+                  simSch=simulationSchemes, V=V)
+  simulatedXs <- rep(NA, length(labelW))
+  for (lab in unique(labelW)) {
+    simulatedXs[which(labelW==lab)] <- theXs[[as.character(lab)]]
   }
-  
+  out <- simulatedXs  
   return(out)
 }
 
