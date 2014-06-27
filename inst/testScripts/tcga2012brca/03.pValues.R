@@ -16,14 +16,15 @@ getPValue <- function(# Calculates p-value from an object of type 'history'
 ### Returns the p-value of the two-sided test of ``\eqn{Psi(P_0)=Phi(P_0)}''.
 }
 
+what <- c("chromosome21", "allChromosomes")[2]
+
 path <- Arguments$getReadablePath(system.file("testScripts/tcga2012brca/",
                                               package="tmle.npvi"))
 PVAL <- NULL
 for (flavor in c("learning", "superLearning")) {
-  pathname <- file.path(path, paste(flavor, "chromosome21", "xdr", sep="."))
+  pathname <- file.path(path, paste(flavor, what, "xdr", sep="."))
   tmle <- loadObject(pathname)
-  pval <- sapply(tmle, function(ll){ifelse(!is.null(ll$hist),
-                                           getPValue(ll[[2]], 463), NA)})
+  pval <- sapply(tmle, function(ll){getPValue(ll$hist, 463)})
   PVAL[[flavor]] <- pval
   
   yi <- -log10(pval[!is.na(pval)])
@@ -43,7 +44,7 @@ for (flavor in c("learning", "superLearning")) {
   ##png(pathname, width=width, height=height)
   par(cex=2, mar=c(5, 4, 2, 0)+.2)
   plot(NA, xlim=xlim, ylim=ylim,
-       xlab="Genome position (Mb)\n-chromosome21-", ylab="Test statistic",
+       xlab="Genome position (Mb)\n-", "what", "-", ylab="Test statistic",
        main=flavor)
   abline(h=thr, col=2)
   pusr <- par()$usr

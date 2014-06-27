@@ -17,7 +17,7 @@ validateArgumentObs <- function(obs, allowIntegers=TRUE) {
   if (nrow(obs)>0) {
     idxs <- which(is.na(m));
     if (length(idxs)) {
-      throw("Missing column:", varNames[idxs]);
+      throw("Missing column: ", varNames[idxs]);
     }
     if (allowIntegers) {
       reject <- sum(obs[, "X"]==0)==0 & !is.integer(obs[, "X"])
