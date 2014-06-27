@@ -1,4 +1,4 @@
-simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), verbose=FALSE) {
+simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), nMax=10L, verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -39,6 +39,9 @@ simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(
   
   ## Argument 'family':
   family <- match.arg(family);
+
+  ## Argument 'nMax':
+  nMax <- Arguments$getInteger(nMax, c(10, Inf))
   
   ## Argument 'Y'
   Y <- Arguments$getNumerics(Y);
@@ -101,7 +104,7 @@ simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(
       YB <- rnorm(B, mean=theta(cbind(X=XB, W=WB)), sd=sd(Y))
     }
   } else if (family=="parsimonious") {
-    indices <- simulateParsimoniouslyXgivenW(WB[U], obsX, condMeanX, sigma2, parameters)
+    indices <- simulateParsimoniouslyXgivenW(WB[U], obsX, condMeanX, sigma2, parameters, nMax=nMax)
     XB[U] <- whichXisNotZero[indices]
     if (!is.null(theta)) {
       T <- theta(cbind(X=XB, W=WB))

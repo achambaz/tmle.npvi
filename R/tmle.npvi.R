@@ -1,4 +1,19 @@
-tmle.npvi <- structure(
+tmle.npvi <- function(flavor=c("learning", "superLearning"), ...) {
+  flavor <- match.arg(flavor)
+  if (flavor=="superLearning") {
+    tmle <- try(tmle.npvi.(flavor="superLearning", ...))
+    failed <- inherits(tmle, "try-error")
+  } else if (flavor=="learning" || failed) {
+    tmle <- try(tmle.npvi.(flavor="learning", ...))
+    if (failed) {
+      attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
+    }
+  }
+      
+  return(tmle)
+}
+
+tmle.npvi. <- structure(
     function#Targeted Minimum Loss Estimation of NPVI
 ### Carries   out  the   targeted  minimum   loss  estimation   (TMLE)   of  a
 ### non-parametric variable importance measure of a continuous exposure.
@@ -56,6 +71,12 @@ tmle.npvi <- structure(
 ### the data set  simulated under each \eqn{P_n^k} to  compute an approximated
 ### value of \eqn{\Psi(P_n^k)}), the parameter of interest at \eqn{P_n^k}. The
 ### larger \code{B}, the more accurate the approximation.
+     nMax=10L,
+### An \code{integer}  (defaults to \code{10L}) indicating  the maximum number
+### of observed values of \eqn{X\neq 0}  which are used to create the supports
+### of the conditional distributions of \eqn{X} given \eqn{W} and \eqn{X\neq0}
+### involved in the simulation under  \eqn{P_n^k} when \code{family} is set to
+### "parsimonious".
      trueGMu=NULL,
 ### Either \code{NULL} (default value) if the \bold{true} conditional
 ### probability \eqn{g(W)=P(X=0|W)} and conditional expectation
@@ -261,7 +282,7 @@ tmle.npvi <- structure(
                learnDevMu=lib$learnDevMu, learnDevTheta=lib$learnDevTheta,
                learnCondExpX2givenW=lib$learnCondExpX2givenW,
                learnCondExpXYgivenW=lib$learnCondExpXYgivenW,
-               bound=bound, B=B, cleverCovTheta=cleverCovTheta,
+               bound=bound, B=B, nMax=nMax, cleverCovTheta=cleverCovTheta,
                exact=exact, trueGMu=trueGMu,
                SuperLearner.=SuperLearner.,
                verbose=verbose);

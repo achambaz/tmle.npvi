@@ -7,6 +7,7 @@ setMethodS3("update", "NPVI", function(object,
                                        learnCondExpX2givenW=NULL,
                                        learnCondExpXYgivenW=NULL,
                                        bound=1e-1, B=1e4,
+                                       nMax=10L,
                                        light=TRUE, 
                                        cleverCovTheta=TRUE,
                                        exact=TRUE, trueGMu=NULL,
@@ -48,6 +49,10 @@ setMethodS3("update", "NPVI", function(object,
   }
   ## Argument 'B':
   B <- Arguments$getInteger(B);
+
+  ## Argument 'nMax':
+  nMax <- Arguments$getInteger(nMax, c(10, Inf));
+
   
   ## Argument 'light'
   light <- Arguments$getLogical(light);
@@ -104,7 +109,8 @@ setMethodS3("update", "NPVI", function(object,
     weightsW <- getWeightsW(this)
     fY <- getFY(this)
     obsB <- simulateData(B, obs[, "W"], obsT[, "X"], g, mu, sigma2,
-                         theta=theta, Y=obsT[, "Y"], weightsW=weightsW, family=family)
+                         theta=theta, Y=obsT[, "Y"], weightsW=weightsW,
+                         family=family, nMax=nMax)
     ## taken from 'updateEfficientInfluenceCurve'
     thetaXW <- theta(obsB[, c("X", "W")]);
     theta0W <- theta0(obsB[, "W", drop=FALSE]);

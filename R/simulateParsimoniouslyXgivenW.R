@@ -1,4 +1,4 @@
-simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters, r=3) {
+simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters, r=3, nMax=10L) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -131,13 +131,7 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     return(out)
   }
 
-  getSimulationScheme <- function(labelW, m1, m2, X, nMax=100) {
-    X0 <- unique(quantile(X, type=1, probs=seq(0, 1, length=nMax)))
-    if (length(setdiff(X0, X))) {
-      throw("This should never happen with type 1 quantiles!")
-    }
-    X <- X0
-    
+  getSimulationScheme <- function(labelW, m1, m2, X) {
     getSimSch <- function(idx) {
       triangle <- getTriangle(m1[idx][1], m2[idx][1], X, X^2)
       if (length(X[triangle])==0) {
@@ -189,7 +183,11 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     throw("Parsimonious conditional simulation of X given W failed...\n")
   } else {
     labelW <- identifyUniqueEntries(W)
-    simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, obsX)
+    obsXq <- unique(quantile(obsX, type=1, probs=seq(0, 1, length=nMax)))
+    if (length(setdiff(obsXq, obsX))) {
+      throw("This should never happen with type 1 quantiles!")
+    }
+    simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, obsXq)
     V <- runif(length(labelW))
     theXs <- tapply(1:length(labelW), labelW, drawFromSimulationScheme,
                     simSch=simulationSchemes, V=V)
