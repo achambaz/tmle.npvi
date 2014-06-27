@@ -36,8 +36,13 @@ whichSmall <- which(abs(obs[, "X"]) <= descr$thresh)
 obs[whichSmall, "X"] <- 0
 
 ##
-tmle <- try(tmle.npvi(obs, f=descr$f, flavor=descr$flavor,
-                      stoppingCriteria=descr$stoppingCriteria))
+tmle10 <- try(tmle.npvi(obs, f=descr$f, flavor=descr$flavor,
+                         stoppingCriteria=descr$stoppingCriteria,
+                         nMax=10))
+
+tmle100 <- try(tmle.npvi(obs, f=descr$f, flavor=descr$flavor,
+                         stoppingCriteria=descr$stoppingCriteria,
+                         nMax=100))
 
 ## mumax <- quantile(obs[, "X"], 0.9, type=1)
 ## mumin <- quantile(obs[, "X"], 0.1, type=1)

@@ -134,8 +134,10 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     } else {
       theSum <- sqrt( diff(A0[1:2])^2 + diff(B0[1:2])^2 )
       theDiff <- ( (A0[1]-a)^2 + (B0[1]-b)^2  -
-                  (A0[2]-a)^2 + (B0[2]-b)^2 )/theSum
-      probs <- 0.5*c(theSum+theDiff, theSum-theDiff)
+                   (A0[2]-a)^2 - (B0[2]-b)^2 )/theSum
+      fracs <- 0.5*c(theSum+theDiff, theSum-theDiff)
+      ratio <- fracs[1]/sum(fracs)
+      probs <- c(ratio, 1-ratio)
     }
     out <- c(probs, 1-sum(probs))
     return(out)
@@ -199,7 +201,7 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
 
   if (!all(tests)) {## if parsimonious method fails (should seldom happen...)
     ## throw("Parsimonious conditional simulation of X given W failed...\n")
-    warning("Parsimonious conditional simulation of X given W under a slightly distorted version of the distribution.\nTry a larger 'nMax'...") 
+    warning("Parsimonious conditional simulation of X given W under a slightly distorted version of the distribution. You may want to try a larger 'nMax'...") 
   } 
   labelW <- identifyUniqueEntries(W)
   simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, obsXq)
