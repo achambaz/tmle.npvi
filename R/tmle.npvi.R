@@ -97,12 +97,12 @@ tmle.npvi. <- structure(
 ### of values  of the estimated probabilities  \eqn{P_n^k(X=0|W)} that \eqn{X}
 ### be  equal to  its  reference  value \code{0}  given  \eqn{W}. Defaults  to
 ### \code{95e-2}, and must be larger than \code{gmin}.
-     mumin=quantile(obs[, "X"], type=1, probs=0.01),
+     mumin=quantile(f(obs[, "X"]), type=1, probs=0.01),
 ### A  \code{numeric}, lower-bound  on the  range of  values of  the estimated
 ### conditional  expectation \eqn{E_{P_n^k}(X|W)}  of  \eqn{X} given  \eqn{W}.
 ### Defaults to  the first  percentile of \code{X},  and must be  smaller than
 ### \code{mumax}.
-     mumax=quantile(obs[, "X"], type=1, probs=0.99),
+     mumax=quantile(f(obs[, "X"]), type=1, probs=0.99),
 ### A  \code{numeric}, upper-bound  on the  range of  values of  the estimated
 ### conditional  expectation \eqn{E_{P_n^k}(X|W)}  of  \eqn{X} given  \eqn{W}.
 ### Defaults  to the  99th  percentile of  \eqn{X},  and must  be larger  than
@@ -249,7 +249,7 @@ tmle.npvi. <- structure(
       
       npvi <- NPVI(obs=obs, f=f, family=family, tabulate=tabulate, 
                    gmin=gmin, gmax=gmax,
-                   mumin=min(f(obs[, "X"])), mumax=max(f(obs[, "X"])),
+                   mumin=mumin, mumax=mumax,
                    thetamin=min(obs[, "Y"]), thetamax=max(obs[, "Y"]),
                    stoppingCriteria=stoppingCriteria)
 
