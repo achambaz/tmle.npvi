@@ -1,15 +1,11 @@
 tmle.npvi <- function(flavor=c("learning", "superLearning"), ...) {
   flavor <- match.arg(flavor)
-  if (flavor=="superLearning") {
-    tmle <- try(tmle.npvi.(flavor="superLearning", ...))
-    failed <- inherits(tmle, "try-error")
-  } else if (flavor=="learning" || failed) {
-    tmle <- try(tmle.npvi.(flavor="learning", ...))
-    if (failed) {
-      attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
-    }
+  tmle <- try(tmle.npvi.(flavor=flavor, ...))
+  failed <- inherits(tmle, "try-error")
+  if (flavor=="superLearning" & failed) {
+    tmle <- tmle.npvi.(flavor="learning", ...)
+    attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
   }
-      
   return(tmle)
 }
 
@@ -101,12 +97,12 @@ tmle.npvi. <- structure(
 ### of values  of the estimated probabilities  \eqn{P_n^k(X=0|W)} that \eqn{X}
 ### be  equal to  its  reference  value \code{0}  given  \eqn{W}. Defaults  to
 ### \code{95e-2}, and must be larger than \code{gmin}.
-     mumin=quantile(obs[, "X"], 0.01),
+     mumin=quantile(obs[, "X"], type=1, probs=0.01),
 ### A  \code{numeric}, lower-bound  on the  range of  values of  the estimated
 ### conditional  expectation \eqn{E_{P_n^k}(X|W)}  of  \eqn{X} given  \eqn{W}.
 ### Defaults to  the first  percentile of \code{X},  and must be  smaller than
 ### \code{mumax}.
-     mumax=quantile(obs[, "X"], 0.99),
+     mumax=quantile(obs[, "X"], type=1, probs=0.99),
 ### A  \code{numeric}, upper-bound  on the  range of  values of  the estimated
 ### conditional  expectation \eqn{E_{P_n^k}(X|W)}  of  \eqn{X} given  \eqn{W}.
 ### Defaults  to the  99th  percentile of  \eqn{X},  and must  be larger  than
@@ -131,6 +127,7 @@ tmle.npvi. <- structure(
 ### be reduced  in size (for  a faster execution). Currently  implemented only
 ### for flavor \code{learning}.
      ) {
+      ##alias<< tmle.npvi
       ##seealso<< getSample, getHistory
       
       ##references<< Chambaz, A.,  Neuvial, P., & van der  Laan, M. J. (2012).
