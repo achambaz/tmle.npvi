@@ -117,15 +117,25 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     best[1] <- which(A==leftA[Best[1]])[1]
     best[2] <- which(A==rightA[Best[2]])[1]
     best[3] <- getThirdVertex(best)
-
+    if (is.na(best[3])) {
+      best[3] <- best[1] ## anything would do because given probability 0
+    }
+    
     return(best)
   }
 
   getProbs <- function(a, b, A0, B0) {
-    S <- rbind(A0[1:2]-A0[3], B0[1:2]-B0[3])
-    probs <- try(solve(S) %*% c(a-A0[3], b-B0[3]))
-    if (class(probs)=="try-error") {
-      ## browser()
+    if (!is.na(A0[3])) {
+      S <- rbind(A0[1:2]-A0[3], B0[1:2]-B0[3])
+      probs <- try(solve(S) %*% c(a-A0[3], b-B0[3]))
+      if (class(probs)=="try-error") {
+        ## browser()
+      }
+    } else {
+      theSum <- sqrt( diff(A0[1:2])^2 + diff(BO[1:2])^2 )
+      theDiff <- ( (A0[1]-a)^2 + (BO[1]-b)^2  -
+                  (A0[2]-a)^2 + (BO[2]-b)^2 )/theSum
+      probs <- 0.5*c(theSum+theDiff, theSum-theDiff)
     }
     out <- c(probs, 1-sum(probs))
     return(out)
@@ -135,7 +145,7 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     getSimSch <- function(idx) {
       triangle <- getTriangle(m1[idx][1], m2[idx][1], X, X^2)
       if (length(X[triangle])==0) {
-       ## browser()
+        ## browser()
       }
       probs <- getProbs(m1[idx][1], m2[idx][1], X[triangle], X[triangle]^2)
       out <- c(triangle, probs)
@@ -168,25 +178,26 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
   }
   condMeanX2 <- phi(condMeanX, lambda)
 
-  tests <- testIfInConvexHull(condMeanX, condMeanX2, obsX, obsX^2)
+  obsXq <- unique(quantile(obsX, type=1, probs=seq(0, 1, length=nMax)))
+  if (length(setdiff(obsXq, obsX))) {
+    throw("This should never happen with type 1 quantiles!")
+  }
+  tests <- testIfInConvexHull(condMeanX, condMeanX2, obsXq, obsXq^2)
   
   if (FALSE) {
     dev.new()
-    xlim <- range(obsX, condMeanX)
-    ylim <- range(obsX^2, condMeanX2)
-    o <- order(obsX)
-    plot(obsX[o], obsX[o]^2, xlim=xlim, ylim=ylim, t='l')
+    xlim <- range(obsXq, condMeanX)
+    ylim <- range(obsXq^2, condMeanX2)
+    o <- order(obsXq)
+    plot(obsXq[o], obsXq[o]^2, xlim=xlim, ylim=ylim, t='l')
     points(condMeanX, condMeanX2, col=2)
   }
 
-  if (!all(tests)) {## if parsimonious method fails (should never happen)
-    throw("Parsimonious conditional simulation of X given W failed...\n")
+  if (!all(tests)) {## if parsimonious method fails (should seldom happen...)
+    ## throw("Parsimonious conditional simulation of X given W failed...\n")
+    warning("Parsimonious conditional simulation of X given W under a slightly distorted version of the distribution.\nTry a larger 'nMax'...") 
   } else {
     labelW <- identifyUniqueEntries(W)
-    obsXq <- unique(quantile(obsX, type=1, probs=seq(0, 1, length=nMax)))
-    if (length(setdiff(obsXq, obsX))) {
-      throw("This should never happen with type 1 quantiles!")
-    }
     simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, obsXq)
     V <- runif(length(labelW))
     theXs <- tapply(1:length(labelW), labelW, drawFromSimulationScheme,
