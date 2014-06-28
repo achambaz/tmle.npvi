@@ -1,14 +1,3 @@
-tmle.npvi <- function(flavor=c("learning", "superLearning"), ...) {
-  flavor <- match.arg(flavor)
-  tmle <- try(tmle.npvi.(flavor=flavor, ...))
-  failed <- inherits(tmle, "try-error")
-  if (flavor=="superLearning" & failed) {
-    tmle <- tmle.npvi.(flavor="learning", ...)
-    attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
-  }
-  return(tmle)
-}
-
 tmle.npvi. <- structure(
     function#Targeted Minimum Loss Estimation of NPVI
 ### Carries   out  the   targeted  minimum   loss  estimation   (TMLE)   of  a
@@ -384,6 +373,19 @@ tmle.npvi. <- structure(
       abline(h=confInt0, col=2)
       
     })
+
+tmle.npvi <- function(flavor=c("learning", "superLearning"), ...) {
+  flavor <- match.arg(flavor)
+  tmle <- try(tmle.npvi.(flavor=flavor, ...))
+  failed <- inherits(tmle, "try-error")
+  if (flavor=="superLearning" & failed) {
+    tmle <- tmle.npvi.(flavor="learning", ...)
+    attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
+  }
+  return(tmle)
+}
+formals(tmle.npvi) <- formals(tmle.npvi.)
+
 
 ############################################################################
 ## HISTORY:
