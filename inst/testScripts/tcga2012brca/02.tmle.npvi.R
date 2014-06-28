@@ -35,7 +35,7 @@ TMLE <- vector("list", length(files.idx))
 names(TMLE) <- unlist(strsplit(files.idx, split=".xdr"))
 
 counter <- 0
-for (ii in 1:length(files.idx)) {
+for (ii in 1:1){#length(files.idx)) {
   counter <- counter+1
   ## loading the data
   pathname <- file.path(path, files.idx[ii])
@@ -50,7 +50,7 @@ for (ii in 1:length(files.idx)) {
   obs[whichSmall, "X"] <- 0
 
   ##
-  tmle <- try(tmle.npvi(obs, f=descr$f, flavor=descr$flavor,
+  tmle <- try(tmle.npvi(obs=obs, f=descr$f, flavor=descr$flavor,
                         stoppingCriteria=descr$stoppingCriteria))
   if (inherits(tmle, "try-error")) {
     TMLE[[ii]] <- attr(tmle, "condition")
