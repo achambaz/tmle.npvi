@@ -11,17 +11,18 @@ if (is.na(match(where, c("ondine", "MacBook-Air-de-Pierre")))) {
   chunk <- as.character(cArgs[5])
   idx <- eval(parse(text=sub("-", ":", chunk)))
 } else {
-  idx <- (1:length(files))[1:2]
+  idx <- (1:length(files))#[1:2]
   chunk <- paste(as.character(idx[c(1, length(idx))]), collapse="-")
 }
 
-nas <- sapply(files[idx], function(ff) {
+files.idx <- files[idx]
+
+nas <- sapply(files.idx, function(ff) {
   obs <- loadObject(file.path(path, ff))
   sum(is.na(obs))
 })
 
-
-files.idx <- files[idx]
+files.idx <- files.idx[nas==0]
 
 descr <- list(thresh=2e-2,
               f=identity,
