@@ -1,11 +1,12 @@
 Package: tmle.npvi
 ===================
 Version: 0.8.6 [2014-06-27]
-o Package does not DEPEND on 'MASS' and 'sgeostat' anymore, but IMPORTS
-functions from them.
 o Now handling the (rare) situation where
 'simulateParsimoniouslyXgivenW' was throwing the error "Parsimonious
 conditional simulation of X given W failed".
+o Thresholding on 'muAux' instead of 'mu'.
+o Package does not DEPEND on 'MASS' and 'sgeostat' anymore, but IMPORTS
+functions from them.
 
 Version: 0.8.5 [2014-06-20]
 o Added parameter 'nMax' to speed up 'getSimulationScheme'.

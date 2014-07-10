@@ -233,18 +233,20 @@ setMethodS3("update", "NPVI", function(object,
     }
     
     
-    ## Update 'mu' *before* 'g' as 'mu' depends on (the existing) 'g'.
+    ## Update 'g' *before* 'mu' as the updated 'mu' depends on the updated 'g', see *inside* 'updateMu'.
+    gW <- g(extractW(obs))
+    devG <- estimateDevG(gW, obsT, eic1, flavor=flavor, learnDevG=learnDevG, light=light,
+                         SuperLearner.=SuperLearner.,
+                         ..., verbose=verbose);
+    updateG(this, devG, exact=exact, effICW=effICW);
+
+
     muW <- mu(extractW(obs))
     devMu <- estimateDevMu(muW, obsT, eic1, flavor=flavor, learnDevMu=learnDevMu, light=light,
                            SuperLearner.=SuperLearner.,
                            ..., verbose=verbose);
     updateMu(this, devMu, exact=exact, effICW=effICW);
 
-    gW <- g(extractW(obs))
-    devG <- estimateDevG(gW, obsT, eic1, flavor=flavor, learnDevG=learnDevG, light=light,
-                         SuperLearner.=SuperLearner.,
-                         ..., verbose=verbose);
-    updateG(this, devG, exact=exact, effICW=effICW);
 
     ## Update 'sigma2'
     X <- fX(obs)

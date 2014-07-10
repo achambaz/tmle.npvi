@@ -94,10 +94,8 @@ setMethodS3("updateMuNonTab", "NPVI", function(this, dev, exact=TRUE, effICW, ..
   if (mode(dev) != "function") {
     throw("Argument 'dev' should be a function, not a ", mode(dev));
   }
-
   ## Argument 'exact':
   exact <- Arguments$getLogical(exact);
-  
   ## Argument 'effICW':
   if (exact) {
     if (missing(effICW)) {
@@ -112,6 +110,7 @@ setMethodS3("updateMuNonTab", "NPVI", function(this, dev, exact=TRUE, effICW, ..
   eps <- getEpsilon(this)
 
   mu <- getMu(this, tabulate=FALSE);
+  g <- getG(this, tabulate=FALSE);
   
   if (!exact) { ## if do not use exact expression
     mu1 <- function(W) {
@@ -126,7 +125,15 @@ setMethodS3("updateMuNonTab", "NPVI", function(this, dev, exact=TRUE, effICW, ..
       numerator/denominator;
     }
   }
-  setMu(this, mu1);
+
+  mumin <- getMumin(this)
+  mumax <- getMumax(this)
+  thresholdedMu1 <- function(W) {
+    muAux1 <- mu1(W)/(1-g(W))
+    (1-g(W))*threshold(muAux1, min=mumin, max=mumax)
+  }
+
+  setMu(this, thresholdedMu1);
 })
 
 setMethodS3("updateMuTab", "NPVI", function(this, dev, exact=TRUE, effICW, ...) {
@@ -137,7 +144,6 @@ setMethodS3("updateMuTab", "NPVI", function(this, dev, exact=TRUE, effICW, ...) 
   if (mode(dev) != "function") {
     throw("Argument 'dev' should be a function, not a ", mode(dev));
   }
-
   ## Argument 'exact':
   exact <- Arguments$getLogical(exact);
   
@@ -155,9 +161,11 @@ setMethodS3("updateMuTab", "NPVI", function(this, dev, exact=TRUE, effICW, ...) 
   eps <- getEpsilon(this)
 
   mu <- getMu(this, tabulate=TRUE)
+  g <- getG(this, tabulate=TRUE)
   obs <- getObs(this, tabulate=TRUE);
   muW <- mu(obs[, "W"])
-  rm(mu, obs)
+  gW <- g(obs[, "W"])
+  rm(mu, g, obs)
 
   obs <- getObs(this)
   devW <- dev(fW(obs))
@@ -176,9 +184,15 @@ setMethodS3("updateMuTab", "NPVI", function(this, dev, exact=TRUE, effICW, ...) 
     mu1W <- numerator/denominator;
   }
 
+  mumin <- getMumin(this)
+  mumax <- getMumax(this)
+  muAux1 <- mu1W/(1-gW)
+  thresholdedMu1W <- (1-gW)*threshold(muAux1, min=mumin, max=mumax)
+  
   mu1tab <- function(ii) {
-    mu1W[ii]
+    thresholdedMu1W[ii]
   }
+
   setMuTab(this, mu1tab)
 })
 

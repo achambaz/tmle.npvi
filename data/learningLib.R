@@ -138,7 +138,7 @@ learnDevMu <- function#Estimation of Cond. Expect. of (X-muW)*effIC1 Given W
 ### \code{TRUE} (its default value). This requires that the result of each fit
 ### be reduced  in size (for  a faster execution). Currently  implemented only
 ### for flavor \code{learning}.
-verbose=FALSE,
+ verbose=FALSE,
 ### Prescribes the amount of information  output by the function.  Defaults to
 ### \code{FALSE}.
  ...

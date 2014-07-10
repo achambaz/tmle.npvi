@@ -11,7 +11,7 @@ if (is.na(match(where, c("ondine", "MacBook-Air-de-Pierre")))) {
   chunk <- as.character(cArgs[5])
   idx <- eval(parse(text=sub("-", ":", chunk)))
 } else {
-  idx <- (1:length(files))#[1:2]
+  idx <- (1:length(files))[1:2]
   chunk <- paste(as.character(idx[c(1, length(idx))]), collapse="-")
 }
 
@@ -30,7 +30,7 @@ descr <- list(thresh=2e-2,
               iter=10,
               stoppingCriteria=list(mic = 0.001, div = 0.001, psi = 0.01))
 
-fileout <- paste(descr$flavor, "chromosome21", chunk, "RData", sep=".")
+fileout <- paste(descr$flavor, "test", chunk, "RData", sep=".")
 
 TMLE <- vector("list", length(files.idx))
 names(TMLE) <- unlist(strsplit(files.idx, split=".xdr"))
