@@ -374,12 +374,12 @@ tmle.npvi. <- structure(
       
     })
 
-tmle.npvi <- function(obs, f=identity, flavor=c("learning", "superLearning"), ...) {
+tmle.npvi <- function(obs, f=identity, flavor=c("learning", "superLearning"), lib=list(), nodes=1L, ...) {
   flavor <- match.arg(flavor)
-  tmle <- try(tmle.npvi.(obs=obs, f=f, flavor=flavor, ...))
+  tmle <- try(tmle.npvi.(obs=obs, f=f, flavor=flavor, lib=lib, nodes=nodes, ...))
   failed <- inherits(tmle, "try-error")
   if (flavor=="superLearning" & failed) {
-    tmle <- tmle.npvi.(obs=obs, f=f, flavor="learning", ...)
+    tmle <- tmle.npvi.(obs=obs, f=f, flavor="learning", lib=learningLib, nodes=1L, ...)
     attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
   }
   return(tmle)

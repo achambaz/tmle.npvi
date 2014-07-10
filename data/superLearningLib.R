@@ -209,12 +209,12 @@ environment(predict.SL.glm.theta) <- asNamespace("SuperLearner")
 ## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm", "SL.glmnet");
 ## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm", "SL.DSA")
 ## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.glmnet");
-
-SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm")
+## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm")
+SL.library <- c("SL.glm", "SL.randomForest", "SL.gam")
 
 library(SuperLearner)
 library(randomForest)
-library(e1071)
+## library(e1071)
 ## library(polspline)
 ## library(DSA)
 ## library(glmnet)
