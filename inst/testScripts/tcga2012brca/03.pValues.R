@@ -5,7 +5,6 @@ getPValue <- function(# Calculates p-value from an object of type 'history'
 ### An \code{integer}, the associated number of observations.
                       ){
   ##seealso<< tmle.npvi, getHistory, as.character.NPVI
-  print(nrow(history))
   y <- history[nrow(history), ]
   psi <- y["psi"]
   phi <- y["phi"]
@@ -16,51 +15,72 @@ getPValue <- function(# Calculates p-value from an object of type 'history'
 ### Returns the p-value of the two-sided test of ``\eqn{Psi(P_0)=Phi(P_0)}''.
 }
 
-what <- c("chromosome21", "allChromosomes")[2]
-
+what <- "AllChromosomes"
 path <- Arguments$getReadablePath(system.file("testScripts/tcga2012brca/",
                                               package="tmle.npvi"))
+path <- "."
+
 PVAL <- NULL
 for (flavor in c("learning", "superLearning")) {
-  pathname <- file.path(path, paste(flavor, what, "xdr", sep="."))
-  tmle <- loadObject(pathname)
+  pathname <- file.path(path, paste(flavor, what, ".xdr", sep=""))
+  tmle <- loadObject(pathname)$TMLE
+  pathname <- file.path(path, "cumLimChr.xdr")
+  cumLimChr <- loadObject(pathname)
+  
   pval <- sapply(tmle, function(ll){getPValue(ll$hist, 463)})
   PVAL[[flavor]] <- pval
-  
+
   yi <- -log10(pval[!is.na(pval)])
-  pos <- sapply(names(yi), function(ll){rev(unlist(strsplit(ll, split=",")))[1]})
-  pos <- 1e-6*as.integer(pos)
-  geneNames <- sapply(names(yi), function(ll){unlist(strsplit(ll, split=","))[2]})
+  yi <- -log10(pval)
+  chr <- sapply(names(yi), function(ll){unlist(strsplit(ll, split=","))[1]})
+  chr <- sapply(chr, function(ll){unlist(strsplit(ll, split="chr"))[2]})
+  chr <- as.integer(chr)
+  posRel <- sapply(names(yi), function(ll){unlist(strsplit(ll, split=","))[2]})
+  posRel <- as.integer(posRel)*1e-3
+  posAbs <- posRel + cumLimChr[chr]
+  geneNames <- sapply(names(yi), function(ll){unlist(strsplit(ll, split=","))[3]})
+  geneNames <- sapply(geneNames, function(ll){unlist(strsplit(ll, split="\\."))[1]})
   attributes(geneNames) <- NULL
 
   dev.new()
-  thr <- 2
+  thr <- 40
   ww <- which(yi>thr)
   
   ylim <- c(0, max(yi))
-  rg <- range(pos)
+  rg <- range(posAbs)
   xlim <- rg*c(.95, 1.05)
   
   ##png(pathname, width=width, height=height)
   par(cex=2, mar=c(5, 4, 2, 0)+.2)
   plot(NA, xlim=xlim, ylim=ylim,
-       xlab="Genome position (Mb)\n-", "what", "-", ylab="Test statistic",
-       main=flavor)
+       xlab=paste("Genome position\n-", what, "-"),
+       ylab="-log10(pval)",
+       main=flavor, axes=FALSE)
   abline(h=thr, col=2)
   pusr <- par()$usr
   unitX <-.01*(pusr[2]-pusr[1])
   unitY <-.02*(pusr[4]-pusr[3])
-  pchs <- rep(20, length=length(pos))
+  pchs <- rep(20, length=length(posAbs))
   if (length(ww)) {
-    pchs[ww] <- 1
+    pchs[ww] <- .5
     if (require(maptools)) {
-      pointLabel(pos[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=.4) # col=cols[ww], )
+      points(posAbs[ww], yi[ww], pch=pchs[ww], cex=0.25)
+      pointLabel(posAbs[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww], )
     } else {
-      text(pos[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww])
+      text(posAbs[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww])
     }
   }
-  points(pos[-ww], yi[-ww], pch=pchs[-ww], cex=1)
+  points(posAbs[-ww], yi[-ww], pch=pchs[-ww], cex=0.5)
+  abline(v=cumLimChr, col="orange")
+  xx <- sapply(1:(length(cumLimChr)-1), function(ii) {
+    mean(cumLimChr[0:1+ii])
+  })
+  box()
+  axis(2)
+  axis(1, xx, 1:length(xx), tcl=NA)
 }
+
+stop()
 
 ww <- apply(sapply(PVAL, is.na), 1, any)
 ranks <- matrix(c(order(PVAL[[1]][!ww]),

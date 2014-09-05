@@ -11,15 +11,21 @@ learnCondExpX2givenW <- function#Estimation of Cond. Expect. of X^2 Given W
 ### for flavor \code{learning}.
  ) {
   ##seealso<< learnG, learnMuAux, learnTheta, learnCondExpXYgivenW, learnDevG, learnDevMu, learnDevTheta
-  W <- extractW(obs)
-  varNames <- colnames(W)
+  varNames <- setdiff(colnames(obs), c("X", "Y"))
+  if (length(varNames)>20) {
+    varNames <- varNames[1:20]
+    warning(paste("Using only", paste(varNames, collapse=", "), "in 'learnCondExpX2givenW'"))
+  }
   theFormula <- paste(varNames, collapse=" + ")
-  theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
-  theFormula <- paste("I(X^2) ~", theFormula, "+", theFormula2, sep="")
-  ## formula <- as.formula(I(X^2)~W+I(W^2));
+  if (length(varNames)<=10) {
+    theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
+    theFormula <- paste("I(X^2) ~", theFormula, "+", theFormula2, sep="")
+  } else {
+    theFormula <- paste("I(X^2) ~", theFormula, sep="")
+  } 
   formula <- as.formula(theFormula)
-  rm(W);
-
+  ## formula <- as.formula(I(X^2)~W+I(W^2));
+  
   fit <- glm(formula, data=as.data.frame(obs), family=gaussian);
   if (light) {
     fit <- getLightFit(fit);
@@ -46,14 +52,20 @@ learnCondExpXYgivenW <- function#Estimation of Cond. Expect. of XY Given W
 ### for flavor \code{learning}.
 ) {
   ##seealso<< learnG, learnMuAux, learnTheta, learnCondExpX2givenW, learnDevG, learnDevMu, learnDevTheta
-  W <- extractW(obs)
-  varNames <- colnames(W)
+  varNames <- setdiff(colnames(obs), c("X", "Y"))
+  if (length(varNames)>20) {
+    varNames <- varNames[1:20]
+    warning(paste("Using only", paste(varNames, collapse=", "), "in 'learnCondExpXYgivenW'", collapse=""))
+  }
   theFormula <- paste(varNames, collapse=" + ")
-  theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
-  theFormula <- paste("I(X*Y) ~", theFormula, "+", theFormula2, sep="")
+  if (length(varNames)<=10) {
+    theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
+    theFormula <- paste("I(X*Y) ~", theFormula, "+", theFormula2, sep="")
+  } else {
+    theFormula <- paste("I(X*Y) ~", theFormula, sep="")
+  } 
+  formula <- as.formula(theFormula)  
   ## formula <- as.formula(I(X*Y)~W+I(W^2));
-  formula <- as.formula(theFormula)
-  rm(W);
 
   fit <- glm(formula, data=as.data.frame(obs), family=gaussian);
   if (light) {
@@ -92,22 +104,29 @@ verbose=FALSE,
 ### Additional arguments possibly needed.
  ) {
   ##seealso<< learnG, learnMuAux, learnTheta, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevMu, learnDevTheta
-  W <- extractW(obs)
   X <- obs[, "X"];
   Z <- effIC1 * ( (X==0) - gW );
 
   obsZ <- cbind(obs, Z=Z);
   verbose && str(verbose, obsZ);
 
-  varNames <- colnames(W)
+  varNames <- setdiff(colnames(obs), c("X", "Y"))
+  if (length(varNames)>20) {
+    varNames <- varNames[1:20]
+    warning(paste("Using only", paste(varNames, collapse=", "), "in 'learnDevG'"))
+  }
   theFormula <- paste(varNames, collapse=" + ")
-  theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
-  theFormula <- paste("Z ~", theFormula, "+", theFormula2, sep="")
-  ## formula <- as.formula(Z~W+I(W^2));
+  if (length(varNames)<=10) {
+    theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
+    theFormula <- paste("Z ~", theFormula, "+", theFormula2, sep="")
+  } else {
+    theFormula <- paste("Z ~", theFormula, sep="")
+  } 
   formula <- as.formula(theFormula)
+  ## formula <- as.formula(Z~W+I(W^2));
 
   fit <- glm(formula, data=as.data.frame(obsZ), family=gaussian);
-  rm(W, X, Z, obsZ);
+  rm(X, Z, obsZ);
   if (light) {
     fit <- getLightFit(fit);
   }
@@ -145,21 +164,29 @@ learnDevMu <- function#Estimation of Cond. Expect. of (X-muW)*effIC1 Given W
 ### Additional arguments possibly needed.
 ) {
   ##seealso<< learnG, learnMuAux, learnTheta, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevG, learnDevTheta
-  W <- extractW(obs)
   Z <- (obs[, "X"]-muW) * effIC1;
 
   obsZ <- cbind(obs, Z=Z);
   verbose && str(verbose, obsZ);
 
-  varNames <- colnames(W)
+  varNames <- setdiff(colnames(obs), c("X", "Y"))
+  if (length(varNames)>20) {
+    varNames <- varNames[1:20]
+    warning(paste("Using only", paste(varNames, collapse=", "), "in 'learnDevMu'"))
+  }
   theFormula <- paste(varNames, collapse=" + ")
-  theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
-  theFormula <- paste("Z ~", theFormula, "+", theFormula2, sep="")
-  ## formula <- as.formula(Z~W+I(W^2));
+  if (length(varNames)<=10) {
+    theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
+    theFormula <- paste("Z ~", theFormula, "+", theFormula2, sep="")
+  } else {
+    theFormula <- paste("Z ~", theFormula, sep="")
+  } 
   formula <- as.formula(theFormula)
+  ## formula <- as.formula(Z~W+I(W^2));
+
 
   fit <- glm(formula, data=as.data.frame(obsZ), family=gaussian);
-  rm(W, Z, obsZ);
+  rm(Z, obsZ);
   if (light) {
     fit <- getLightFit(fit);
   }
@@ -199,11 +226,20 @@ verbose=FALSE,
   obsZ <- cbind(obs, Z=thetaXW);
   verbose && str(verbose, obsZ);
 
-  varNames <- setdiff(colnames(obs), "Y")
-  theFormula <- paste(varNames, collapse="*")
-  theFormula <- paste("I((Y-Z)^2) ~", theFormula, sep=" ")
-  ## formula <- as.formula(I((Y-Z)^2)~X*W);
+  varNames <- setdiff(colnames(obs), c("X", "Y"))
+  if (length(varNames)>20) {
+    varNames <- varNames[1:20]
+    warning(paste("Using only 'X' and", paste(varNames, collapse=", "), "in 'learnDevTheta'"))
+  }
+  theFormula <- paste(varNames, collapse=" + ")
+  if (length(varNames)<=10) {
+    theFormula <- paste("I((Y-Z)^2) ~ X+", theFormula, "+ X*(",
+                        theFormula, ")", sep="")
+  } else {
+    theFormula <- paste("I((Y-Z)^2) ~ X+", theFormula, sep="")
+  } 
   formula <- as.formula(theFormula)
+  ## formula <- as.formula(I((Y-Z)^2)~X*W);
   
   ## family <- Gamma(link="log");
   family <- gaussian();
@@ -246,11 +282,20 @@ learnG <- function#Estimation of Cond. Prob. of X=x_0 Given W
   ## 'glm' version 
   ##
   varNames <- setdiff(colnames(obs), c("X", "Y"))
+  if (length(varNames)>20) {
+    varNames <- varNames[1:20]
+    warning(paste("Using only", paste(varNames, collapse=", "), "in 'learnG'"))
+  }
   theFormula <- paste(varNames, collapse=" + ")
-  theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
-  theFormula <- paste("I(X==theX0) ~", theFormula, "+", theFormula2, sep=" ")
-  ## formula <- as.formula(I(X==theX0)~W);
+  if (length(varNames)<=10) {
+    theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
+    theFormula <- paste("I(X==theX0) ~", theFormula, "+", theFormula2, sep=" ")
+  } else {
+    theFormula <- paste("I(X==theX0) ~", theFormula, sep="")
+  }
   formula <- as.formula(theFormula)
+  ## formula <- as.formula(I(X==theX0)~W);
+
     
   fit <- glm(formula, data=as.data.frame(obs), family="binomial");
   if (light) {
@@ -284,11 +329,20 @@ learnMuAux <- function#Estimation of Cond. Expect. of X Given (X!=x_0, W)
 ) {
   ##seealso<< learnG, learnTheta, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevG, learnDevMu, learnDevTheta
   varNames <- setdiff(colnames(obs), c("X", "Y"))
+  if (length(varNames)>20) {
+    varNames <- varNames[1:20]
+    warning(paste("Using only", paste(varNames, collapse=", "), "in 'learnMuAux'"))
+  }
   theFormula <- paste(varNames, collapse=" + ")
-  theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
-  theFormula <- paste("X ~", theFormula, "+", theFormula2, sep=" ")
-  ## formula <- as.formula(X~W+I(W^2));
+  if (length(varNames)<=10) {
+    theFormula2 <- paste("I(", varNames, "^2)", collapse=" + ", sep="")
+    theFormula <- paste("X ~", theFormula, "+", theFormula2, sep=" ")
+  } else {
+    theFormula <- paste("X ~", theFormula, sep="")
+  }
   formula <- as.formula(theFormula)
+  ## formula <- as.formula(X~W+I(W^2));
+
 
   fit <- glm(formula, data=as.data.frame(obs), family=gaussian);
   if (light) {
@@ -320,10 +374,20 @@ learnTheta <- function#Estimation of Cond. Expect. of Y given (X,W)
 ) {
   ##seealso<< learnG, learnMuAux, learnCondExpX2givenW, learnCondExpXYgivenW, learnDevG, learnDevMu, learnDevTheta
   varNames <- setdiff(colnames(obs), "Y")
-  theFormula <- paste(varNames, collapse="*")
-  theFormula <- paste("Y ~", theFormula, sep=" ")
-  ## formula <- as.formula(Y~X*W);
+  if (length(varNames)>20) {
+    varNames <- varNames[1:20]
+    warning(paste("Using only 'X' and", paste(varNames, collapse=", "), "in 'learnTheta'"))
+  }
+  theFormula <- paste(varNames, collapse=" + ")
+  if (length(varNames)<=10) {
+    theFormula <- paste("Y ~ X+", theFormula, "+ X*(",
+                        theFormula, ")", sep="")
+  } else {
+    theFormula <- paste("Y ~ X+", theFormula, sep="")
+  } 
   formula <- as.formula(theFormula);
+  ## formula <- as.formula(Y~X*W);
+
   
   fit <- glm(formula, data=as.data.frame(obs), family=gaussian);
   if (light) {

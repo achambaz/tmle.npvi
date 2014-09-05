@@ -15,7 +15,14 @@ if (is.na(match(where, c("ondine", "MacBook-Air-de-Pierre")))) {
   chunk <- paste(as.character(idx[c(1, length(idx))]), collapse="-")
 }
 
-files.idx <- files[idx]
+if (FALSE) {
+  files.idx <- files[idx]
+} else {
+  idx <- grep("chr4,004861,MSX1", files)
+  files.idx <- files[idx]
+  chunk <- as.character(idx)
+}
+
 
 nas <- sapply(files.idx, function(ff) {
   obs <- loadObject(file.path(path, ff))
@@ -26,7 +33,7 @@ files.idx <- files.idx[nas==0]
 
 descr <- list(thresh=2e-2,
               f=identity,
-              flavor="superLearning",
+              flavor="learning",
               nodes=3,
               iter=10,
               stoppingCriteria=list(mic = 0.001, div = 0.001, psi = 0.01))
