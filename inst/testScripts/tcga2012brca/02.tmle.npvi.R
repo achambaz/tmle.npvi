@@ -33,9 +33,10 @@ files.idx <- files.idx[nas==0]
 
 descr <- list(thresh=2e-2,
               f=identity,
-              flavor="learning",
+              flavor="superLearning",
               nodes=3,
               iter=10,
+              cvControl=2,
               stoppingCriteria=list(mic = 0.001, div = 0.001, psi = 0.01))
 
 fileout <- paste(descr$flavor, "test", chunk, "RData", sep=".")
@@ -60,7 +61,8 @@ for (ii in 1:length(files.idx)) {
 
   ##
   tmle <- try(tmle.npvi(obs=obs, f=descr$f, flavor=descr$flavor,
-                        stoppingCriteria=descr$stoppingCriteria))
+                        stoppingCriteria=descr$stoppingCriteria,
+                        cvControl=descr$cvControl))
   if (inherits(tmle, "try-error")) {
     TMLE[[ii]] <- attr(tmle, "condition")
   } else {

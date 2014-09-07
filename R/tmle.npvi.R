@@ -170,7 +170,7 @@ tmle.npvi. <- structure(
       }
       test <- setdiff(names(lib), paste0("learn", c("G", "MuAux", "Theta",
                                                     "DevG", "DevMu", "DevTheta",
-                                                    "condExpX2givenW", "condExpXYgivenW")))
+                                                    "CondExpX2givenW", "CondExpXYgivenW")))
       if (length(test)) {
         throw("Missing element in argument 'lib':", test);
       }
@@ -198,6 +198,9 @@ tmle.npvi. <- structure(
         if (is.null(cvControl)) {
           warning("Setting 'V=10' in 'SuperLearner.'")
           cvControl <- SuperLearner.CV.control(V=10L)
+        } else {
+          cvControl <- Arguments$getInteger(cvControl,c(2, Inf))
+          cvControl <- SuperLearner.CV.control(V=cvControl)
         }
         if (nodes==1) {
           SuperLearner. <- function(...) {
