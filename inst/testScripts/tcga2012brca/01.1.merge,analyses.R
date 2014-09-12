@@ -27,18 +27,25 @@ cumLimChr <- c(0, cumsum(limChr))
 ## super-learning
 ##- - - - - - - -
 
-load("superLearning.allChromosomes.1-3000.RData")
-superLearning <- list(descr=descr,
-                 TMLE=TMLE)
-load("superLearning.allChromosomes.3001-6000.RData")
-superLearning$TMLE <- c(superLearning$TMLE, TMLE)
-load("superLearning.allChromosomes.6001-9000.RData")
-superLearning$TMLE <- c(superLearning$TMLE, TMLE)
-load("superLearning.allChromosomes.9001-11314.RData")
-superLearning$TMLE <- c(superLearning$TMLE, TMLE)
+if (FALSE) {
+  load("superLearning.allChromosomes.1-3000.RData")
+  superLearning <- list(descr=descr,
+                        TMLE=TMLE)
+  load("superLearning.allChromosomes.3001-6000.RData")
+  superLearning$TMLE <- c(superLearning$TMLE, TMLE)
+  load("superLearning.allChromosomes.6001-9000.RData")
+  superLearning$TMLE <- c(superLearning$TMLE, TMLE)
+  load("superLearning.allChromosomes.9001-11314.RData")
+  superLearning$TMLE <- c(superLearning$TMLE, TMLE)
+  
+  superLearning0 <- superLearning
+} else {
+  load("superLearning.wholeGenome.9001-11314.RData")
+  superLearning <- list(descr=descr,
+                        TMLE=TMLE)
 
-superLearning0 <- superLearning
-
+  superLearning0 <- superLearning
+}
 
 
 ## - - - - - - - - - 
@@ -80,7 +87,13 @@ errSL <- sapply(superLearning$TMLE[idxSL], as.character)
 ## compare to known error messages
 ##
 
-knownMsgs <- c("Error in findInterval", "impossible", "Parsimonious conditional simulation of X given W failed", "sLeftA", "Range of argument", "")
+knownMsgs <- c("Error in findInterval",
+               "impossible",
+               "Parsimonious conditional simulation of X given W failed",
+               "sLeftA",
+               "Range of argument",
+               "Error in if \\(ps",
+               "must be positive")
 msgsL <- lapply(knownMsgs, grep, errL)
 names(msgsL) <- knownMsgs
 str(msgsL)
@@ -95,6 +108,46 @@ if (sum(sapply(msgsSL, length)) < length(errSL)) {
   stop("'superLearning': some messages are not in 'knownMsgs'")
 }
 head(errSL[-unlist(msgsSL)])
+
+##
+##  impossible... 
+##
+
+msg <- "impossible"
+idxL <- sapply(learning$TMLE,
+               function(xx){length(xx)==2 && length(grep(msg, as.character(xx)))})
+idxSL <- sapply(superLearning$TMLE,
+                function(xx){length(xx)==2 && length(grep(msg, as.character(xx)))})
+sum(idxL)  # 6 
+sum(idxSL) # 0 
+
+## get names of an instance of guilty genes
+print(names(learning$TMLE[min(which(idxL))]))  # "chr11,002466,KCNQ1"
+print(names(superLearning$TMLE[min(which(idxSL))]))  # NA
+
+learning$TMLE <- learning$TMLE[!idxL]
+superLearning$TMLE <- superLearning$TMLE[!idxSL]
+
+
+##
+##  Error in if (ps[3]==0)
+##
+
+msg <- "Error in if \\("
+idxL <- sapply(learning$TMLE,
+               function(xx){length(xx)==2 && length(grep(msg, as.character(xx)))})
+idxSL <- sapply(superLearning$TMLE,
+                function(xx){length(xx)==2 && length(grep(msg, as.character(xx)))})
+sum(idxL)  # 6 
+sum(idxSL) # 1 
+
+## get names of an instance of guilty genes
+print(names(learning$TMLE[min(which(idxL))]))  # "chr11,070245,CTTN"
+print(names(superLearning$TMLE[min(which(idxSL))]))  # "chr7,056019,GBAS"
+
+learning$TMLE <- learning$TMLE[!idxL]
+superLearning$TMLE <- superLearning$TMLE[!idxSL]
+
 
 ##
 ##  Parameter 'sigma2' must be positive...
