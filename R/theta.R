@@ -98,22 +98,32 @@ setMethodS3("initializeTheta", "NPVI", function(this, theta, ...) {
   ## theta
   setTheta(this, theta)
 
-  ## tabulated version of 'theta'
+  ## tabulated versions of 'theta' and 'theta0'
   fW <- getFW(this);
   fX <- getFX(this);
   obs <- getObs(this);
-
-  eg <- expand.grid(X=obs[, "X"], W=obs[, "W"])
-  OBSTAB <- cbind(X=fX(eg), fW(eg))
-
-  THETATAB <- theta(OBSTAB)
-  THETATAB <- matrix(THETATAB, nrow=nrow(obs), ncol=nrow(obs))
+  Xq <- getXq(this);
+  
+  eg <- expand.grid(X=Xq, W=obs[, "W"])
+  ## top
+  OBSTAB.top <- cbind(X=eg[, "X"], fW(eg))
+  THETATAB.top <- theta(OBSTAB.top)
+  THETATAB.top <- matrix(THETATAB.top, nrow=length(Xq), ncol=nrow(obs))
+  ## bottom
+  OBSTAB.bottom <- cbind(X=fX(obs), W=fW(obs))
+  THETATAB.bottom <- theta(OBSTAB.bottom) ## a vector, not a matrix!
+  ## last but one row
+  THETA0TAB <- theta(cbind(X=0, W=fW(obs)))  ## a vector, not a matrix!
+  ## merge
+  THETATAB <- rbind(THETATAB.top,
+                    THETA0TAB,
+                    THETATAB.bottom)
+  ## the last but one row of 'THETATAB' contains the values if 'theta(0,W_i)'
+  ## the last row of 'THETATAB' contains the values of 'theta(X_i,Y_i)'
   thetatab <- function(xiwj) {
     stopifnot(is.matrix(xiwj) && ncol(xiwj)==2 && is.integer(xiwj))
     THETATAB[xiwj]
   }
-  ## tabulated version of 'theta0'
-  THETA0TAB <- theta(cbind(X=0, W=fW(obs)))  ## a vector, not a matrix !
   theta0tab <- function(wi) {
     ## stopifnot(is.matrix(wi) && ncol(wi)==1 && is.integer(wi))
     THETA0TAB[wi]

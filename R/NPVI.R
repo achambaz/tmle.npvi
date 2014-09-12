@@ -1,5 +1,5 @@
 setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL, c("W", "X", "Y"))),
-                                  f=identity,
+                                  f=identity, nMax=10L,
                                   gmin=0.01, gmax=1-gmin, mumin=-Inf,
                                   mumax=Inf, thetamin=-Inf, thetamax=Inf,
                                   family=c("parsimonious", "gaussian"), tabulate=TRUE,
@@ -18,6 +18,9 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
     throw("Argument 'f' must be a function such that f(0)=0.")
   }
 
+  ## Argument 'nMax':
+  nMax <- Arguments$getInteger(nMax, c(10, Inf));
+  
   ## Arguments 'gmin' and 'gmax':
   gmin <- Arguments$getNumeric(gmin);
   gmax <- Arguments$getNumeric(gmax);
@@ -76,7 +79,16 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
     throw("Unauthorized, because not implemented (it is a sub-optimal combination of options).")
   }
 
-  obs[, "X"] <- f(obs[, "X"])
+  obs[, "X"] <- X <- f(obs[, "X"])
+  if (length(X)==0) {
+    Xq <- numeric(0)
+  } else {
+    Xneq0 <- X[X!=0]
+    Xq <- unique(quantile(Xneq0, type=1, probs=seq(0, 1, length=nMax)))
+    if (length(setdiff(Xq, Xneq0))) {
+      throw("In 'NPVI': components of 'Xq' must be observed values of 'X'...")
+    }
+  }
   
   theW <- setdiff(colnames(obs), c("X", "Y"))
   if (!tabulate & length(theW)>1) {
@@ -92,6 +104,7 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
   
   extend(Object(), "NPVI",
          .obs=obs, #.flavor=flavor,
+         .Xq=Xq,
          .g=NULL, .mu=NULL, .theta=NULL, .theta0=NULL, .weightsW=rep(1, nrow(obs)), 
          .gtab=NULL, .mutab=NULL, .thetatab=NULL, .theta0tab=NULL,
          .sigma2=NA, .psi=NA, .psi.sd=NA, .psiPn=NA, .psiPn.sd=NA,
@@ -105,6 +118,9 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
          );
 })
 
+setMethodS3("getXq", "NPVI", function(this, ...) {
+  this$.Xq;
+})
 
 setMethodS3("getFlavor", "NPVI", function(this, ...) {
   this$.flavor;

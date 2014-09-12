@@ -57,11 +57,11 @@ tmle.npvi. <- structure(
 ### value of \eqn{\Psi(P_n^k)}), the parameter of interest at \eqn{P_n^k}. The
 ### larger \code{B}, the more accurate the approximation.
      nMax=10L,
-### An \code{integer}  (defaults to \code{10L}) indicating  the maximum number
-### of observed values of \eqn{X\neq 0}  which are used to create the supports
-### of the conditional distributions of \eqn{X} given \eqn{W} and \eqn{X\neq0}
-### involved in the simulation under  \eqn{P_n^k} when \code{family} is set to
-### "parsimonious".
+### An \code{integer} (defaults to  \code{10L}, the smallest authorized value)
+### indicating the  maximum number of  observed values of \eqn{X\neq  0} which
+### are  used to  create  the  supports of  the  conditional distributions  of
+### \eqn{X} given  \eqn{W} and \eqn{X\neq0}  involved in the  simulation under
+### \eqn{P_n^k} when \code{family} is set to "parsimonious".
      trueGMu=NULL,
 ### Either \code{NULL} (default value) if the \bold{true} conditional
 ### probability \eqn{g(W)=P(X=0|W)} and conditional expectation
@@ -176,6 +176,7 @@ tmle.npvi. <- structure(
       }
       
       flavor <- match.arg(flavor)
+      nMax <- Arguments$getInteger(nMax, c(10, Inf))
       nodes <- Arguments$getInteger(nodes)
       family <- match.arg(family)
 
@@ -239,7 +240,7 @@ tmle.npvi. <- structure(
         warning("Only ", n0, " out of ", nrow(obs), " observations have 'X==0'. Should 'X' be thresholded?")
       }
       
-      npvi <- NPVI(obs=obs, f=f, family=family, tabulate=tabulate, 
+      npvi <- NPVI(obs=obs, f=f, nMax=nMax, family=family, tabulate=tabulate, 
                    gmin=gmin, gmax=gmax,
                    mumin=mumin, mumax=mumax,
                    thetamin=min(obs[, "Y"]), thetamax=max(obs[, "Y"]),
@@ -377,12 +378,12 @@ tmle.npvi. <- structure(
       
     })
 
-tmle.npvi <- function(obs, f=identity, flavor=c("learning", "superLearning"), lib=list(), nodes=1L, ...) {
+tmle.npvi <- function(obs, f=identity, nMax=10L, flavor=c("learning", "superLearning"), lib=list(), nodes=1L, ...) {
   flavor <- match.arg(flavor)
-  tmle <- try(tmle.npvi.(obs=obs, f=f, flavor=flavor, lib=lib, nodes=nodes, ...))
+  tmle <- try(tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, ...))
   failed <- inherits(tmle, "try-error")
   if (flavor=="superLearning" & failed) {
-    tmle <- tmle.npvi.(obs=obs, f=f, flavor="learning", lib=learningLib, nodes=1L, ...)
+    tmle <- tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor="learning", lib=learningLib, nodes=1L, ...)
     attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
   }
   return(tmle)

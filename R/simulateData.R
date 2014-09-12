@@ -1,4 +1,4 @@
-simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), nMax=10L, verbose=FALSE) {
+simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -10,7 +10,14 @@ simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(
 
   ## Argument 'X':
   X <- Arguments$getNumerics(X);
-   
+
+  ## Argument 'Xq':
+  Xq <- Arguments$getNumerics(Xq);
+  if (length(setdiff(Xq, X))) {
+    throw("This should never happen with type 1 quantiles!")
+  }
+  nMax <- length(Xq)
+  
   ## Argument 'g':
   mode <- mode(g);
   if (mode != "function") {
@@ -40,9 +47,6 @@ simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(
   ## Argument 'family':
   family <- match.arg(family);
 
-  ## Argument 'nMax':
-  nMax <- Arguments$getInteger(nMax, c(10, Inf))
-  
   ## Argument 'Y'
   Y <- Arguments$getNumerics(Y);
   if (!is.null(theta)) {
@@ -78,7 +82,10 @@ simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(
   if (family=="gaussian") {
     XB[!U] <- 0
   } else if (family=="parsimonious") {
-    XB[!U] <- whichXisZero[1] ## first index of row with X equal to 0
+    ## old:
+    ## XB[!U] <- whichXisZero[1] ## first index of row with X equal to 0
+    ## new:
+    XB[!U] <- nMax+1
   }
   ##
   muW <- muWB[U]
@@ -104,8 +111,11 @@ simulateData <- function(B, W, X, g, mu, sigma2, theta=NULL, Y=NA, weightsW=rep(
       YB <- rnorm(B, mean=theta(cbind(X=XB, W=WB)), sd=sd(Y))
     }
   } else if (family=="parsimonious") {
-    indices <- simulateParsimoniouslyXgivenW(WB[U], obsX, condMeanX, sigma2, parameters, nMax=nMax)
-    XB[U] <- whichXisNotZero[indices]
+    indices <- simulateParsimoniouslyXgivenW(WB[U], min(obsX), max(obsX),
+                                             Xq, condMeanX, sigma2, parameters)
+    ## old: XB[U] <- whichXisNotZero[indices]
+    ## new:
+    XB[U] <- as.integer(indices)
     if (!is.null(theta)) {
       T <- theta(cbind(X=XB, W=WB))
       YB <- simulateParsimoniouslyYgivenXW(T, Y)

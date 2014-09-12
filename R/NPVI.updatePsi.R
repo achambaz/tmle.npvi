@@ -15,6 +15,7 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   obs <- getObs(this)
   W <- obs[, "W"]
   X <- fX(obs)
+  Xq <- getXq(this)
     
   g <- getG(this);
   mu <- getMu(this);
@@ -23,7 +24,7 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
 
   ## Perform 'B' simulations according to the estimated parameters
   verbose && enter(verbose, "Simulating ", B, " observations");
-  obsB <- simulateData(B, W, X, g, mu, sigma2, weightsW=weightsW, family=family, verbose=verbose)
+  obsB <- simulateData(B, W, X, Xq, g, mu, sigma2, weightsW=weightsW, family=family, verbose=verbose)
   verbose && str(verbose, obsB);
   verbose && exit(verbose);
 
@@ -32,10 +33,14 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   theta0 <- getTheta0(this)
 
   ## Estimate psiPn:
-  psi1 <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obs, sigma2=sigma2, verbose=verbose) 
-  this$.psiPn <- psi1$mean;
-  this$.psiPn.sd <- psi1$sd;
-
+  if (FALSE) {
+    psi1 <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obs, sigma2=sigma2, verbose=verbose) 
+    this$.psiPn <- psi1$mean;
+    this$.psiPn.sd <- psi1$sd;
+  } else {
+    this$.psiPn <- NA
+    this$.psiPn.sd <- NA
+  }
   ## Estimate psi:
   psi0 <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obsB, sigma2=sigma2, verbose=verbose) 
   this$.psi <- psi0$mean;

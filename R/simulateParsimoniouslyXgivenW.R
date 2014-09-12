@@ -1,4 +1,4 @@
-simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters, r=3, nMax=10L) {
+simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, parameters, r=3) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -8,9 +8,17 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     throw("Parameter 'W' must contain integers entries.")
   }
 
-  ## Argument 'obsX':
-  if (sum(obsX==0)!=0) {
-    throw("Copy neutral state (obs[,'X']==0) has to be removed");
+  ## Arguments 'xmin' and 'xmax':
+  xmin <- Arguments$getNumerics(xmin)
+  xmax <- Arguments$getNumerics(xmax)
+  if (xmin>=xmax) {
+    throw("Argument 'xmin' must be smaller than argument 'xmax'...")
+  }
+  
+  ## Argument 'Xq':
+  Xq <- Arguments$getNumerics(Xq)
+  if (sum(Xq==0)!=0) {
+    throw("Copy neutral state (Xq[,'X']==0) has to be removed");
   }
   
   ## Argument 'condMeanX':
@@ -171,10 +179,10 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
   }
 
   
-  phi <- function(x, lambda, xmin=min(obsX), xmax=max(obsX)) {
-    lambda*x^2 + (1-lambda)*(x*(xmax+xmin)-xmin*xmax)
+  phi <- function(x, lambda, x.min=xmin, x.max=xmax) {
+    lambda*x^2 + (1-lambda)*(x*(x.max+x.min)-x.min*x.max)
   }
-  term1 <- (min(obsX)+max(obsX))*mean(parameters$muWB) - mean(1-parameters$gWB)*min(obsX)*max(obsX)
+  term1 <- (xmin+xmax)*mean(parameters$muWB) - mean(1-parameters$gWB)*xmin*xmax
   term2 <- mean(parameters$muWB^2/(1-parameters$gWB))
   lambda <- (term1-sigma2)/(term1-term2)
   if (lambda>1 | lambda<0) {## cannot happen in theory, but may occur due
@@ -184,18 +192,14 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
   }
   condMeanX2 <- phi(condMeanX, lambda)
 
-  obsXq <- unique(quantile(obsX, type=1, probs=seq(0, 1, length=nMax)))
-  if (length(setdiff(obsXq, obsX))) {
-    throw("This should never happen with type 1 quantiles!")
-  }
-  tests <- testIfInConvexHull(condMeanX, condMeanX2, obsXq, obsXq^2)
+  tests <- testIfInConvexHull(condMeanX, condMeanX2, Xq, Xq^2)
   
   if (FALSE) {
     dev.new()
-    xlim <- range(obsXq, condMeanX)
-    ylim <- range(obsXq^2, condMeanX2)
-    o <- order(obsXq)
-    plot(obsXq[o], obsXq[o]^2, xlim=xlim, ylim=ylim, t='l')
+    xlim <- range(Xq, condMeanX)
+    ylim <- range(Xq^2, condMeanX2)
+    o <- order(Xq)
+    plot(Xq[o], Xq[o]^2, xlim=xlim, ylim=ylim, t='l')
     points(condMeanX, condMeanX2, col=2)
   }
 
@@ -204,7 +208,7 @@ simulateParsimoniouslyXgivenW <- function(W, obsX, condMeanX, sigma2, parameters
     warning("Parsimonious conditional simulation of X given W under a slightly distorted version of the distribution. You may want to try a larger 'nMax'...") 
   } 
   labelW <- identifyUniqueEntries(W)
-  simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, obsXq)
+  simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, Xq)
   V <- runif(length(labelW))
   theXs <- tapply(1:length(labelW), labelW, drawFromSimulationScheme,
                   simSch=simulationSchemes, V=V)
