@@ -80,7 +80,10 @@ simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=NA, weightsW=
   if (family=="gaussian") {
     XB[!U] <- 0
   } else if (family=="parsimonious") {
-    XB[!U] <- whichXisZero[1] ## first index of row with X equal to 0
+    ## old:
+    ## XB[!U] <- whichXisZero[1] ## first index of row with X equal to 0
+    ## new:
+    XB[!U] <- Xq.index[Xq.value==0]
   }
   ##
   muW <- muWB[U]
@@ -108,6 +111,8 @@ simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=NA, weightsW=
   } else if (family=="parsimonious") {
     indices <- simulateParsimoniouslyXgivenW(WB[U], min(obsX), max(obsX),
                                              Xq, condMeanX, sigma2, parameters)
+    ## ## CAUTION
+    Xq.index <- Xq.index[Xq.value!=0]
     XB[U] <- Xq.index[indices]
     if (!is.null(theta)) {
       T <- theta(cbind(X=XB, W=WB))

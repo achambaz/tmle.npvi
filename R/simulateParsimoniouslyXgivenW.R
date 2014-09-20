@@ -17,9 +17,9 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
   
   ## Argument 'Xq':
   Xq.value <- Arguments$getNumerics(Xq$value)
-  if (sum(Xq.value==0)!=0) {
-    throw("Copy neutral state must be be removed from 'Xq'");
-  }
+  Xq.index <- Arguments$getNumerics(Xq$index)
+  ## ## CAUTION!
+  Xq.value <- Xq.value[Xq.value!=0]
   
   ## Argument 'condMeanX':
   condMeanX <- Arguments$getNumerics(condMeanX);

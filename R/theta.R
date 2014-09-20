@@ -273,7 +273,7 @@ setMethodS3("updateThetaTab", "NPVI", function(this, dev, cleverCovTheta, exact=
     OBSTAB.nondiag <- cbind(X=eg.value[, "X"], fW(eg.value))
     OBSTAB.diag <- cbind(X=fX(obs), W=fW(obs))
     OBSTAB <- rbind(OBSTAB.nondiag, OBSTAB.diag)
-    X <- OBSTAB$X
+    X <- OBSTAB[, "X"]
     rm(obs)
 
     ## old:
@@ -323,12 +323,17 @@ setMethodS3("updateThetaTab", "NPVI", function(this, dev, cleverCovTheta, exact=
   ## idx <- which(obs[, "X"]==0)[1]
   ## theta01W <- theta1XW[idx, ]
   ## new:
-  theta01W <- NA
+  whichXqIsZero <- which(eg.index[, "X"]==Xq.index[Xq.value==0])
+  theta01W <- theta1XW[whichXqIsZero]
 
-#### REPRENDRE ICI!!!
-
-  ## formatting
-  THETA1TAB <- theta1XW
+  ## old:
+  ## THETA1TAB <- theta1XW
+  ## new:
+  ## making the sparse matrix
+  THETA1TAB <- sparseMatrix(i=eg.index[, "X"], j=eg.index[, "W"],
+                            x=theta1XW[1:nrow(eg.index)],
+                            dims=c(nr, nr))
+  THETA1TAB[cbind(1:nr, 1:nr)] <- theta1XW[nrow(eg.index)+(1:nr)]
   theta1tab <- function(xiwj) {
     stopifnot(is.matrix(xiwj) && ncol(xiwj)==2 && is.integer(xiwj))
     THETA1TAB[xiwj]
