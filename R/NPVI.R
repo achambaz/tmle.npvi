@@ -125,9 +125,9 @@ setMethodS3("getXq", "NPVI", function(this, ...) {
   this$.Xq;
 })
 
-setMethodS3("getFlavor", "NPVI", function(this, ...) {
-  this$.flavor;
-})
+## setMethodS3("getFlavor", "NPVI", function(this, ...) {
+##   this$.flavor;
+## })
 
 setMethodS3("getMicTol", "NPVI", function(this, ...) {
   this$.stoppingCriteria$mic;
@@ -500,6 +500,13 @@ setMethodS3("as.character", "NPVI", function(#Returns a Description
   s <- sprintf("%s object:", class(this)[1]);
   s <- c(s, "")
 
+  ##   switched to from 'superLearning' to 'learning'?
+  flag <- attr(this, "flag")
+  if (!is.null(flag)) {
+    s <- c(s, flag, "")
+  } 
+
+  
   ## sample size
   s <- c(s, sprintf("Sample size: %s", nrow(getObs(this))))
   s <- c(s, "")
@@ -542,7 +549,7 @@ setMethodS3("as.character", "NPVI", function(#Returns a Description
     s <- c(s, msg2, msg)
     s <- c(s, "")
   }
-
+  
   ## confidence intervals
   psi <- getPsi(this)
   alpha <- 1-getConfLevel(this)

@@ -117,9 +117,9 @@ setMethodS3("initializeTheta", "NPVI", function(this, theta, ...) {
   THETATAB.diag <- theta(OBSTAB.diag) ## a nrow(obs) vector
   ## making the sparse matrix
   THETATAB <- sparseMatrix(i=eg.index[, "X"], j=eg.index[, "W"],
-                           x=THETATAB.nondiag,
+                           x=as.vector(THETATAB.nondiag),
                            dims=c(nr, nr))
-  THETATAB[cbind(1:nr, 1:nr)] <- THETATAB.diag
+  THETATAB[cbind(1:nr, 1:nr)] <- as.vector(THETATAB.diag)
   THETA0TAB <- theta(cbind(X=0, W=fW(obs)))  ## a vector, not a matrix!
   thetatab <- function(xiwj) {
     stopifnot(is.matrix(xiwj) && ncol(xiwj)==2 && is.integer(xiwj))
@@ -331,9 +331,9 @@ setMethodS3("updateThetaTab", "NPVI", function(this, dev, cleverCovTheta, exact=
   ## new:
   ## making the sparse matrix
   THETA1TAB <- sparseMatrix(i=eg.index[, "X"], j=eg.index[, "W"],
-                            x=theta1XW[1:nrow(eg.index)],
+                            x=as.vector(theta1XW[1:nrow(eg.index)]),
                             dims=c(nr, nr))
-  THETA1TAB[cbind(1:nr, 1:nr)] <- theta1XW[nrow(eg.index)+(1:nr)]
+  THETA1TAB[cbind(1:nr, 1:nr)] <- as.vector(theta1XW[nrow(eg.index)+(1:nr)])
   theta1tab <- function(xiwj) {
     stopifnot(is.matrix(xiwj) && ncol(xiwj)==2 && is.integer(xiwj))
     THETA1TAB[xiwj]

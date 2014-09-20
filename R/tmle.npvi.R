@@ -272,7 +272,7 @@ tmle.npvi. <- structure(
                learnDevMu=lib$learnDevMu, learnDevTheta=lib$learnDevTheta,
                learnCondExpX2givenW=lib$learnCondExpX2givenW,
                learnCondExpXYgivenW=lib$learnCondExpXYgivenW,
-               bound=bound, B=B, nMax=nMax, cleverCovTheta=cleverCovTheta,
+               bound=bound, B=B, cleverCovTheta=cleverCovTheta,
                exact=exact, trueGMu=trueGMu,
                SuperLearner.=SuperLearner.,
                verbose=verbose);
