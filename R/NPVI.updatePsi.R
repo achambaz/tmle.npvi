@@ -16,7 +16,7 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   W <- obs[, "W"]
   X <- fX(obs)
   Xq <- getXq(this)
-    
+  
   g <- getG(this);
   mu <- getMu(this);
   sigma2 <- getSigma2(this);
@@ -33,14 +33,9 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   theta0 <- getTheta0(this)
 
   ## Estimate psiPn:
-  if (FALSE) {
-    psi1 <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obs, sigma2=sigma2, verbose=verbose) 
-    this$.psiPn <- psi1$mean;
-    this$.psiPn.sd <- psi1$sd;
-  } else {
-    this$.psiPn <- NA
-    this$.psiPn.sd <- NA
-  }
+  psi1 <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obs, sigma2=sigma2, verbose=verbose) 
+  this$.psiPn <- psi1$mean;
+  this$.psiPn.sd <- psi1$sd;
   ## Estimate psi:
   psi0 <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obsB, sigma2=sigma2, verbose=verbose) 
   this$.psi <- psi0$mean;

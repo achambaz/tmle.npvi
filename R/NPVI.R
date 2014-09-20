@@ -81,13 +81,15 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
 
   obs[, "X"] <- X <- f(obs[, "X"])
   if (length(X)==0) {
-    Xq <- numeric(0)
+    Xq <- data.frame(value=numeric(0), index=integer(0))
   } else {
     Xneq0 <- X[X!=0]
     Xq <- unique(quantile(Xneq0, type=1, probs=seq(0, 1, length=nMax)))
     if (length(setdiff(Xq, Xneq0))) {
       throw("In 'NPVI': components of 'Xq' must be observed values of 'X'...")
     }
+    Xq.idx <- match(Xq, X)
+    Xq <- data.frame(value=Xq, index=Xq.idx)
   }
   
   theW <- setdiff(colnames(obs), c("X", "Y"))

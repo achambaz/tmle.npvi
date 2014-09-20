@@ -102,24 +102,25 @@ setMethodS3("initializeTheta", "NPVI", function(this, theta, ...) {
   fW <- getFW(this);
   fX <- getFX(this);
   obs <- getObs(this);
+  nr <- nrow(obs)
   Xq <- getXq(this);
+  Xq.value <- Arguments$getNumerics(Xq$value)
+  Xq.index <- Arguments$getIntegers(Xq$index)
   
-  eg <- expand.grid(X=Xq, W=obs[, "W"])
-  ## top
-  OBSTAB.top <- cbind(X=eg[, "X"], fW(eg))
-  THETATAB.top <- theta(OBSTAB.top)
-  THETATAB.top <- matrix(THETATAB.top, nrow=length(Xq), ncol=nrow(obs))
-  ## bottom
-  OBSTAB.bottom <- cbind(X=fX(obs), W=fW(obs))
-  THETATAB.bottom <- theta(OBSTAB.bottom) ## a vector, not a matrix!
-  ## last but one row
+  eg.value <- expand.grid(X=Xq.value, W=obs[, "W"])
+  eg.index <- expand.grid(X=Xq.index, W=1:nr)
+  ## non-diagonal entries
+  OBSTAB.nondiag <- cbind(X=eg.value[, "X"], fW(eg.value))
+  THETATAB.nondiag <- theta(OBSTAB.nondiag) ## length(Xq.value)*nrow(obs) vector
+  ## diagonal entries
+  OBSTAB.diag <- cbind(X=fX(obs), W=fW(obs))
+  THETATAB.diag <- theta(OBSTAB.diag) ## a nrow(obs) vector
+  ## making the sparse matrix
+  THETATAB <- sparseMatrix(i=eg.index[, "X"], j=eg.index[, "W"],
+                           x=THETATAB.nondiag,
+                           dims=c(nr, nr))
+  THETATAB[cbind(1:nr, 1:nr)] <- THETATAB.diag
   THETA0TAB <- theta(cbind(X=0, W=fW(obs)))  ## a vector, not a matrix!
-  ## merge
-  THETATAB <- rbind(THETATAB.top,
-                    THETA0TAB,
-                    THETATAB.bottom)
-  ## the last but one row of 'THETATAB' contains the values if 'theta(0,W_i)'
-  ## the last row of 'THETATAB' contains the values of 'theta(X_i,Y_i)'
   thetatab <- function(xiwj) {
     stopifnot(is.matrix(xiwj) && ncol(xiwj)==2 && is.integer(xiwj))
     THETATAB[xiwj]
@@ -213,6 +214,10 @@ setMethodS3("updateThetaTab", "NPVI", function(this, dev, cleverCovTheta, exact=
   ## Argument 'exact':
   exact <- Arguments$getLogical(exact);
 
+  Xq <- getXq(this);
+  Xq.value <- Arguments$getNumerics(Xq$value)
+  Xq.index <- Arguments$getIntegers(Xq$index)
+  
   fW <- getFW(this)
   fX <- getFX(this)
   devThetaAux <- dev
@@ -223,14 +228,18 @@ setMethodS3("updateThetaTab", "NPVI", function(this, dev, cleverCovTheta, exact=
   obs <- getObs(this, tabulate=TRUE);
   nr <- nrow(obs)
 
+  ## very old:
   ## rm(obs)
   ## XW <- as.matrix(expand.grid(X=1:nr, W=1:nr))
   ## thetaXW <- matrix(theta(XW), nrow=nr, ncol=nr)
-
-  XW <- as.matrix(expand.grid(X=obs[, "X"], W=obs[, "W"]))
-  thetaXW <- matrix(theta(XW), nrow=nr, ncol=nr)
-  rm(obs)
-
+  ## old:
+  ## XW <- as.matrix(expand.grid(X=obs[, "X"], W=obs[, "W"]))
+  ## thetaXW <- matrix(theta(XW), nrow=nr, ncol=nr)
+  ## new:
+  XW <- as.matrix(rbind(expand.grid(X=Xq.index, W=1:nr),
+                        cbind(X=1:nr, W=1:nr)))
+  thetaXW <- theta(XW)
+  
   if (!cleverCovTheta) {
     eps <- getEpsilon(this);
     g <- getG(this, tabulate=TRUE);
@@ -240,25 +249,49 @@ setMethodS3("updateThetaTab", "NPVI", function(this, dev, cleverCovTheta, exact=
 
     obs <- getObs(this, tabulate=TRUE);
     gW <- g(obs[, "W"])
-    gW <- t(matrix(gW, nrow=nr, ncol=nr))
+    ## old:
+    ## gW <- t(matrix(gW, nrow=nr, ncol=nr))
+    ## new:
+    gW <- c(rep(gW, each=length(Xq.value)), gW)
+    
     muW <- mu(obs[, "W"])
-    muW <- t(matrix(muW, nrow=nr, ncol=nr))
+    ## old:
+    ## muW <- t(matrix(muW, nrow=nr, ncol=nr))
+    ## new:
+    muW <- c(rep(muW, each=length(Xq.value)), muW)
 
     rm(g, mu, obs)
 
     obs <- getObs(this)
-    eg <- expand.grid(X=obs[, "X"], W=obs[, "W"])
-    OBSTAB <- cbind(X=fX(eg), fW(eg))
-    X <- matrix(fX(obs), nrow=nr, ncol=nr)
+    ## old:
+    ## eg <- expand.grid(X=obs[, "X"], W=obs[, "W"])
+    ## OBSTAB <- cbind(X=fX(eg), fW(eg))
+    ## X <- matrix(fX(obs), nrow=nr, ncol=nr)
+    ## new:
+    eg.value <- expand.grid(X=Xq.value, W=obs[, "W"])
+    eg.index <- expand.grid(X=Xq.index, W=1:nr)
+    OBSTAB.nondiag <- cbind(X=eg.value[, "X"], fW(eg.value))
+    OBSTAB.diag <- cbind(X=fX(obs), W=fW(obs))
+    OBSTAB <- rbind(OBSTAB.nondiag, OBSTAB.diag)
+    X <- OBSTAB$X
     rm(obs)
-    
-    devThetaAuxXW <- matrix(devThetaAux(OBSTAB), nrow=nr, ncol=nr)
-    devXW <- devThetaAuxXW * (X - muW/gW*(X==0))/sigma2;
+
+    ## old:
+    ## devThetaAuxXW <- matrix(devThetaAux(OBSTAB), nrow=nr, ncol=nr)
+    ## devXW <- devThetaAuxXW * (X - muW/gW*(X==0))/sigma2;
+    ## new:
+    devThetaAuxXW <- devThetaAux(OBSTAB)
+    devXW <- devThetaAuxXW * (X - muW/gW*(X==0))/sigma2
     
     if (!exact) { ## do not use clever covariate nor exact expression
       theta1XW <- thetaXW + eps*devXW
     } else { ## do not use clever covariate, but exact expression
-      theta0W <- t(matrix(theta0(1:nr), nrow=nr, ncol=nr))
+      ## old:
+      ## theta0W <- t(matrix(theta0(1:nr), nrow=nr, ncol=nr))
+      ## new:
+      theta0W <- theta0(1:nr)
+      theta0W <- c(rep(theta0W, each=length(Xq.value)),
+                   theta0W)
       term2 <- ( X*(thetaXW - theta0W -X*psi) )/sigma2;
       numerator <- thetaXW + eps*(devXW+term2*thetaXW);
       denominator <- 1 + eps*term2;
@@ -270,14 +303,29 @@ setMethodS3("updateThetaTab", "NPVI", function(this, dev, cleverCovTheta, exact=
     }
     eps <- getEpsilonTheta(this);
     dev <- getHTheta(this, tabulate=TRUE);
-    devXW <- dev(expand.grid(X=1:nr, W=1:nr))
-    devXW <- matrix(devXW, nrow=nr, ncol=nr)
-    theta1XW <- thetaXW + eps*dev(XW)
+    ## old:
+    ## devXW <- dev(expand.grid(X=1:nr, W=1:nr))
+    ## devXW <- matrix(devXW, nrow=nr, ncol=nr)
+    ## theta1XW <- thetaXW + eps*dev(XW)
+    ## new:
+    if (FALSE) {
+      OBSTAB.nondiag <- expand.grid(X=Xq.index, W=1:nr)
+      OBSTAB.diag <- cbind(X=1:nr, W=1:nr)
+      OBSTAB <- rbind(OBSTAB.nondiag, OBSTAB.diag)
+      theta1XW <- thetaXW + eps*dev(OBSTAB)
+    } else {## should be the same
+      theta1XW <- thetaXW + eps*dev(XW)
+    }
   }
-  ## retrieving 'theta01W' from 'theta1XW'
-  obs <- getObs(this, tabulate=FALSE)
-  idx <- which(obs[, "X"]==0)[1]
-  theta01W <- theta1XW[idx, ]
+  ## old: 
+  ## ## retrieving 'theta01W' from 'theta1XW'
+  ## obs <- getObs(this, tabulate=FALSE)
+  ## idx <- which(obs[, "X"]==0)[1]
+  ## theta01W <- theta1XW[idx, ]
+  ## new:
+  theta01W <- NA
+
+#### REPRENDRE ICI!!!
 
   ## formatting
   THETA1TAB <- theta1XW

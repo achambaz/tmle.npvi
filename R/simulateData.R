@@ -12,11 +12,9 @@ simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=NA, weightsW=
   X <- Arguments$getNumerics(X);
 
   ## Argument 'Xq':
-  Xq <- Arguments$getNumerics(Xq);
-  if (length(setdiff(Xq, X))) {
-    throw("This should never happen with type 1 quantiles!")
-  }
-  nMax <- length(Xq)
+  Xq.value <- Arguments$getNumerics(Xq$value);
+  Xq.index <- Arguments$getIntegers(Xq$index);
+  nMax <- nrow(Xq)
   
   ## Argument 'g':
   mode <- mode(g);
@@ -82,10 +80,7 @@ simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=NA, weightsW=
   if (family=="gaussian") {
     XB[!U] <- 0
   } else if (family=="parsimonious") {
-    ## old:
-    ## XB[!U] <- whichXisZero[1] ## first index of row with X equal to 0
-    ## new:
-    XB[!U] <- nMax+1
+    XB[!U] <- whichXisZero[1] ## first index of row with X equal to 0
   }
   ##
   muW <- muWB[U]
@@ -113,9 +108,7 @@ simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=NA, weightsW=
   } else if (family=="parsimonious") {
     indices <- simulateParsimoniouslyXgivenW(WB[U], min(obsX), max(obsX),
                                              Xq, condMeanX, sigma2, parameters)
-    ## old: XB[U] <- whichXisNotZero[indices]
-    ## new:
-    XB[U] <- as.integer(indices)
+    XB[U] <- Xq.index[indices]
     if (!is.null(theta)) {
       T <- theta(cbind(X=XB, W=WB))
       YB <- simulateParsimoniouslyYgivenXW(T, Y)

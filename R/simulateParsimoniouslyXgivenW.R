@@ -16,9 +16,9 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
   }
   
   ## Argument 'Xq':
-  Xq <- Arguments$getNumerics(Xq)
-  if (sum(Xq==0)!=0) {
-    throw("Copy neutral state (Xq[,'X']==0) has to be removed");
+  Xq.value <- Arguments$getNumerics(Xq$value)
+  if (sum(Xq.value==0)!=0) {
+    throw("Copy neutral state must be be removed from 'Xq'");
   }
   
   ## Argument 'condMeanX':
@@ -192,14 +192,14 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
   }
   condMeanX2 <- phi(condMeanX, lambda)
 
-  tests <- testIfInConvexHull(condMeanX, condMeanX2, Xq, Xq^2)
+  tests <- testIfInConvexHull(condMeanX, condMeanX2, Xq.value, Xq.value^2)
   
   if (FALSE) {
     dev.new()
-    xlim <- range(Xq, condMeanX)
-    ylim <- range(Xq^2, condMeanX2)
-    o <- order(Xq)
-    plot(Xq[o], Xq[o]^2, xlim=xlim, ylim=ylim, t='l')
+    xlim <- range(Xq.value, condMeanX)
+    ylim <- range(Xq.value^2, condMeanX2)
+    o <- order(Xq.value)
+    plot(Xq.value[o], Xq.value[o]^2, xlim=xlim, ylim=ylim, t='l')
     points(condMeanX, condMeanX2, col=2)
   }
 
@@ -208,7 +208,7 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
     warning("Parsimonious conditional simulation of X given W under a slightly distorted version of the distribution. You may want to try a larger 'nMax'...") 
   } 
   labelW <- identifyUniqueEntries(W)
-  simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, Xq)
+  simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, Xq.value)
   V <- runif(length(labelW))
   theXs <- tapply(1:length(labelW), labelW, drawFromSimulationScheme,
                   simSch=simulationSchemes, V=V)

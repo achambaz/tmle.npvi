@@ -10,5 +10,5 @@ License: GPL
 LazyLoad: yes
 LazyData: yes
 Depends: R (>= 2.9.0), R.utils (>= 1.4.1)
-Imports: R.methodsS3, R.oo, MASS, sgeostat
+Imports: R.methodsS3, R.oo, MASS, Matrix, sgeostat
 Suggests: SuperLearner (>= 2.0),  e1071 (>= 1.5.24), randomForest (>= 4.5-35), polspline (>= 1.1.4), gam (>= 1.03)

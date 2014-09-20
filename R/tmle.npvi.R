@@ -301,7 +301,6 @@ tmle.npvi. <- structure(
       library("R.utils")
       log <- Arguments$getVerbose(-8, timestamp=TRUE)
       set.seed(12345)
-      
       ##
       ## Simulating a data set and computing the true value of the parameter
       ##

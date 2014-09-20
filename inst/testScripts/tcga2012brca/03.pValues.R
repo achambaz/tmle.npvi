@@ -15,7 +15,7 @@ getPValue <- function(# Calculates p-value from an object of type 'history'
 ### Returns the p-value of the two-sided test of ``\eqn{Psi(P_0)=Phi(P_0)}''.
 }
 
-what <- "AllChromosomes"
+what <- "WholeGenome"
 path <- Arguments$getReadablePath(system.file("testScripts/tcga2012brca/",
                                               package="tmle.npvi"))
 path <- "."

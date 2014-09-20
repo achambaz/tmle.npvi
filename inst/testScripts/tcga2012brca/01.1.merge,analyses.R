@@ -2,14 +2,17 @@
 ## learning
 ##- - - - - 
 ## wd: 'clusterData'
-load("learning.allChromosomes.1-3000.RData")
+
+setwd("/home/antoine/Recherche/Pierre/TMLE/trunk/results/tcga2012brca/")
+
+load("learning.wholeGenome.1-3000.RData")
 learning <- list(descr=descr,
                  TMLE=TMLE)
-load("learning.allChromosomes.3001-6000.RData")
+load("learning.wholeGenome.3001-6000.RData")
 learning$TMLE <- c(learning$TMLE, TMLE)
-load("learning.allChromosomes.6001-9000.RData")
+load("learning.wholeGenome.6001-9000.RData")
 learning$TMLE <- c(learning$TMLE, TMLE)
-load("learning.allChromosomes.9001-11314.RData")
+load("learning.wholeGenome.9001-11314.RData")
 learning$TMLE <- c(learning$TMLE, TMLE)
 learning0 <- learning
 
@@ -27,15 +30,15 @@ cumLimChr <- c(0, cumsum(limChr))
 ## super-learning
 ##- - - - - - - -
 
-if (FALSE) {
-  load("superLearning.allChromosomes.1-3000.RData")
+if (TRUE) {
+  load("superLearning.wholeGenome.1-3000.RData")
   superLearning <- list(descr=descr,
                         TMLE=TMLE)
-  load("superLearning.allChromosomes.3001-6000.RData")
+  load("superLearning.wholeGenome.3001-6000.RData")
   superLearning$TMLE <- c(superLearning$TMLE, TMLE)
-  load("superLearning.allChromosomes.6001-9000.RData")
+  load("superLearning.wholeGenome.6001-9000.RData")
   superLearning$TMLE <- c(superLearning$TMLE, TMLE)
-  load("superLearning.allChromosomes.9001-11314.RData")
+  load("superLearning.wholeGenome.9001-11314.RData")
   superLearning$TMLE <- c(superLearning$TMLE, TMLE)
   
   superLearning0 <- superLearning
@@ -93,7 +96,8 @@ knownMsgs <- c("Error in findInterval",
                "sLeftA",
                "Range of argument",
                "Error in if \\(ps",
-               "must be positive")
+               "must be positive",
+               "Missing element in argument 'lib'")
 msgsL <- lapply(knownMsgs, grep, errL)
 names(msgsL) <- knownMsgs
 str(msgsL)
@@ -101,13 +105,37 @@ str(msgsL)
 if (sum(sapply(msgsL, length)) < length(errL)) {
   stop("'learning': some messages are not in 'knownMsgs'")
 }
-str(msgsL)
+
 
 msgsSL <- lapply(knownMsgs, grep, errSL)
+names(msgsSL) <- knownMsgs
+str(msgsSL)
 if (sum(sapply(msgsSL, length)) < length(errSL)) {
   stop("'superLearning': some messages are not in 'knownMsgs'")
 }
 head(errSL[-unlist(msgsSL)])
+
+##
+##  Missing element in argument 'lib'
+##
+
+msg <- "Missing element in argument 'lib'"
+idxL <- sapply(learning$TMLE,
+               function(xx){length(xx)==1 && length(grep(msg, as.character(xx)))})
+idxSL <- sapply(superLearning$TMLE,
+                function(xx){length(xx)==1 && length(grep(msg, as.character(xx)))})
+sum(idxL)  # 0
+sum(idxSL) # 61 
+
+## get names of an instance of guilty genes
+print(names(learning$TMLE[min(which(idxL))]))  # NA
+print(names(superLearning$TMLE[min(which(idxSL))]))  # "chr10,026505,GAD2"
+
+learning$TMLE <- learning$TMLE[!idxL]
+superLearning$TMLE <- superLearning$TMLE[!idxSL]
+
+load("superLearning.missingGenes.RData")
+superLearning$TMLE <- c(superLearning$TMLE, TMLE)
 
 ##
 ##  impossible... 
@@ -252,5 +280,7 @@ tmle <- tmle[!sapply(tmle, is.null)]
 superLearning$TMLE <- tmle
 
 saveObject(cumLimChr, file="cumLimChr.xdr")
-saveObject(learning, file="learningAllChromosomes.xdr")
-saveObject(superLearning, file="superLearningAllChromosomes.xdr")
+saveObject(learning, file="learningWholeGenome.xdr")
+saveObject(superLearning, file="superLearningWholeGenome.xdr")
+
+
