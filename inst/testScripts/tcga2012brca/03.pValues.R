@@ -24,11 +24,17 @@ PVAL <- NULL
 for (flavor in c("learning", "superLearning")) {
   pathname <- file.path(path, paste(flavor, what, ".xdr", sep=""))
   tmle <- loadObject(pathname)$TMLE
+  if (flavor=="learning") {
+    tmle.l <- tmle
+  } else {
+    tmle.sl <- tmle
+  }
   pathname <- file.path(path, "cumLimChr.xdr")
   cumLimChr <- loadObject(pathname)
   
   pval <- sapply(tmle, function(ll){getPValue(ll$hist, 463)})
   PVAL[[flavor]] <- pval
+  rm(tmle)
 
   yi <- -log10(pval[!is.na(pval)])
   yi <- -log10(pval)
@@ -80,7 +86,13 @@ for (flavor in c("learning", "superLearning")) {
   axis(1, xx, 1:length(xx), tcl=NA)
 }
 
+cmp <- sapply(1:length(tmle.l), function(ii){c(tmle.l[[ii]]$hist[nrow(tmle.l[[ii]]$hist), "psi"],
+                                               tmle.sl[[ii]]$hist[nrow(tmle.sl[[ii]]$hist), "psi"])})
+
+
 stop()
+
+
 
 ww <- apply(sapply(PVAL, is.na), 1, any)
 ranks <- matrix(c(order(PVAL[[1]][!ww]),

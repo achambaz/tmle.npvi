@@ -34,7 +34,7 @@ files.idx <- files.idx[nas==0]
 descr <- list(thresh=2e-2,
               f=identity,
               flavor="superLearning",
-              nodes=3,
+              nodes=1, ##3,
               iter=10,
               cvControl=2,
               stoppingCriteria=list(mic = 0.001, div = 0.001, psi = 0.01))

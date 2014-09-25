@@ -3,7 +3,7 @@
 ##- - - - - 
 ## wd: 'clusterData'
 
-setwd("/home/antoine/Recherche/Pierre/TMLE/trunk/results/tcga2012brca/")
+setwd("../../../../results/tcga2012brca/")
 
 load("learning.wholeGenome.1-3000.RData")
 learning <- list(descr=descr,
@@ -134,8 +134,10 @@ print(names(superLearning$TMLE[min(which(idxSL))]))  # "chr10,026505,GAD2"
 learning$TMLE <- learning$TMLE[!idxL]
 superLearning$TMLE <- superLearning$TMLE[!idxSL]
 
-load("superLearning.missingGenes.RData")
-superLearning$TMLE <- c(superLearning$TMLE, TMLE)
+if (FALSE) {
+  load("superLearning.missingGenes.RData")
+  superLearning$TMLE <- c(superLearning$TMLE, TMLE)
+}
 
 ##
 ##  impossible... 
