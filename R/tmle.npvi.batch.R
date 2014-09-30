@@ -1,7 +1,7 @@
-tmle.npvi. <- structure(
-    function#Targeted Minimum Loss Estimation of NPVI
-### Carries   out  the   targeted  minimum   loss  estimation   (TMLE)   of  a
-### non-parametric variable importance measure of a continuous exposure.
+tmle.npvi.batch. <- structure(
+    function#Batched Targeted Minimum Loss Estimation of NPVI
+### Carries out the batched version of targeted minimum loss estimation (TMLE)
+### of a non-parametric variable importance measure of a continuous exposure.
     (obs,
 ### A \code{n x p} \code{matrix} of observations, with \eqn{p \ge 3}.
 ### \itemize{ \item{Column \code{"X"} corresponds to the continuous
@@ -116,8 +116,8 @@ tmle.npvi. <- structure(
 ### be reduced  in size (for  a faster execution). Currently  implemented only
 ### for flavor \code{learning}.
      ) {
-      ##alias<< tmle.npvi
-      ##seealso<< getSample, getHistory
+      ##alias<< tmle.npvi.batch
+      ##seealso<< tmle.npvi
       
       ##references<< Chambaz, A.,  Neuvial, P., & van der  Laan, M. J. (2012).
       ##Estimation  of  a  non-parametric  variable importance  measure  of  a
@@ -239,50 +239,86 @@ tmle.npvi. <- structure(
       if (n0<n0min) {
         warning("Only ", n0, " out of ", nrow(obs), " observations have 'X==0'. Should 'X' be thresholded?")
       }
-      
-      npvi <- NPVI(obs=obs, f=f, nMax=nMax, family=family, tabulate=tabulate, 
-                   gmin=gmin, gmax=gmax,
-                   mumin=mumin, mumax=mumax,
-                   thetamin=min(obs[, "Y"]), thetamax=max(obs[, "Y"]),
-                   stoppingCriteria=stoppingCriteria)
 
       ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       ## Initialization
       ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      init(npvi, flavor=flavor,
-           learnG=lib$learnG, learnMuAux=lib$learnMuAux, learnTheta=lib$learnTheta,
-           bound=bound, B=B,
-           light=light,
-           trueGMu=trueGMu, 
-           SuperLearner.=SuperLearner.,
-           verbose=verbose);
-      ## rm(learnG);
-      conv <- getConv(npvi);
-      
-      kk <- 1
-      ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      ## Update
-      ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      cat("  iteration ")
-      while ((kk <= iter) && (is.na(conv) || !conv)) {
-        cat(kk, " ")
-        kk <- kk+1
 
-        ## k^th update
-        update(npvi, flavor=flavor, learnDevG=lib$learnDevG,
-               learnDevMu=lib$learnDevMu, learnDevTheta=lib$learnDevTheta,
-               learnCondExpX2givenW=lib$learnCondExpX2givenW,
-               learnCondExpXYgivenW=lib$learnCondExpXYgivenW,
-               bound=bound, B=B, cleverCovTheta=cleverCovTheta,
-               exact=exact, trueGMu=trueGMu,
-               SuperLearner.=SuperLearner.,
-               verbose=verbose);
+      ## COMMENTAIRES:
+      ## 1. limiter les options au maximum: eg, 'tabulate' est obligatoirement TRUE etc.
 
-        ## check convergence
-        updateConv(npvi, B=B)
-        conv <- getConv(npvi)
+      ## determining 'Xq'
+      obs[, "X"] <- X <- f(obs[, "X"])
+      Xneq0 <- X[X!=0]
+      Xq <- unique(quantile(Xneq0, type=1, probs=seq(0, 1, length=nMax-1)))
+      if (length(setdiff(Xq, Xneq0))) {
+        throw("In 'tmle.npvi.batch': components of 'Xq' must be observed values of 'X'...")
       }
-      cat("\n")
+      Xq.idx <- match(Xq, X)
+      Xq0.idx <- which(X==0)[1]
+      Xq <- data.frame(value=c(0, Xq), index=c(Xq0.idx, Xq.idx))
+
+      ## preparing to accumulate information
+      history.batch <- vector("list", length=nBatch)
+      g.cum <- rep(1/2, nrow(obs))
+      muAux.cum <- rep(0, nrow(obs))
+      theta.cum <- NULL
+      sigma2.cum <- NULL
+
+      
+      
+      ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      ## Iteratively exploiting the batches
+      ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      
+      
+      for (batch in 1:nBatch) {
+        cat("treating batch ", nBatch, ":")
+        npvi <- NPVI(obs=obs, f=f, nMax=nMax, family=family, tabulate=tabulate, 
+                     gmin=gmin, gmax=gmax,
+                     mumin=mumin, mumax=mumax,
+                     thetamin=min(obs[, "Y"]), thetamax=max(obs[, "Y"]),
+                     stoppingCriteria=stoppingCriteria)
+
+        ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        ## Inner initialization
+        ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        init(npvi, flavor=flavor,
+             learnG=lib$learnG, learnMuAux=lib$learnMuAux, learnTheta=lib$learnTheta,
+             bound=bound, B=B,
+             light=light,
+             trueGMu=trueGMu, 
+             SuperLearner.=SuperLearner.,
+             verbose=verbose);
+        ## rm(learnG);
+        conv <- getConv(npvi);
+        
+        kk <- 1
+        ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        ## Inner update
+        ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        cat("  iteration ")
+        while ((kk <= iter) && (is.na(conv) || !conv)) {
+          cat(kk, " ")
+          kk <- kk+1
+
+          ## k^th update
+          update(npvi, flavor=flavor, learnDevG=lib$learnDevG,
+                 learnDevMu=lib$learnDevMu, learnDevTheta=lib$learnDevTheta,
+                 learnCondExpX2givenW=lib$learnCondExpX2givenW,
+                 learnCondExpXYgivenW=lib$learnCondExpXYgivenW,
+                 bound=bound, B=B, cleverCovTheta=cleverCovTheta,
+                 exact=exact, trueGMu=trueGMu,
+                 SuperLearner.=SuperLearner.,
+                 verbose=verbose);
+
+          ## check convergence
+          updateConv(npvi, B=B)
+          conv <- getConv(npvi)
+        }
+        cat("\n")
+      }
+      
 
       
       ## history <- getHistory(npvi)
@@ -379,12 +415,12 @@ tmle.npvi. <- structure(
       
     })
 
-tmle.npvi <- function(obs, f=identity, nMax=10L, flavor=c("learning", "superLearning"), lib=list(), nodes=1L, ...) {
+tmle.npvi.batch <- function(obs, f=identity, nMax=10L, flavor=c("learning", "superLearning"), lib=list(), nodes=1L, ...) {
   flavor <- match.arg(flavor)
-  tmle <- try(tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, ...))
+  tmle <- try(tmle.npvi.batch.(obs=obs, f=f, nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, ...))
   failed <- inherits(tmle, "try-error")
   if (flavor=="superLearning" & failed) {
-    tmle <- tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor="learning", lib=learningLib, nodes=1L, ...)
+    tmle <- tmle.npvi.batch.(obs=obs, f=f, nMax=nMax, flavor="learning", lib=learningLib, nodes=1L, ...)
     attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
   }
   return(tmle)

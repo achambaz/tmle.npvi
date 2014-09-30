@@ -1,14 +1,23 @@
 getPValue <- function(# Calculates p-value from an object of type 'history'
                       history,
 ### The \code{history} of a TMLE procedure.
-                      nobs
+                      nobs,
 ### An \code{integer}, the associated number of observations.
-                      ){
+                      wrt.phi=TRUE
+### A  \code{logical}  equal  to  \code{TRUE}  by default,  which  means  that
+### \eqn{psi_n}  is  compared  with  \eqn{phi_n}.  Otherwise,  \eqn{psi_n}  is
+### compared with 0.
+){
   ##seealso<< tmle.npvi, getHistory, as.character.NPVI
   y <- history[nrow(history), ]
   psi <- y["psi"]
-  phi <- y["phi"]
-  se <- y["sicAlt"]/sqrt(nobs)
+  if (wrt.phi) {
+    phi <- y["phi"]
+    se <- y["sicAlt"]/sqrt(nobs)
+  } else {
+    phi <- 0
+    se <- y["psi.sd"]/sqrt(nobs)
+  }
   pval <- 2*pnorm(abs(psi-phi), sd=se, lower.tail=FALSE)
   names(pval) <- "p.value"
   return(pval)
@@ -32,12 +41,14 @@ for (flavor in c("learning", "superLearning")) {
   pathname <- file.path(path, "cumLimChr.xdr")
   cumLimChr <- loadObject(pathname)
   
-  pval <- sapply(tmle, function(ll){getPValue(ll$hist, 463)})
+  pval <- sapply(tmle, function(ll){getPValue(ll$hist, 463, TRUE)})
   PVAL[[flavor]] <- pval
   rm(tmle)
 
-  yi <- -log10(pval[!is.na(pval)])
   yi <- -log10(pval)
+  if (any(is.infinite(yi))) {
+    yi[is.infinite(yi)] <- max(yi[!is.infinite(yi)])+1 ## arbitrary
+  }
   chr <- sapply(names(yi), function(ll){unlist(strsplit(ll, split=","))[1]})
   chr <- sapply(chr, function(ll){unlist(strsplit(ll, split="chr"))[2]})
   chr <- as.integer(chr)
@@ -49,10 +60,10 @@ for (flavor in c("learning", "superLearning")) {
   attributes(geneNames) <- NULL
 
   dev.new()
-  thr <- 40
+  thr <- 200
   ww <- which(yi>thr)
   
-  ylim <- c(0, max(yi))
+  ylim <- c(0, 300) ## c(0, max(yi))
   rg <- range(posAbs)
   xlim <- rg*c(.95, 1.05)
   
