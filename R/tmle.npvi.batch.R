@@ -264,7 +264,7 @@ tmle.npvi.batch. <- structure(
       muAux.cum <- rep(0, nrow(obs))
       theta.cum <- NULL
       sigma2.cum <- NULL
-
+      effIC.cum <- NULL
       
       
       ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

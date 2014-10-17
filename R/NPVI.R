@@ -92,6 +92,19 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
     Xq0.idx <- which(X==0)[1]
     Xq <- data.frame(value=c(0, Xq), index=c(Xq0.idx, Xq.idx))
   }
+
+  Y <- obs[, "Y"]
+  if (length(Y)==0) {
+    Yq <- data.frame(value=numeric(0), index=integer(0))
+  } else {
+    Yq <- unique(quantile(Y, type=1, probs=seq(0, 1, length=nMax)))
+    if (length(setdiff(Yq, Y))) {
+      throw("In 'NPVI': components of 'Yq' must be observed values of 'Y'...")
+    }
+    Yq.idx <- match(Yq, Y)
+    Yq <- data.frame(value=Yq, index=Yq.idx)
+  }
+
   
   theW <- setdiff(colnames(obs), c("X", "Y"))
   if (!tabulate & length(theW)>1) {
@@ -107,7 +120,7 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
   
   extend(Object(), "NPVI",
          .obs=obs, #.flavor=flavor,
-         .Xq=Xq,
+         .Xq=Xq, .Yq=Yq,
          .g=NULL, .mu=NULL, .theta=NULL, .theta0=NULL, .weightsW=rep(1, nrow(obs)), 
          .gtab=NULL, .mutab=NULL, .thetatab=NULL, .theta0tab=NULL,
          .sigma2=NA, .psi=NA, .psi.sd=NA, .psiPn=NA, .psiPn.sd=NA,
@@ -124,6 +137,11 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
 setMethodS3("getXq", "NPVI", function(this, ...) {
   this$.Xq;
 })
+
+setMethodS3("getYq", "NPVI", function(this, ...) {
+  this$.Yq;
+})
+
 
 ## setMethodS3("getFlavor", "NPVI", function(this, ...) {
 ##   this$.flavor;

@@ -85,6 +85,7 @@ setMethodS3("update", "NPVI", function(object,
   obs <- getObs(this);
   obsT <- getObs(this, tabulate=FALSE);
   Xq <- getXq(this);
+  Yq <- getYq(this);
   family <- getFamily(this);
   tabulate <- getTabulate(this)
   g <- getG(this);
@@ -105,7 +106,8 @@ setMethodS3("update", "NPVI", function(object,
     weightsW <- getWeightsW(this)
     fY <- getFY(this)
     obsB <- simulateData(B, obs[, "W"], obsT[, "X"], Xq, g, mu, sigma2,
-                         theta=theta, Y=obsT[, "Y"], weightsW=weightsW,
+                         theta=theta, Y=Yq, #obsT[, "Y"],
+                         weightsW=weightsW,
                          family=family)
     ## taken from 'updateEfficientInfluenceCurve'
     thetaXW <- theta(obsB[, c("X", "W")]);
@@ -115,7 +117,7 @@ setMethodS3("update", "NPVI", function(object,
     
     X <- fX(obsB)
     Y <- fY(obsB)
-          
+              
     D1 <- X * (thetaXW - theta0W - X * psi);
     D2 <- (Y - thetaXW) * (X - muW/gW*(X==0));
     verbose && summary(verbose, D1);
