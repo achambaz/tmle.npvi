@@ -106,7 +106,7 @@ setMethodS3("update", "NPVI", function(object,
     weightsW <- getWeightsW(this)
     fY <- getFY(this)
     obsB <- simulateData(B, obs[, "W"], obsT[, "X"], Xq, g, mu, sigma2,
-                         theta=theta, Y=Yq, #obsT[, "Y"],
+                         theta=theta, Y=Yq, 
                          weightsW=weightsW,
                          family=family)
     ## taken from 'updateEfficientInfluenceCurve'
