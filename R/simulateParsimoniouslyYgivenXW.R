@@ -8,7 +8,19 @@ simulateParsimoniouslyYgivenXW <- function(T, Y) {
   ## Argument 'Y':
   Y <- Arguments$getNumerics(Y);
   
-
+  ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ## A few useful functions
+  ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  identifyUniqueEntries <- function(T) {
+    ## attributes a unique label to each unique entry of T
+    sortedT <- sort(T, index.return=TRUE)
+    labelST <- cumsum(c(0, diff(sortedT$x)>0))
+    labelT <- rep(NA, length(T))
+    labelT[sortedT$ix] <- labelST
+    return(labelT+1)
+  }
+    
   getSimulationScheme <- function(T, Y) {
     ## Yinf <- sapply(T, function(tt) {
     ##   max(Y[which(Y<tt)])
@@ -16,14 +28,20 @@ simulateParsimoniouslyYgivenXW <- function(T, Y) {
     ## Ysup <- sapply(T, function(tt) {
     ##   min(Y[which(Y>=tt)])
     ## })
+    lab <- identifyUniqueEntries(T)
+    suT <- sort(unique(T))
+    ## the above  labels  are such  that the  i-th  largest value  of 'T'  is
+    ## labelled 'i'
     sortedY <- sort(Y, index.return=TRUE)
-    index <- findInterval(T, sortedY$x)
+    index <- findInterval(suT,
+                          sortedY$x)
     Yinf.value <- sortedY$x[index]
     Ysup.value <- sortedY$x[index+1]
     Yinf.index <- sortedY$ix[index]
     Ysup.index <- sortedY$ix[index+1]
-    prob <- (Ysup.value - T)/(Ysup.value-Yinf.value)
+    prob <- (Ysup.value - suT)/(Ysup.value-Yinf.value)
     out <- cbind(Yinf.index, Ysup.index, prob, 1-prob)
+    out <- out[lab, ]
     colnames(out) <- c("Y1", "Y2", "p1", "p2")
     return(out)
   }
