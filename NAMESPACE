@@ -1,7 +1,7 @@
 import(R.utils)
 importFrom(R.methodsS3, setMethodS3, throw)
 importFrom(R.oo, setConstructorS3, extend, Object)
-importFrom(sgeostat, in.chull)
+importFrom(sgeostat, in.chull, in.polygon)
 importFrom(MASS, mvrnorm)
 importFrom(Matrix, sparseMatrix)
 

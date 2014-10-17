@@ -3,7 +3,7 @@ Package: tmle.npvi
 Version: 0.8.9 [2014-10-17]
 o Now using sparse matrices to speed up the computations of the tabulated
 versions of the features of interest
-o Faster version of 'simulateParsimiouslyYgivenXW'
+o Faster version of 'simulateParsimiouslyYgivenXW' and 'simulateParsimiouslyXgivenW' 
 
 Version: 0.8.6 [2014-06-27]
 o Now handling the (rare) situation where

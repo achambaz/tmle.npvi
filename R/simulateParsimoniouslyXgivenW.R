@@ -220,6 +220,29 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
   return(out)
 }
 
+fasterGetSimulationScheme <- function(Xq, X, X2) {
+    idx <- 1:length(Xq)
+    tri <- as.matrix(expand.grid(idx, idx, idx))
+    a <- apply(tri, 1, FUN=function(x) all(diff(x)>0))
+    trie <- tri[a, ]
+    
+    ## order triangles by distance to tails
+    left <- Xq[trie[, 1]]-min(Xq)
+    right <- max(Xq)-Xq[trie[, 3]]
+    oo <- order(pmin(left, right), decreasing=TRUE)
+
+    trio <- trie[oo, ]
+
+    res <- rep(NA, length(X))
+    for (ii in 1:nrow(trio)) {
+        idx <- trio[ii, ]
+        test <- in.polygon(X, X2, Xq[idx], Xq[idx]^2)
+        res[which(test & is.na(res))] <- ii
+        if (sum(is.na(res))==0) break
+    }
+    res
+}
+
 ############################################################################
 ## HISTORY:
 ## 2014-02-07

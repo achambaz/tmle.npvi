@@ -99,3 +99,7 @@ polygon(x=xP, y=yP, col=lightRed, border=NA)
 abline(v=cumMaxPos, col=8)
 text(x, y=1:21%%2*1.04-0.02, lab)
 dev.off()
+
+## saving to file
+dat <- cbind(absPos[o], mat[o, ])
+R.utils::saveObject(dat, "tcga2012brca,propZero.xdr")
