@@ -208,7 +208,7 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
     warning("Parsimonious conditional simulation of X given W under a slightly distorted version of the distribution. You may want to try a larger 'nMax'...") 
   } 
   labelW <- identifyUniqueEntries(W)
-  simulationSchemes <- getSimulationScheme(labelW, condMeanX, condMeanX2, Xq.value)
+  simulationSchemes <- fasterGetSimulationScheme(labelW, condMeanX, condMeanX2, Xq.value)
   V <- runif(length(labelW))
   theXs <- tapply(1:length(labelW), labelW, drawFromSimulationScheme,
                   simSch=simulationSchemes, V=V)
@@ -216,31 +216,55 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
   for (lab in unique(labelW)) {
     simulatedXs[which(labelW==lab)] <- theXs[[as.character(lab)]]
   }
-  out <- simulatedXs  
+  out <- simulatedXs
   return(out)
 }
 
-fasterGetSimulationScheme <- function(Xq, X, X2) {
-    idx <- 1:length(Xq)
-    tri <- as.matrix(expand.grid(idx, idx, idx))
-    a <- apply(tri, 1, FUN=function(x) all(diff(x)>0))
-    trie <- tri[a, ]
-    
-    ## order triangles by distance to tails
-    left <- Xq[trie[, 1]]-min(Xq)
-    right <- max(Xq)-Xq[trie[, 3]]
-    oo <- order(pmin(left, right), decreasing=TRUE)
 
-    trio <- trie[oo, ]
+fasterGetSimulationScheme <- function(labelW, condMeanX, condMeanX2, Xq.value) {
+  ## preliminary
+  Xq <- Xq.value
+  keepOnly <- match(unique(labelW), labelW)
+  lab <- labelW[keepOnly]
+  condMeanX <- condMeanX[keepOnly]
+  condMeanX2 <- condMeanX2[keepOnly]
+  ## preparing triangles
+  idx <- 1:length(Xq)
+  triangles <- as.matrix(expand.grid(idx, idx, idx))
+  keep <- apply(triangles, 1, FUN=function(x) all(diff(x)>0))
+  triangles <- triangles[keep, ]
+  
+  ## ordering triangles by distance to tails
+  left <- Xq[triangles[, 1]]-min(Xq)
+  right <- max(Xq)-Xq[triangles[, 3]]
+  oo <- order(pmin(left, right), decreasing=TRUE)
+  triangles <- triangles[oo, ]
 
-    res <- rep(NA, length(X))
-    for (ii in 1:nrow(trio)) {
-        idx <- trio[ii, ]
-        test <- in.polygon(X, X2, Xq[idx], Xq[idx]^2)
-        res[which(test & is.na(res))] <- ii
-        if (sum(is.na(res))==0) break
+  ## assigning a triangle to each couple '(condMeanX[ii], condMeanX2[ii])'
+  ## and completing the simulation scheme
+  trg <- matrix(NA, ncol=length(condMeanX), nrow=3)
+  probs <- matrix(NA, nrow=length(condMeanX), ncol=3)
+  for (ii in 1:nrow(triangles)) {
+    idx <- triangles[ii, ]
+    jdx <- is.na(trg[1, ])
+    if (length(jdx)==0) {
+      break
     }
-    res
+    test <- in.polygon(condMeanX[jdx], condMeanX2[jdx],
+                       Xq[idx], Xq[idx]^2)
+    if (any(test)) {
+      concerned <- which(jdx)[which(test)]
+      trg[, concerned] <- idx
+      probs[concerned, ] <- cart2bary(cbind(Xq[idx], Xq[idx]^2),
+                                      cbind(condMeanX[concerned], condMeanX2[concerned]))
+    }
+  }
+  out <- cbind(t(trg), probs)
+  colnames(out) <- c("X1", "X2", "X3", "p1", "p2", "p3")
+  out <- lapply(seq_len(nrow(out)), function(ii){out[ii, ]})
+  names(out) <- as.character(lab)
+  
+  return(out)
 }
 
 ############################################################################

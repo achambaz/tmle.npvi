@@ -2,6 +2,7 @@ import(R.utils)
 importFrom(R.methodsS3, setMethodS3, throw)
 importFrom(R.oo, setConstructorS3, extend, Object)
 importFrom(sgeostat, in.chull, in.polygon)
+importFrom(geometry, cart2bary)
 importFrom(MASS, mvrnorm)
 importFrom(Matrix, sparseMatrix)
 
