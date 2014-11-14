@@ -263,6 +263,7 @@ fasterGetSimulationScheme <- function(labelW, condMeanX, condMeanX2, Xq.value) {
   colnames(out) <- c("X1", "X2", "X3", "p1", "p2", "p3")
   out <- lapply(seq_len(nrow(out)), function(ii){out[ii, ]})
   names(out) <- as.character(lab)
+  out <- out[order(lab), ]
   
   return(out)
 }
