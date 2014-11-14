@@ -1,27 +1,35 @@
 simulateParsimoniouslyYgivenXW <- function(T, Y) {
-  ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## Validate arguments
-  ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## Argument 'T':
-  T <- Arguments$getNumerics(T);
-  
-  ## Argument 'Y':
-  Y <- Arguments$getNumerics(Y);
-  
-  ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ## A few useful functions
-  ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  
-  identifyUniqueEntries <- function(T) {
+    ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ## Validate arguments
+    ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ## Argument 'T':
+    T <- Arguments$getNumerics(T);
+    
+    ## Argument 'Y':
+    Y <- Arguments$getNumerics(Y);
+    
+    test <- (min(Y)<=min(T) & max(T)<=max(Y))
+    if (!test) {## if parsimonious method fails
+        throw("Parsimonious conditional simulation of Y given (X, W) only works when 'theta' takes its values in 'range(Y)'\nPlease use options 'thetamin' and 'thetamax' in the construction of the 'NPVI' object")
+    } else {
+        simulationSchemes <- getSimulationScheme(T, Y)
+        V <- (runif(length(T)) >= simulationSchemes[, "p1"]) + 1
+        out <- simulationSchemes[cbind(1:length(T), V)]
+    }
+    
+    return(out)
+}
+
+identifyUniqueEntries <- function(T) {
     ## attributes a unique label to each unique entry of T
     sortedT <- sort(T, index.return=TRUE)
     labelST <- cumsum(c(0, diff(sortedT$x)>0))
     labelT <- rep(NA, length(T))
     labelT[sortedT$ix] <- labelST
     return(labelT+1)
-  }
-    
-  getSimulationScheme <- function(T, Y) {
+}
+
+getSimulationScheme <- function(T, Y) {
     ## Yinf <- sapply(T, function(tt) {
     ##   max(Y[which(Y<tt)])
     ## })
@@ -44,19 +52,8 @@ simulateParsimoniouslyYgivenXW <- function(T, Y) {
     out <- out[lab, ]
     colnames(out) <- c("Y1", "Y2", "p1", "p2")
     return(out)
-  }
-  
-  test <- (min(Y)<=min(T) & max(T)<=max(Y))
-  if (!test) {## if parsimonious method fails
-    throw("Parsimonious conditional simulation of Y given (X, W) only works when 'theta' takes its values in 'range(Y)'\nPlease use options 'thetamin' and 'thetamax' in the construction of the 'NPVI' object")
-  } else {
-    simulationSchemes <- getSimulationScheme(T, Y)
-    V <- (runif(length(T)) >= simulationSchemes[, "p1"]) + 1
-    out <- simulationSchemes[cbind(1:length(T), V)]
-  }
-  
-  return(out)
 }
+
 
 ############################################################################
 ## HISTORY:
