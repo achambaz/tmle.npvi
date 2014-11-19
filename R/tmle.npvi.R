@@ -16,6 +16,12 @@ tmle.npvi. <- structure(
 ### A \code{function} involved in the  definition of the parameter of interest
 ### \eqn{\psi},  which must  satisfy  \eqn{f(0)=0} (see  Details). Defaults  to
 ### \code{identity}.
+     nMax=10L,
+### An \code{integer} (defaults to  \code{10L}, the smallest authorized value)
+### indicating the  maximum number of  observed values of \eqn{X\neq  0} which
+### are  used to  create  the  supports of  the  conditional distributions  of
+### \eqn{X} given  \eqn{W} and \eqn{X\neq0}  involved in the  simulation under
+### \eqn{P_n^k} when \code{family} is set to "parsimonious".
      flavor=c("learning", "superLearning"),
 ### Indicates whether the construction of the relevant features of \eqn{P_n^0}
 ### and \eqn{P_n^k}, the (non-targeted  yet) initial and (targeted) successive
@@ -56,12 +62,6 @@ tmle.npvi. <- structure(
 ### the data set  simulated under each \eqn{P_n^k} to  compute an approximated
 ### value of \eqn{\Psi(P_n^k)}), the parameter of interest at \eqn{P_n^k}. The
 ### larger \code{B}, the more accurate the approximation.
-     nMax=10L,
-### An \code{integer} (defaults to  \code{10L}, the smallest authorized value)
-### indicating the  maximum number of  observed values of \eqn{X\neq  0} which
-### are  used to  create  the  supports of  the  conditional distributions  of
-### \eqn{X} given  \eqn{W} and \eqn{X\neq0}  involved in the  simulation under
-### \eqn{P_n^k} when \code{family} is set to "parsimonious".
      trueGMu=NULL,
 ### Either \code{NULL} (default value) if the \bold{true} conditional
 ### probability \eqn{g(W)=P(X=0|W)} and conditional expectation
@@ -379,12 +379,27 @@ tmle.npvi. <- structure(
       
     })
 
-tmle.npvi <- function(obs, f=identity, nMax=10L, flavor=c("learning", "superLearning"), lib=list(), nodes=1L, ...) {
+tmle.npvi <- function(obs,         f=identity,        nMax=10L,
+                      flavor=c("learning", "superLearning"),  lib=list(),  nodes=1L,  cvControl=NULL,
+                      family=c("parsimonious",   "gaussian"),  
+                      cleverCovTheta=FALSE, bound=1, B=1e5L, trueGMu=NULL,  iter=5L,
+                      stoppingCriteria=list(mic=0.01,  div=0.01,  psi=0.1),
+                      gmin=5e-2,   gmax=.95,
+                      mumin=quantile(f(obs[obs[,  "X"]!=0,   "X"]),  type=1, probs=0.01),
+                      mumax=quantile(f(obs[obs[, "X"]!=0, "X"]),  type=1, probs=0.99),
+                      verbose=FALSE, tabulate=TRUE, exact=TRUE, light=TRUE) {
   flavor <- match.arg(flavor)
-  tmle <- try(tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, ...))
+  tmle <- try(tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, cvControl=cvControl,
+                         family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
+                         trueGMu=trueGMu, iter=iter,
+                         stoppingCriteria=stoppingCriteria, gmin=gmin, gmax=gmax,
+                         mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light))
   failed <- inherits(tmle, "try-error")
   if (flavor=="superLearning" & failed) {
-    tmle <- tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor="learning", lib=learningLib, nodes=1L, ...)
+    tmle <- tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor="learning", lib=learningLib, nodes=1L,
+                       cvControl=cvControl, family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B, 
+                       trueGMu=trueGMu, iter=iter, stoppingCriteria=stoppingCriteria, gmin=gmin, gmax=gmax,
+                         mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light)
     attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
   }
   return(tmle)
