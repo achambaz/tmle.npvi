@@ -188,9 +188,9 @@ tmle.npvi. <- structure(
       if (length(lib)==0) {
         ## get our library:
         if (flavor=="superLearning") {
-          lib <- superLearningLib
+          lib <- tmle.npvi::superLearningLib
         } else {
-          lib <- learningLib
+          lib <- tmle.npvi::learningLib
         }
       }
        
