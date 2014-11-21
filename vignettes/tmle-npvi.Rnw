@@ -6,12 +6,13 @@
 
 \documentclass[a4paper]{article}
 \usepackage{amsmath,amssymb,manfnt}
-\usepackage[textwidth=15cm]{geometry}
+\usepackage[textwidth=15cm, textheight=23cm]{geometry}
+\graphicspath{{fig/}}
 
 <<include=FALSE>>=
 library(knitr)
 opts_chunk$set(
-fig.path='fig'
+fig.path='fig/'
 )
 @
 
@@ -307,7 +308,7 @@ abline(h=confInt0, col="red")
 
 \begin{figure}
   \centering
-  \includegraphics[width=6cm]{fig-confInt}
+  \includegraphics[width=6cm]{confInt-1}
   \caption{A visual summary of  the TMLE procedure contained in \texttt{npvi}.
     The black  dots represent  the successive values  of $\Psi_{f}(P_{n}^{k})$
     for    $k=0,1,2$,   where   $\Psi_{f}(P_{n}^{2})$    is   the    TMLE   of
@@ -335,31 +336,34 @@ nms <- names(tcga2012brca)
 str(nms)
 @ 
 
-The data set associated with gene TP53 includes 3 DNA methylation measures across the gene.  It can be analyzed as follows:
-
-<<>>=
+The data set associated with gene TP53 includes 3 DNA methylation measures across the gene.  
+<<pairs>>=
 ii <- grep("TP53", nms)
 obs <- tcga2012brca[[ii]]
 @ 
-
-<<>>=
-pairs(obs, main=nms[ii])
-@
-
-
+In this case, there are only \Sexpr{sum(obs[, "X"]==0)} observations with neutral copy number ($X=0$ after shifting).   We arbitrarily set a threshold to $0.02$. This is what the data set looks like, where green points correspond to observations whose copy numbers are smaller than this threshold in absolute value:
 <<>>=
 thr <- 0.02
 whichSmall <- which(abs(obs[, "X"]) <= thr)
-obs[whichSmall, "X"] <- 0
+cols <- rep("black", nrow(obs))
+cols[whichSmall] <- "green"
+pairs(obs, main=nms[ii], col=cols, pch=19, cex=0.5)
 
-res <- tmle.npvi(obs)
-res
+## thresholding
+whichSmall <- which(abs(obs[, "X"]) <= thr)
+obs[whichSmall, "X"] <- 0
+@ 
+
+After thresholding there are  \Sexpr{sum(obs[, "X"]==0)} observations with neutral copy number.  We analyze the data set as follows:
+<<>>=
+npvi.TP53 <- tmle.npvi(obs)
+npvi.TP53
 @
 
 \section{Session information}
 \label{sec:session-information}
 
-<<>>=
+<<echo=FALSE>>=
 sessionInfo()
 @ 
 
