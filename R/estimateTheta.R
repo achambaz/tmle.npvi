@@ -41,7 +41,7 @@ estimateTheta <- function(obs, flavor=c("learning", "superLearning"), learnTheta
                               family=gaussian(), ...)
     theta <- function(XW) {
       XWd <- as.data.frame(XW)
-      predict.SuperLearner(fitTheta, newdata=XWd)$pred
+      predict(fitTheta, newdata=XWd)$pred
     }
   }
   verbose && cat(verbose, "theta(X,W):");

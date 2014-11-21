@@ -46,7 +46,7 @@ estimateDevTheta <- function(thetaXW, obs, flavor=c("learning", "superLearning")
     
     devTheta <- function(XW) {
       XWd <- as.data.frame(XW)
-      predict.SuperLearner(fitDevTheta, newdata=XWd)$pred
+      predict(fitDevTheta, newdata=XWd)$pred
     }
   }
   verbose && cat(verbose, "devTheta(XW):");

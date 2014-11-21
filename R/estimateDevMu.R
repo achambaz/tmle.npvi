@@ -48,7 +48,7 @@ estimateDevMu <- function(muW, obs, eic1, flavor=c("learning", "superLearning"),
                               family=gaussian(), ...);
     devMu <- function(W) {
       Wd <- as.data.frame(W)
-      predict.SuperLearner(fitDevMu, newdata=Wd)$pred;
+      predict(fitDevMu, newdata=Wd)$pred;
     }
   }
   verbose && cat(verbose, "devMu(W):");

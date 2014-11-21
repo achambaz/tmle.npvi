@@ -198,11 +198,11 @@ setMethodS3("update", "NPVI", function(object,
                                           family=gaussian(), ...)
       condExpX2givenW <- function(W) {
         Wd <- as.data.frame(W)
-        predict.SuperLearner(fitCondExpX2givenW, newdata=Wd)$pred
+        predict(fitCondExpX2givenW, newdata=Wd)$pred
       }
       condExpXYgivenW <- function(W) {
         Wd <- as.data.frame(W)
-        predict.SuperLearner(fitCondExpXYgivenW, newdata=Wd)$pred
+        predict(fitCondExpXYgivenW, newdata=Wd)$pred
       }
       verbose && cat(verbose, "E(X^2|W):");
       verbose && print(verbose, summary(condExpX2givenW(extractW(obsD))));

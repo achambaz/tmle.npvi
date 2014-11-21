@@ -30,7 +30,6 @@ estimateDevG <- function(gW, obs, eic1, flavor=c("learning", "superLearning"), l
       throw("Argument 'SuperLearner.' should be a function")
     }
   }
-
   
   ## Argument 'verbose'
   verbose <- Arguments$getVerbose(verbose);
@@ -48,7 +47,7 @@ estimateDevG <- function(gW, obs, eic1, flavor=c("learning", "superLearning"), l
                              family=gaussian(), ...)
     devG <- function(W) {
       Wd <- as.data.frame(W)
-      predict.SuperLearner(fitDevG, newdata=Wd)$pred
+      predict(fitDevG, newdata=Wd)$pred
     }
   }
   verbose && cat(verbose, "devG(W):");

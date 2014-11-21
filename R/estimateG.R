@@ -41,7 +41,7 @@ estimateG <- function(obs, flavor=c("learning", "superLearning"), learnG,
                           family=binomial(), ...)
     g <- function(W) {
       Wd <- as.data.frame(W)
-      predict.SuperLearner(fitG, newdata=Wd)$pred
+      predict(fitG, newdata=Wd)$pred
     }  
   }
   verbose && cat(verbose, "g(W):");

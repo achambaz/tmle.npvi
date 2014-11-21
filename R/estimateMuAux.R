@@ -46,7 +46,7 @@ estimateMuAux <- function(obs, flavor=c("learning", "superLearning"), learnMuAux
     verbose && print(verbose, fitMuAux);
     muAux <- function(W) {
       Wd <- as.data.frame(W)
-      predict.SuperLearner(fitMuAux, newdata=Wd)$pred;
+      predict(fitMuAux, newdata=Wd)$pred;
     }
   }
   verbose && cat(verbose, "mu'(W):");
