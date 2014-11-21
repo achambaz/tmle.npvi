@@ -351,7 +351,7 @@ tmle.npvi. <- structure(
       ##
 
       ## Running the TMLE procedure
-      npvi <- tmle.npvi(obs, f=identity, flavor="learning")
+      npvi <- tmle.npvi(obs, f=identity, flavor="learning", B=5e4)
 
       ## Summarizing its results
       npvi
