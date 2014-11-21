@@ -382,7 +382,7 @@ tmle.npvi. <- structure(
 tmle.npvi <- function(obs,         f=identity,        nMax=10L,
                       flavor=c("learning", "superLearning"),  lib=list(),  nodes=1L,  cvControl=NULL,
                       family=c("parsimonious",   "gaussian"),  
-                      cleverCovTheta=FALSE, bound=1, B=1e5L, trueGMu=NULL,  iter=5L,
+                      cleverCovTheta=FALSE, bound=1, B=1e5, trueGMu=NULL,  iter=5L,
                       stoppingCriteria=list(mic=0.01,  div=0.01,  psi=0.1),
                       gmin=5e-2,   gmax=.95,
                       mumin=quantile(f(obs[obs[,  "X"]!=0,   "X"]),  type=1, probs=0.01),
