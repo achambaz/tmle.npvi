@@ -57,7 +57,7 @@ tmle.npvi. <- structure(
      bound=1,
 ### A  positive  \code{numeric} (defaults  to  \code{1}),  upper-bound on  the
 ### absolute value of the fluctuation parameter.
-     B=1e5L,
+     B=1e5,
 ### An \code{integer}  (defaults to \code{1e5}) indicating the  sample size of
 ### the data set  simulated under each \eqn{P_n^k} to  compute an approximated
 ### value of \eqn{\Psi(P_n^k)}), the parameter of interest at \eqn{P_n^k}. The
