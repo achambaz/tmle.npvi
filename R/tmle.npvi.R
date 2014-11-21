@@ -212,7 +212,7 @@ tmle.npvi. <- structure(
           cl <- parallel::makeCluster(nodes, type="PSOCK", outfile=tf) # can use different types here
           on.exit(parallel::stopCluster(cl))
           ##
-          SL.library <- unique(unlist(superLearningLib))
+          SL.library <- unique(unlist(tmle.npvi::superLearningLib))
           parallel::clusterSetRNGStream(cl, iseed=2343)
           parallel::clusterExport(cl, SL.library)
           SuperLearner. <- function(...) {
@@ -396,7 +396,7 @@ tmle.npvi <- function(obs,         f=identity,        nMax=10L,
                          mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light))
   failed <- inherits(tmle, "try-error")
   if (flavor=="superLearning" & failed) {
-    tmle <- tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor="learning", lib=learningLib, nodes=1L,
+    tmle <- tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor="learning", lib=tmle.npvi::learningLib, nodes=1L,
                        cvControl=cvControl, family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B, 
                        trueGMu=trueGMu, iter=iter, stoppingCriteria=stoppingCriteria, gmin=gmin, gmax=gmax,
                          mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light)
