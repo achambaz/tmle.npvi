@@ -180,7 +180,7 @@ tmle.npvi. <- structure(
       nodes <- Arguments$getInteger(nodes)
       family <- match.arg(family)
 
-      if (B<1e5) {
+      if (B<5e4) {
         warning("Parameter 'B' may be too small; try a larger 'B'")
       }
       
