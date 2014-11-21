@@ -198,14 +198,14 @@ tmle.npvi. <- structure(
         library(SuperLearner)
         if (is.null(cvControl)) {
           warning("Setting 'V=10' in 'SuperLearner.'")
-          cvControl <- SuperLearner.CV.control(V=10L)
+          cvControl <- SuperLearner::SuperLearner.CV.control(V=10L)
         } else {
           cvControl <- Arguments$getInteger(cvControl,c(2, Inf))
-          cvControl <- SuperLearner.CV.control(V=cvControl)
+          cvControl <- SuperLearner::SuperLearner.CV.control(V=cvControl)
         }
         if (nodes==1) {
           SuperLearner. <- function(...) {
-            SuperLearner(cvControl=cvControl, ...)
+            SuperLearner::SuperLearner(cvControl=cvControl, ...)
           }
         } else {
           tf <- tempfile("snitch.Rout")
@@ -216,7 +216,7 @@ tmle.npvi. <- structure(
           parallel::clusterSetRNGStream(cl, iseed=2343)
           parallel::clusterExport(cl, SL.library)
           SuperLearner. <- function(...) {
-            snowSuperLearner(cluster=cl, cvControl=cvControl, ...)
+            SuperLearner::snowSuperLearner(cluster=cl, cvControl=cvControl, ...)
           }
         }
       } else {
