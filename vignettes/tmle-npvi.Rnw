@@ -1,11 +1,20 @@
+%\VignetteEngine{knitr::knitr}
 % \VignetteIndexEntry{tmle.npvi}
 % \VignetteDepends{tmle.npvi}
 % \VignetteKeywords{Targeted minimum loss estimation}
 % \VignettePackage{tmle.npvi}
 
 \documentclass[a4paper]{article}
-\usepackage{Sweave,amsmath,amssymb,manfnt}
-\SweaveOpts{prefix.string=fig}
+\usepackage{amsmath,amssymb,manfnt}
+\usepackage[textwidth=15cm]{geometry}
+
+<<include=FALSE>>=
+library(knitr)
+opts_chunk$set(
+fig.path='fig'
+)
+@
+
 
 \addtolength{\parskip}{\baselineskip}
 
@@ -278,7 +287,7 @@ print(round(history, 4))
 
 The following lines produce the plot shown in Figure~\ref{fig:visu}.
 
-<<confInt, fig=TRUE, include=FALSE>>=
+<<confInt, include=FALSE>>=
 hp <- history[, "psi"]
 hs <- history[, "sic"]
 hs[1] <- NA
@@ -333,18 +342,19 @@ ii <- grep("TP53", nms)
 obs <- tcga2012brca[[ii]]
 @ 
 
-<<fig=TRUE>>=
+<<>>=
 pairs(obs, main=nms[ii])
 @
 
 
+<<>>=
 thr <- 0.02
 whichSmall <- which(abs(obs[, "X"]) <= thr)
 obs[whichSmall, "X"] <- 0
 
 res <- tmle.npvi(obs)
 res
-@ 
+@
 
 \section{Session information}
 \label{sec:session-information}
