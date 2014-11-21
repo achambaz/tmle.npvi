@@ -238,7 +238,7 @@ setMethodS3("getHistory", "NPVI", function(#Returns History of TMLE Procedure
 })
 
 setMethodS3("updateHistory", "NPVI", function(this, ...) {
-  history <- getHistory(this);
+  history <- tmle.npvi::getHistory(this);
   psi <- getPsi(this);
   psi.sd <- getPsiSd(this);  
   epsilon <- getEpsilon(this);
@@ -807,7 +807,7 @@ setMethodS3("updateConv", "NPVI", function(x, B, ...) {
   psi.tol <- getPsiTol(this)
   ## extracting the relevant components of history
   ## (whether 'cleverCovTheta' is TRUE or FALSE)
-  hist <- getHistory(this)
+  hist <- tmle.npvi::getHistory(this)
   step <- as.integer(gsub("step([0-9]+)", "\\1", rownames(hist)))
   idxs <- c(which(diff(step)==1), length(step))
   hist <- tail(hist[idxs, ], 2)
