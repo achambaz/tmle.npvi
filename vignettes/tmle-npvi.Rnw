@@ -324,8 +324,12 @@ abline(h=confInt0, col="red")
 
 \section{Analysis of TCGA data}
 
-The package includes real data, namely expression, DNA copy number, and DNA methylation data of 150 genes for 463 breast cancer samples from TCGA \cite{TCGA12}.  
+\subsection{TCGA data included in the package}
+\label{subsec:tcga}
 
+The package  includes real data, namely  expression, DNA copy  number, and DNA
+methylation  data of 150  genes for  463 breast  cancer samples  from publicly
+available TCGA data~\cite{TCGA12}. 
 <<>>=
 data(tcga2012brca)
 @ 
@@ -336,12 +340,22 @@ nms <- names(tcga2012brca)
 str(nms)
 @ 
 
-The data set associated with gene TP53 includes 3 DNA methylation measures across the gene.  
+
+\subsection{Gene TP53 analysis}
+
+The data  set associated  with gene TP53  includes 3 DNA  methylation measures
+across the gene.
 <<pairs>>=
 ii <- grep("TP53", nms)
 obs <- tcga2012brca[[ii]]
+head(obs)
 @ 
-In this case, there are only \Sexpr{sum(obs[, "X"]==0)} observations with neutral copy number ($X=0$ after shifting).   We arbitrarily set a threshold to $0.02$. This is what the data set looks like, where green points correspond to observations whose copy numbers are smaller than this threshold in absolute value:
+
+In  this case,  there are  only \Sexpr{sum(obs[,  "X"]==0)}  observations with
+neutral copy number ($X=0$ after shifting).  We arbitrarily set a threshold to
+$0.02$. This is what the data set looks like, where green points correspond to
+observations whose  copy numbers are  smaller than this threshold  in absolute
+value:
 <<>>=
 thr <- 0.02
 whichSmall <- which(abs(obs[, "X"]) <= thr)
@@ -354,11 +368,44 @@ whichSmall <- which(abs(obs[, "X"]) <= thr)
 obs[whichSmall, "X"] <- 0
 @ 
 
-After thresholding there are  \Sexpr{sum(obs[, "X"]==0)} observations with neutral copy number.  We analyze the data set as follows:
+After  thresholding  there are  \Sexpr{sum(obs[,  "X"]==0)} observations  with
+neutral copy number.  We analyze the data set as follows:
 <<>>=
 npvi.TP53 <- tmle.npvi(obs)
 npvi.TP53
 @
+
+\subsection{Whole genome analysis}
+
+The following script creates a data set for each gene from TCGA~\cite{TCGA12}.
+<<eval=FALSE>>=
+system.file("testScripts/tcga2012brca/01.merge,manyCG.R", 
+            package="tmle.npvi")
+@ 
+
+Once it is run, executing the script below yields the \texttt{tcga2012brca} data set
+presented in Section~\ref{subsec:tcga}.
+<<eval=FALSE>>=
+system.file("testScripts/tcga2012brca/01.1.exportGeneLevelData.R", 
+            package="tmle.npvi")
+@    
+
+The following  script analyzes all the  data sets previously  created based on
+the \verb|tmle.npvi| function.
+<<eval=FALSE>>=
+system.file("testScripts/tcga2012brca/02.tmle.npvi.R", 
+            package="tmle.npvi")
+@  
+
+
+The computation of $p$-values and illustration of the results along the genome
+can be performed by drawing inspiration from the following last two scripts.
+<<eval=FALSE>>=
+system.file("testScripts/tcga2012brca/03.pValues.R", 
+            package="tmle.npvi")
+system.file("testScripts/tcga2012brca/04.propZero.R", 
+            package="tmle.npvi")
+@ 
 
 \section{Session information}
 \label{sec:session-information}

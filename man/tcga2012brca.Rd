@@ -17,7 +17,8 @@ has the following columns:\describe{
 }
 \details{
   These data were obtained using the scripts located in
-  \code{testScripts/tcga2012brca}. 
+  \code{testScripts/tcga2012brca}. See the \code{tmle-npvi.pdf} vignette
+  for more details on the preparation of the data set.
 
   Gene names and genomic coordinates are stored in the names of the list.
 }

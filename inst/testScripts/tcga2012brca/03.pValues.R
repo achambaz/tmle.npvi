@@ -101,19 +101,3 @@ cmp <- sapply(1:length(tmle.l), function(ii){c(tmle.l[[ii]]$hist[nrow(tmle.l[[ii
                                                tmle.sl[[ii]]$hist[nrow(tmle.sl[[ii]]$hist), "psi"])})
 
 
-stop()
-
-
-
-ww <- apply(sapply(PVAL, is.na), 1, any)
-ranks <- matrix(c(order(PVAL[[1]][!ww]),
-                  order(PVAL[[2]][!ww])),
-                nrow=2, byrow=TRUE)
-geneNames <- sapply(names(PVAL[[1]][!ww]), function(ll){unlist(strsplit(ll, split=","))[2]})
-attributes(geneNames) <- NULL
-rownames(ranks) <- names(PVAL)
-
-library(RankAggreg)
-cmprRanks <- RankAggreg(ranks, 10, method="CE", distance="Spearman",
-                        N=100, convIn=5, rho=.1, verbose=FALSE)
-top <- geneNames[cmprRanks$top.list]
