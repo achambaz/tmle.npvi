@@ -16,12 +16,14 @@ tmle.npvi. <- structure(
 ### A \code{function} involved in the  definition of the parameter of interest
 ### \eqn{\psi},  which must  satisfy  \eqn{f(0)=0} (see  Details). Defaults  to
 ### \code{identity}.
-     nMax=10L,
-### An \code{integer} (defaults to  \code{10L}, the smallest authorized value)
-### indicating the  maximum number of  observed values of \eqn{X\neq  0} which
-### are  used to  create  the  supports of  the  conditional distributions  of
-### \eqn{X} given  \eqn{W} and \eqn{X\neq0}  involved in the  simulation under
-### \eqn{P_n^k} when \code{family} is set to "parsimonious".
+     nMax=20L,
+### An \code{integer} (defaults to \code{20L}; \code{10L} is the
+### smallest authorized value and we recommend a value less than
+### \code{50L} for reasonable computational time) indicating the maximum number of
+### observed values of \eqn{X\neq 0} which are used to create the
+### supports of the conditional distributions of \eqn{X} given \eqn{W}
+### and \eqn{X\neq0} involved in the simulation under \eqn{P_n^k} when
+### \code{family} is set to "parsimonious".
      flavor=c("learning", "superLearning"),
 ### Indicates whether the construction of the relevant features of \eqn{P_n^0}
 ### and \eqn{P_n^k}, the (non-targeted  yet) initial and (targeted) successive
@@ -379,7 +381,7 @@ tmle.npvi. <- structure(
       
     })
 
-tmle.npvi <- function(obs,         f=identity,        nMax=10L,
+tmle.npvi <- function(obs,         f=identity,        nMax=20L,
                       flavor=c("learning", "superLearning"),  lib=list(),  nodes=1L,  cvControl=NULL,
                       family=c("parsimonious",   "gaussian"),  
                       cleverCovTheta=FALSE, bound=1, B=1e5, trueGMu=NULL,  iter=5L,

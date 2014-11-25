@@ -1,79 +1,60 @@
 library("tmle.npvi")
 log <- Arguments$getVerbose(-8, timestamp=TRUE)
 
-path <- "geneData/tcga2012brca"
+dataSet <- "tcga2012brca"
+path <- file.path("geneData", dataSet)
 path <- Arguments$getReadablePath(path)
 files <- list.files(path)
 
-where <- unlist(strsplit(Sys.info()["nodename"], split="\\."))[1]
-if (is.na(match(where, c("ondine", "MacBook-Air-de-Pierre")))) {
-  cArgs <- commandArgs()
-  chunk <- as.character(cArgs[5])
-  idx <- eval(parse(text=sub("-", ":", chunk)))
-} else {
-  idx <- (1:length(files))[3001:3100]
-  chunk <- paste(as.character(idx[c(1, length(idx))]), collapse="-")
-}
-
-if (FALSE) {
-  files.idx <- files[idx]
-} else {
-  idx <- grep("chr4,004861,MSX1", files)
-  files.idx <- files[idx]
-  chunk <- as.character(idx)
-}
-
-
-nas <- sapply(files.idx, function(ff) {
-  obs <- loadObject(file.path(path, ff))
-  sum(is.na(obs))
+nas <- sapply(files, function(ff) {
+    obs <- loadObject(file.path(path, ff))
+    sum(is.na(obs))
 })
 
-files.idx <- files.idx[nas==0]
+files <- files[which(nas==0)]
 
 descr <- list(thresh=2e-2,
               f=identity,
-              flavor="superLearning",
+              flavor="learning",
               nodes=1, ##3,
               iter=10,
               cvControl=2,
-              stoppingCriteria=list(mic = 0.001, div = 0.001, psi = 0.01))
+              stoppingCriteria=list(mic = 0.001, div = 0.001, psi = 0.01),
+              nMax=30)
 
-fileout <- paste(descr$flavor, "test", chunk, "RData", sep=".")
+fileout <- sprintf("%s,tmle.npvi,%s,2014-11-21.rda", dataSet, descr$flavor)
 
-TMLE <- vector("list", length(files.idx))
-names(TMLE) <- unlist(strsplit(files.idx, split=".xdr"))
+mc.cores <- 3
 
-counter <- 0
-for (ii in 1:length(files.idx)) {
-  counter <- counter+1
-  ## loading the data
-  pathname <- file.path(path, files.idx[ii])
-  obs <- loadObject(pathname)
-  nbcov <- ncol(extractW(obs))
-  if (nbcov==1) {
-    colnames(obs) <- c("Y", "X", "W")
-  }
+nms <- unlist(strsplit(files, split=".xdr"))
 
-  ## thresholding copy number data
-  whichSmall <- which(abs(obs[, "X"]) <= descr$thresh)
-  obs[whichSmall, "X"] <- 0
+TMLE <- parallel::mclapply(seq(along=files), mc.cores=mc.cores, FUN=function(ii) {
+    ff <- files[ii]
+    ## loading the data
+    print(ii)
+    print(ff)
+    pathname <- file.path(path, ff)
+    
+    obs <- loadObject(pathname)
+    nbcov <- ncol(extractW(obs))
+    if (nbcov==1) {
+        colnames(obs) <- c("Y", "X", "W")
+    }
 
-  ##
-  tmle <- try(tmle.npvi(obs=obs, f=descr$f, flavor=descr$flavor,
-                        stoppingCriteria=descr$stoppingCriteria,
-                        cvControl=descr$cvControl))
-  if (inherits(tmle, "try-error")) {
-    TMLE[[ii]] <- attr(tmle, "condition")
-  } else {
-    TMLE[[ii]] <- list(nbcov=nbcov,
-                       hist=getHistory(tmle))
-  }
-  ## saving
-  if (counter==10) {
-    save(descr, TMLE, file=fileout)
-    counter <- 0
-  }
-}
+    ## thresholding copy number data
+    whichSmall <- which(abs(obs[, "X"]) <= descr$thresh)
+    obs[whichSmall, "X"] <- 0
 
+    ##
+    tmle <- try(tmle.npvi(obs=obs, f=descr$f, flavor=descr$flavor,
+                          stoppingCriteria=descr$stoppingCriteria,
+                          cvControl=descr$cvControl, nMax=descr$nMax))
+    if (inherits(tmle, "try-error")) {
+        return(attr(tmle, "condition"))
+    } else {
+        return(list(nbcov=nbcov, hist=getHistory(tmle)))
+    }
+})
+
+names(TMLE) <- tmle
 save(descr, TMLE, file=fileout)

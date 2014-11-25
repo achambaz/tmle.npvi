@@ -136,10 +136,8 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
     plot(Xq.value[o], Xq.value[o]^2, xlim=xlim, ylim=ylim, t='l')
     points(condMeanX, condMeanX2, col=2)
   }
-
   if (!all(tests)) {## if parsimonious method fails (should seldom happen...)
-    ## throw("Parsimonious conditional simulation of X given W failed...\n")
-    warning("Parsimonious conditional simulation of X given W under a slightly distorted version of the distribution. You may want to try a larger 'nMax'...") 
+    throw("Parsimonious conditional simulation of X given W failed... You may want to try a larger 'nMax'.\n")
   } 
   labelW <- identifyUniqueEntries(W)
   simulationSchemes <-  fasterGetSimulationScheme(labelW, condMeanX, condMeanX2, Xq.value)

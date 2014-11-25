@@ -7,7 +7,7 @@ simulateParsimoniouslyYgivenXW <- function(T, Y) {
     
     ## Argument 'Y':
     Y <- Arguments$getNumerics(Y);
-    
+
     test <- (min(Y)<=min(T) & max(T)<=max(Y))
     if (!test) {## if parsimonious method fails
         throw("Parsimonious conditional simulation of Y given (X, W) only works when 'theta' takes its values in 'range(Y)'\nPlease use options 'thetamin' and 'thetamax' in the construction of the 'NPVI' object")
