@@ -1,4 +1,4 @@
-%\VignetteEngine{knitr::knitr}
+% \VignetteEngine{knitr::knit}
 % \VignetteIndexEntry{tmle.npvi}
 % \VignetteDepends{tmle.npvi}
 % \VignetteKeywords{Targeted minimum loss estimation}
