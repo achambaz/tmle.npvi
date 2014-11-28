@@ -16,8 +16,8 @@ tmle.npvi. <- structure(
 ### A \code{function} involved in the  definition of the parameter of interest
 ### \eqn{\psi},  which must  satisfy  \eqn{f(0)=0} (see  Details). Defaults  to
 ### \code{identity}.
-     nMax=20L,
-### An \code{integer} (defaults to \code{20L}; \code{10L} is the
+     nMax=30L,
+### An \code{integer} (defaults to \code{30L}; \code{10L} is the
 ### smallest authorized value and we recommend a value less than
 ### \code{50L} for reasonable computational time) indicating the maximum number of
 ### observed values of \eqn{X\neq 0} which are used to create the
@@ -163,7 +163,7 @@ tmle.npvi. <- structure(
       ##\code{glmnet}, \code{polspline} and \code{randomForest} packages.
       ## 
       ##If  \code{family}  is set  to  "parsimonious"  (recommended) then  the
-      ##package \code{sgeostat} is required.
+      ##packages \code{sgeostat} and \code{geometry} are required.
       
       ## Arguments
       mode <- mode(lib)
@@ -353,7 +353,7 @@ tmle.npvi. <- structure(
       ##
 
       ## Running the TMLE procedure
-      npvi <- tmle.npvi(obs, f=identity, flavor="learning", B=5e4)
+      npvi <- tmle.npvi(obs, f=identity, flavor="learning", B=5e4, nMax=10)
 
       ## Summarizing its results
       npvi
