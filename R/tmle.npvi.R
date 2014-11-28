@@ -381,7 +381,7 @@ tmle.npvi. <- structure(
       
     })
 
-tmle.npvi <- function(obs,         f=identity,        nMax=20L,
+tmle.npvi <- function(obs,         f=identity,        nMax=30L,
                       flavor=c("learning", "superLearning"),  lib=list(),  nodes=1L,  cvControl=NULL,
                       family=c("parsimonious",   "gaussian"),  
                       cleverCovTheta=FALSE, bound=1, B=1e5, trueGMu=NULL,  iter=5L,
