@@ -1,77 +1,119 @@
-what <- "WholeGenome"
-path <- Arguments$getReadablePath(system.file("testScripts/tcga2012brca/",
-                                              package="tmle.npvi"))
-## path <- "."
+library("R.utils")
 
-PVAL <- NULL
-for (flavor in c("learning", "superLearning")) {
-  pathname <- file.path(path, paste(flavor, what, ".xdr", sep=""))
-  tmle <- loadObject(pathname)$TMLE
-  if (flavor=="learning") {
-    tmle.l <- tmle
-  } else {
-    tmle.sl <- tmle
-  }
-  pathname <- file.path(path, "cumLimChr.xdr")
-  cumLimChr <- loadObject(pathname)
-  
-  pval <- sapply(tmle, function(ll){getPValue(ll$hist, 463, TRUE)})
-  PVAL[[flavor]] <- pval
-  rm(tmle)
+dataSet <- "tcga2012brca"
 
-  yi <- -log10(pval)
-  if (any(is.infinite(yi))) {
-    yi[is.infinite(yi)] <- max(yi[!is.infinite(yi)])+1 ## arbitrary
-  }
-  chr <- sapply(names(yi), function(ll){unlist(strsplit(ll, split=","))[1]})
-  chr <- sapply(chr, function(ll){unlist(strsplit(ll, split="chr"))[2]})
-  chr <- as.integer(chr)
-  posRel <- sapply(names(yi), function(ll){unlist(strsplit(ll, split=","))[2]})
-  posRel <- as.integer(posRel)*1e-3
-  posAbs <- posRel + cumLimChr[chr]
-  geneNames <- sapply(names(yi), function(ll){unlist(strsplit(ll, split=","))[3]})
-  geneNames <- sapply(geneNames, function(ll){unlist(strsplit(ll, split="\\."))[1]})
-  attributes(geneNames) <- NULL
+path <- file.path("results", dataSet)
+path <- Arguments$getReadablePath(path)
 
-  dev.new()
-  thr <- 50
-  ww <- which(yi>thr)
-  
-  ylim <- c(0, 300) ## c(0, max(yi))
-  rg <- range(posAbs)
-  xlim <- rg*c(.95, 1.05)
-  
-  ##png(pathname, width=width, height=height)
-  par(cex=2, mar=c(5, 4, 2, 0)+.2)
-  plot(NA, xlim=xlim, ylim=ylim,
-       xlab=paste("Genome position\n-", what, "-"),
-       ylab="-log10(pval)",
-       main=flavor, axes=FALSE)
-  abline(h=thr, col=2)
-  pusr <- par()$usr
-  unitX <-.01*(pusr[2]-pusr[1])
-  unitY <-.02*(pusr[4]-pusr[3])
-  pchs <- rep(20, length=length(posAbs))
-  if (length(ww)) {
-    pchs[ww] <- .5
-    if (require(maptools)) {
-      points(posAbs[ww], yi[ww], pch=pchs[ww], cex=0.25)
-      pointLabel(posAbs[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww], )
-    } else {
-      text(posAbs[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww])
+flavors <- c("learning", "superLearning")
+## date <- "2014-11-21"
+## filenames <- sprintf("%s,tmle.npvi,%s,%s.rda", dataSet, flavors, date)
+filenames <- sprintf("%sWholeGenome.xdr", flavors)
+pathnames <- file.path(path, filenames)
+tmles <- lapply(pathnames, loadObject)
+tmles <- lapply(tmles, "[[", 1)
+names(tmles) <- flavors
+
+sapply(tmles, length)
+
+## correlation with copy number changes?
+## (data set below can be created by 04.propZero.R...)
+filename <- sprintf("%s,propZero.xdr", dataSet)
+path <- file.path("results", dataSet)
+path <- Arguments$getReadablePath(path)
+pathname <- file.path(path, filename)
+dat <- loadObject(pathname)
+
+## Focus on those genes for which learning (or superLearning) returned an estimate:
+nms0 <- rownames(dat)
+
+wrt.phi <- c(TRUE, FALSE)[2]
+tag <- ifelse(wrt.phi, "psi=phi?", "psi=0?")
+    
+for (flavor in flavors) {
+    tmle <- tmles[[flavor]]
+
+
+    pattern <- "chr([0-9]+),([0-9]+),(.*)"
+    geneNames <- gsub(pattern, "\\3", names(tmle))
+
+    ww <- match(geneNames, nms0)
+    stopifnot(sum(is.na(ww))==0)  ## sanity check
+
+    datC <- dat[ww, ]
+    o <- order(datC[, "pos"])
+    datC <- datC[o, ]
+
+    chr <- datC[, "chr"]
+    absPos <- datC[, "pos"]
+    neg <- datC[, "-1"]
+    pos <- datC[, "1"]
+    cumProps <- cbind(neg, 1-pos)
+    cumMaxPos <- c(0, tapply(absPos, chr, max)[-max(chr)])
+
+
+    lightBlue <- "#8888FF55"
+    lightRed <- "#FF888855"
+
+    pval <- sapply(tmle, function(ll){getPValue(ll$hist, 463, wrt.phi=wrt.phi)})
+    yi <- -log10(pval)
+    if (any(is.infinite(yi))) {
+        yi[is.infinite(yi)] <- max(yi[!is.infinite(yi)])+1 ## arbitrary
     }
-  }
-  points(posAbs[-ww], yi[-ww], pch=pchs[-ww], cex=0.5)
-  abline(v=cumLimChr, col="orange")
-  xx <- sapply(1:(length(cumLimChr)-1), function(ii) {
-    mean(cumLimChr[0:1+ii])
-  })
-  box()
-  axis(2)
-  axis(1, xx, 1:length(xx), tcl=NA)
+
+    yi <- yi[o]
+    geneNames <- rownames(datC)
+
+    if (flavor=="learning") {
+        thr <- ifelse(wrt.phi, 20, 150)
+    } else {
+        thr <- ifelse(wrt.phi, 40, 1000)
+    }
+                      
+    ww <- which(yi>thr)
+
+    ylim <- c(0, max(yi))
+    rg <- range(absPos)
+    xlim <- rg*c(.95, 1.05)
+
+    filename <- sprintf("pValues,%s,%s,%s.png", dataSet, flavor, tag)
+    pathname <- file.path(path, filename)
+    png(pathname, width=1200, height=600)
+    par(cex=2, mar=c(2, 2, 0, 0)+.2)
+
+    plot(NA, xlim=xlim, ylim=ylim, ylab="",
+         xaxt='n', xlab="Genome position")
+    u3 <- par("usr")[3]
+    u4 <- par("usr")[4]
+    lambda <- 0.98
+    y3 <- lambda*u3 + (1-lambda)*u4
+    y4 <- (1-lambda)*u3 + lambda*u4
+
+    xP <- c(1, absPos, max(absPos))
+    yP <- c(0, cumProps[, 1], 0)*diff(ylim)+ylim[1]
+    polygon(x=xP, y=yP, col=lightBlue, border=NA)
+
+    xP <- c(absPos, rev(absPos))
+    yP <- c(cumProps[, 1], rev(cumProps[, 2]))*diff(ylim)+ylim[1]
+    polygon(x=xP, y=yP, col=lightRed, border=NA)
+    abline(v=cumMaxPos, col="lightgray")
+    x <- head(cumMaxPos, 21)+diff(cumMaxPos)/2
+    text(x, y=1:21%%2*(y4-y3) + y3, 1:21, cex=0.5)
+
+    abline(h=thr, col=2)
+    pusr <- par("usr")
+    unitX <-.01*(pusr[2]-pusr[1])
+    unitY <-.02*(pusr[4]-pusr[3])
+    pchs <- rep(20, length=length(absPos))
+    if (length(ww)) {
+        pchs[ww] <- .5
+        if (require(maptools)) {
+            points(absPos[ww], yi[ww], pch=pchs[ww], cex=0.25)
+            pointLabel(absPos[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww], )
+        } else {
+            text(absPos[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww])
+        }
+    }
+    points(absPos[-ww], yi[-ww], pch=pchs[-ww], cex=0.2)
+    dev.off()
 }
-
-cmp <- sapply(1:length(tmle.l), function(ii){c(tmle.l[[ii]]$hist[nrow(tmle.l[[ii]]$hist), "psi"],
-                                               tmle.sl[[ii]]$hist[nrow(tmle.sl[[ii]]$hist), "psi"])})
-
-

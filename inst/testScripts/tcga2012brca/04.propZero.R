@@ -1,30 +1,35 @@
 library("tmle.npvi")
 log <- Arguments$getVerbose(-8, timestamp=TRUE)
-doPlots <- FALSE
+doPlots <- TRUE
 
-path <- "geneData/tcga2012brca"
+dataSet <- "tcga2012brca"
+path <- file.path("geneData", dataSet)
 path <- Arguments$getReadablePath(path)
 files <- list.files(path)
 
-nas <- sapply(files, function(ff) {
-    obs <- loadObject(file.path(path, ff))
-    sum(is.na(obs))
-})
-
-sum(nas==0)
-ww <- which(nas==0)
+if (FALSE) {
+    nas <- sapply(files, function(ff) {
+        obs <- loadObject(file.path(path, ff))
+        sum(is.na(obs))
+    })
+    sum(nas==0)
+    ww <- which(nas==0)
+}
 
 ## getting chromosome and position
-pattern <- "chr([0-9]+),([0-9]+),.*.xdr"
+pattern <- "chr([0-9]+),([0-9]+),(.*).xdr"
 chr <- as.numeric(gsub(pattern, "\\1", files))
 pos <- as.numeric(gsub(pattern, "\\2", files))
+geneName <- gsub(pattern, "\\3", files)
 
 unique(chr)
 which(diff(chr)!=0)
 maxPos <- tapply(pos, chr, max)
-cumMaxPos <- cumsum(maxPos)-maxPos[1]
+cumMaxPos <- c(0, cumsum(maxPos)[-length(maxPos)])
 chrOffset <- cumMaxPos[chr]
 absPos <- pos+chrOffset
+rm(pos)
+
 if (doPlots) {
     plot(cumMaxPos)
     plot(chrOffset)
@@ -34,27 +39,8 @@ if (doPlots) {
 ## thresholding copy-number data
 thr <- 2e-2
 
-nbZeros <- parallel::mclapply(files, FUN=function(file, thr) {
-    pathname <- file.path(path, file)
-    obs <- loadObject(pathname)
-    X <- obs[, "X"]
-
-    ## thresholding copy number data
-    isSmall <- (abs(X) <= thr)
-    mean(isSmall)
-}, thr, mc.cores=3)
-nbZeros <- unlist(nbZeros)
-
-
 x <- head(cumMaxPos, 21)+diff(cumMaxPos)/2
 lab <- 1:21
-
-if (doPlots) {
-    plot(absPos, nbZeros, ylim=c(0, 1), pch=19, cex=0.3, xaxt='n', xlab="Genome position", ylab="P(X=0)")
-    abline(h=0.5, col=8, lty=3)
-    abline(v=cumMaxPos, col=8)
-    text(x, y=1:21%%2, lab)
-}
 
 ## showing X>0 and X<0 separtately
 props <- parallel::mclapply(files, FUN=function(file, thr) {
@@ -90,14 +76,22 @@ if (doPlots) {
 }
 
 ## saving to file
-dat <- cbind(absPos[o], mat[o, ])
-R.utils::saveObject(dat, "tcga2012brca,propZero.xdr")
+dat <- cbind(chr=chr, pos=absPos, mat)
+nms <- gsub("\\.xdr", "", files)  ### HERE
+rownames(dat) <- geneName
+dat <- dat[o, ]
 
-## version 2
-lightBlue <- "#8888FF55"
-lightRed <- "#FF888855"
+filename <- sprintf("%s,propZero.xdr", dataSet)
+path <- file.path("results", dataSet)
+path <- Arguments$getWritablePath(path)
+pathname <- file.path(path, filename)
+saveObject(dat, file=pathname)
+
 
 if (doPlots) {
+    lightBlue <- "#8888FF55"
+    lightRed <- "#FF888855"
+
     png("copyNumberProps.png", width=1200, height=600)
     plot(NA, xlim=range(absPos), ylim=c(0,1), ylab="P(X<0) | P(X>0) | P(X=0)",
          xaxt='n', xlab="Genome position")
