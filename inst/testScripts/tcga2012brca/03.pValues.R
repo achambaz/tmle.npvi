@@ -1,33 +1,7 @@
-getPValue <- function(# Calculates p-value from an object of type 'history'
-                      history,
-### The \code{history} of a TMLE procedure.
-                      nobs,
-### An \code{integer}, the associated number of observations.
-                      wrt.phi=TRUE
-### A  \code{logical}  equal  to  \code{TRUE}  by default,  which  means  that
-### \eqn{psi_n}  is  compared  with  \eqn{phi_n}.  Otherwise,  \eqn{psi_n}  is
-### compared with 0.
-){
-  ##seealso<< tmle.npvi, getHistory, as.character.NPVI
-  y <- history[nrow(history), ]
-  psi <- y["psi"]
-  if (wrt.phi) {
-    phi <- y["phi"]
-    se <- y["sicAlt"]/sqrt(nobs)
-  } else {
-    phi <- 0
-    se <- y["psi.sd"]/sqrt(nobs)
-  }
-  pval <- 2*pnorm(abs(psi-phi), sd=se, lower.tail=FALSE)
-  names(pval) <- "p.value"
-  return(pval)
-### Returns the p-value of the two-sided test of ``\eqn{Psi(P_0)=Phi(P_0)}''.
-}
-
 what <- "WholeGenome"
 path <- Arguments$getReadablePath(system.file("testScripts/tcga2012brca/",
                                               package="tmle.npvi"))
-path <- "."
+## path <- "."
 
 PVAL <- NULL
 for (flavor in c("learning", "superLearning")) {
@@ -60,7 +34,7 @@ for (flavor in c("learning", "superLearning")) {
   attributes(geneNames) <- NULL
 
   dev.new()
-  thr <- 200
+  thr <- 50
   ww <- which(yi>thr)
   
   ylim <- c(0, 300) ## c(0, max(yi))
