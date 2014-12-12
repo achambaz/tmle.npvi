@@ -863,6 +863,59 @@ setMethodS3("updateConv", "NPVI", function(x, B, ...) {
   this$.conv <- conv
 })
 
+setMethodS3("getPValue", "NPVI", function(# Calculates p-value from a NPVI object
+    this,
+### An object of class \code{TMLE.NPVI}.
+    wrt.phi=TRUE,
+### A  \code{logical}  equal  to  \code{TRUE}  by default,  which  means  that
+### \eqn{psi_n}  is  compared  with  \eqn{phi_n}.  Otherwise,  \eqn{psi_n}  is
+### compared with 0.
+    ...
+### Not used.
+
+){
+    ##alias<< getPValue
+    ##seealso<< tmle.npvi, getHistory, as.character.NPVI, getPValue.matrix
+    nobs <- nrow(getObs(this))
+    history <- getHistory(this)
+    getPValue(history, wrt.phi=wrt.phi, nobs=nobs)
+### Returns the p-value of the two-sided test of
+### ``\eqn{Psi(P_0)=Phi(P_0)}'' or ``\eqn{Psi(P_0)=0}'', according to
+### the value of \code{wrt.phi}.
+})
+
+setMethodS3("getPValue", "matrix", function(# Calculates p-value from a matrix object of type 'history'
+    this,
+### The \code{history} of a TMLE procedure.
+    wrt.phi=TRUE,
+### A  \code{logical}  equal  to  \code{TRUE}  by default,  which  means  that
+### \eqn{psi_n}  is  compared  with  \eqn{phi_n}.  Otherwise,  \eqn{psi_n}  is
+### compared with 0.
+    nobs,
+### An \code{integer}, the associated number of observations.
+    ...
+### Not used.
+){
+    ##alias<< getPValue
+    ##seealso<< tmle.npvi, getHistory, as.character.NPVI
+    y <- this[nrow(this), ]
+    psi <- y["psi"]
+    if (wrt.phi) {
+        phi <- y["phi"]
+        se <- y["sicAlt"]/sqrt(nobs)
+    } else {
+        phi <- 0
+        se <- y["psi.sd"]/sqrt(nobs)
+    }
+    pval <- 2*pnorm(abs(psi-phi), sd=se, lower.tail=FALSE)
+    names(pval) <- "p.value"
+    return(pval)
+### Returns the p-value of the two-sided test of
+### ``\eqn{Psi(P_0)=Phi(P_0)}'' of ``\eqn{Psi(P_0)=0}'', according to
+### the value of \code{wrt.phi}.
+})
+
+
 ############################################################################
 ## HISTORY:
 ## 2014-02-07

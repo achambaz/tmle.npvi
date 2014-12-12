@@ -56,5 +56,5 @@ TMLE <- parallel::mclapply(seq(along=files), mc.cores=mc.cores, FUN=function(ii)
     }
 })
 
-names(TMLE) <- tmle
+names(TMLE) <- nms
 save(descr, TMLE, file=fileout)

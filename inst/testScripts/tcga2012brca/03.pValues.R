@@ -67,12 +67,18 @@ for (flavor in flavors) {
     if (flavor=="learning") {
         thr <- ifelse(wrt.phi, 20, 150)
     } else {
-        thr <- ifelse(wrt.phi, 40, 1000)
+        thr <- ifelse(wrt.phi, 40, 200)
     }
-                      
     ww <- which(yi>thr)
-
+    wwC <- setdiff(1:length(yi), ww)
     ylim <- c(0, max(yi))
+
+    thr <- 5.3
+    ww <- integer(0)
+    wwC <- setdiff(1:length(yi), ww)
+    ylim <- c(0, 50)
+    
+
     rg <- range(absPos)
     xlim <- rg*c(.95, 1.05)
 
@@ -114,6 +120,6 @@ for (flavor in flavors) {
             text(absPos[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww])
         }
     }
-    points(absPos[-ww], yi[-ww], pch=pchs[-ww], cex=0.2)
+    points(absPos[wwC], yi[wwC], pch=pchs[wwC], cex=0.2)
     dev.off()
 }
