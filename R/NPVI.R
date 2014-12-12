@@ -874,7 +874,6 @@ setMethodS3("getPValue", "NPVI", function(# Calculates p-value from a NPVI objec
 ### Not used.
 
 ){
-    ##alias<< getPValue
     ##seealso<< tmle.npvi, getHistory, as.character.NPVI, getPValue.matrix
     nobs <- nrow(getObs(this))
     history <- getHistory(this)
@@ -897,7 +896,7 @@ setMethodS3("getPValue", "matrix", function(# Calculates p-value from a matrix o
 ### Not used.
 ){
     ##alias<< getPValue
-    ##seealso<< tmle.npvi, getHistory, as.character.NPVI
+    ##seealso<< tmle.npvi, getHistory.NPVI, as.character.NPVI
     y <- this[nrow(this), ]
     psi <- y["psi"]
     if (wrt.phi) {
