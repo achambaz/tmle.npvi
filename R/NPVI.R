@@ -877,7 +877,7 @@ setMethodS3("getPValue", "NPVI", function(# Calculates a p-value from a NPVI obj
 ){
     ##seealso<< tmle.npvi, getHistory, as.character.NPVI, getPValue.matrix
     nobs <- nrow(getObs(this))
-    history <- getHistory(this)
+    history <- getHistory.NPVI(this)
     getPValue(history, wrt.phi=wrt.phi, nobs=nobs)
 ### Returns the p-value of the two-sided test of
 ### ``\eqn{Psi(P_0)=Phi(P_0)}'' or ``\eqn{Psi(P_0)=0}'', according to

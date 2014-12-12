@@ -8,7 +8,7 @@ importFrom(Matrix, sparseMatrix)
 
 export(as.character.NPVI,
        extractW, extractXW,
-       getHistory, getHistory.NPVI,
+       getHistory.NPVI,
        getLightFit,
        getObs, getObs.NPVI,
        getPsi, getPsi.NPVI,
