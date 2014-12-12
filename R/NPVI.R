@@ -863,7 +863,8 @@ setMethodS3("updateConv", "NPVI", function(x, B, ...) {
   this$.conv <- conv
 })
 
-setMethodS3("getPValue", "NPVI", function(# Calculates p-value from a NPVI object
+setMethodS3("getPValue", "NPVI", function(# Calculates a p-value from a NPVI object
+### Calculates a p-value from a NPVI object
     this,
 ### An object of class \code{TMLE.NPVI}.
     wrt.phi=TRUE,
@@ -883,7 +884,8 @@ setMethodS3("getPValue", "NPVI", function(# Calculates p-value from a NPVI objec
 ### the value of \code{wrt.phi}.
 })
 
-setMethodS3("getPValue", "matrix", function(# Calculates p-value from a matrix object of type 'history'
+setMethodS3("getPValue", "matrix", function(# Calculates a p-value from a matrix object of type 'history'
+### Calculates a p-value from a matrix object of type 'history'
     this,
 ### The \code{history} of a TMLE procedure.
     wrt.phi=TRUE,
