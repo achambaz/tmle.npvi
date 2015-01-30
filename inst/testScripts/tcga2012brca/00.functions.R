@@ -178,3 +178,26 @@ cleanResults <- function(rawTMLE, verbose=FALSE) {
   TMLE <- TMLE[!sapply(TMLE, is.null)]
   return(TMLE)
 }
+
+
+
+
+enrich <- function ## calculates and plots the degree of over-résentation
+(p.values, chr, thr=1e-5, ...) {
+    p <- length(p.values)
+    rk <- rank(1-p.values)
+    rkChr <- tapply(rk, chr, FUN=mean)
+    isRej <- (rk>length(rk)-nbRej)
+    rejByChr <- tapply(isRej, chr, sum)
+    nbByChr <- table(chr)
+    phg <- 1-phyper(rejByChr, nbByChr, p-nbByChr, sum(isRej))
+    lphg <- -log10(phg)
+    ww <- which(is.finite(lphg))
+    ymax <- max(lphg[ww], na.rm=TRUE)
+    ylim <- c(0, ymax+1)
+    lphg[-ww] <- ymax
+    cols <- rep("purple", length(lphg))
+    cols[-ww] <- "pink"
+    bp <- barplot(lphg, ..., col=cols, ylim=ylim)
+    sa <- sapply(bp[-ww], points, ymax, pch=2)
+}

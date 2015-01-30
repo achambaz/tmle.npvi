@@ -5,6 +5,8 @@ dataSet <- "tcga2012brca"
 path <- file.path("results", dataSet)
 path <- Arguments$getReadablePath(path)
 
+displayGeneNames <- FALSE
+
 flavors <- c("learning", "superLearning")
 ## date <- "2014-11-21"
 ## filenames <- sprintf("%s,tmle.npvi,%s,%s.rda", dataSet, flavors, date)
@@ -27,12 +29,11 @@ dat <- loadObject(pathname)
 ## Focus on those genes for which learning (or superLearning) returned an estimate:
 nms0 <- rownames(dat)
 
-wrt.phi <- c(TRUE, FALSE)[2]
+wrt.phi <- c(TRUE, FALSE)[1]
 tag <- ifelse(wrt.phi, "psi=phi?", "psi=0?")
     
 for (flavor in flavors) {
     tmle <- tmles[[flavor]]
-
 
     pattern <- "chr([0-9]+),([0-9]+),(.*)"
     geneNames <- gsub(pattern, "\\3", names(tmle))
@@ -49,7 +50,7 @@ for (flavor in flavors) {
     neg <- datC[, "-1"]
     pos <- datC[, "1"]
     cumProps <- cbind(neg, 1-pos)
-    cumMaxPos <- c(0, tapply(absPos, chr, max)[-max(chr)])
+    cumMaxPos <- c(0, tapply(absPos, chr, max))
 
 
     lightBlue <- "#8888FF55"
@@ -64,31 +65,32 @@ for (flavor in flavors) {
     yi <- yi[o]
     geneNames <- rownames(datC)
 
-    if (flavor=="learning") {
-        thr <- ifelse(wrt.phi, 20, 150)
+    if (displayGeneNames) {
+        if (flavor=="learning") {
+            thr <- ifelse(wrt.phi, 20, 150)
+        } else {
+            thr <- ifelse(wrt.phi, 40, 200)
+        }
+
+        ww <- which(yi>thr)
+        wwC <- setdiff(1:length(yi), ww)
+        ylim <- c(0, max(yi))
     } else {
-        thr <- ifelse(wrt.phi, 40, 200)
+        thr <- Inf
+        ww <- integer(0)
+        wwC <- setdiff(1:length(yi), ww)
+        ylim <- c(0, 50)
     }
-    ww <- which(yi>thr)
-    wwC <- setdiff(1:length(yi), ww)
-    ylim <- c(0, max(yi))
-
-    thr <- 5.3
-    ww <- integer(0)
-    wwC <- setdiff(1:length(yi), ww)
-    ylim <- c(0, 50)
-    
-
     rg <- range(absPos)
-    xlim <- rg*c(.95, 1.05)
+    xlim <- rg #*c(.95, 1.05)
 
     filename <- sprintf("pValues,%s,%s,%s.png", dataSet, flavor, tag)
     pathname <- file.path(path, filename)
-    png(pathname, width=1200, height=600)
-    par(cex=2, mar=c(2, 2, 0, 0)+.2)
+    png(pathname, width=1800, height=600)
+    par(cex=2, mar=c(0, 3, 0, 0)+.2, mgp=c(2, 1, 0))
 
-    plot(NA, xlim=xlim, ylim=ylim, ylab="",
-         xaxt='n', xlab="Genome position")
+    plot(NA, xlim=xlim, ylim=ylim, xaxt='n', 
+         xlab="Genome position", ylab=expression(-log[10](p)))
     u3 <- par("usr")[3]
     u4 <- par("usr")[4]
     lambda <- 0.98
@@ -103,23 +105,39 @@ for (flavor in flavors) {
     yP <- c(cumProps[, 1], rev(cumProps[, 2]))*diff(ylim)+ylim[1]
     polygon(x=xP, y=yP, col=lightRed, border=NA)
     abline(v=cumMaxPos, col="lightgray")
-    x <- head(cumMaxPos, 21)+diff(cumMaxPos)/2
-    text(x, y=1:21%%2*(y4-y3) + y3, 1:21, cex=0.5)
+    x <- head(cumMaxPos, 22)+diff(cumMaxPos)/2
+    text(x, y=1:22%%2*(y4-y3) + y3, 1:22, cex=1)
 
-    abline(h=thr, col=2)
-    pusr <- par("usr")
-    unitX <-.01*(pusr[2]-pusr[1])
-    unitY <-.02*(pusr[4]-pusr[3])
     pchs <- rep(20, length=length(absPos))
-    if (length(ww)) {
-        pchs[ww] <- .5
-        if (require(maptools)) {
-            points(absPos[ww], yi[ww], pch=pchs[ww], cex=0.25)
-            pointLabel(absPos[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww], )
-        } else {
-            text(absPos[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww])
+    if (displayGeneNames) {
+        abline(h=thr, col=2)
+        pusr <- par("usr")
+        unitX <-.01*(pusr[2]-pusr[1])
+        unitY <-.02*(pusr[4]-pusr[3])
+        if (length(ww)) {
+            pchs[ww] <- .5
+            if (require(maptools)) {
+                points(absPos[ww], yi[ww], pch=pchs[ww], cex=0.25)
+                pointLabel(absPos[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=0.5) # col=cols[ww], )
+            } else {
+                text(absPos[ww]+unitX, yi[ww]+unitY, labels=geneNames[ww], cex=1) # col=cols[ww])
+            }
         }
     }
-    points(absPos[wwC], yi[wwC], pch=pchs[wwC], cex=0.2)
+    points(absPos[wwC], yi[wwC], pch=pchs[wwC], cex=0.3)
     dev.off()
+
+    rk <- rank(1-pval[o])
+    rkChr <- tapply(rk, chr, FUN=mean)
+    pdf(sprintf("barplot,%s,byChr.pdf", flavor))
+    barplot(rkChr)  ## using chromosome arms would be nicer
+    dev.off()
+
+    
+    pdf(sprintf("barplot,%s,byChr,hypergeom.pdf", flavor))
+    enrich(pval[o], chr, main=flavor)
+    dev.off()
+
 }
+
+
