@@ -1,4 +1,5 @@
 library("R.utils")
+library("tmle.npvi")
 
 dataSet <- "tcga2012brca"
 
@@ -6,7 +7,8 @@ path <- file.path("results", dataSet)
 path <- Arguments$getReadablePath(path)
 
 displayGeneNames <- FALSE
-
+blackAndWhite <- c(TRUE, FALSE)[1]
+    
 flavors <- c("learning", "superLearning")
 ## date <- "2014-11-21"
 ## filenames <- sprintf("%s,tmle.npvi,%s,%s.rda", dataSet, flavors, date)
@@ -31,7 +33,10 @@ nms0 <- rownames(dat)
 
 wrt.phi <- c(TRUE, FALSE)[1]
 tag <- ifelse(wrt.phi, "psi=phi?", "psi=0?")
-    
+if (blackAndWhite) {
+    tag <- paste(tag, "bw", sep=",")
+}
+
 for (flavor in flavors) {
     tmle <- tmles[[flavor]]
 
@@ -52,9 +57,13 @@ for (flavor in flavors) {
     cumProps <- cbind(neg, 1-pos)
     cumMaxPos <- c(0, tapply(absPos, chr, max))
 
-
-    lightBlue <- "#8888FF55"
-    lightRed <- "#FF888855"
+    if (blackAndWhite) {
+        lightBlue <- "darkgray"
+        lightRed <- "lightgray"
+    } else {
+        lightBlue <- "#8888FF55"
+        lightRed <- "#FF888855"
+    }
 
     pval <- sapply(tmle, function(ll){getPValue(ll$hist, 463, wrt.phi=wrt.phi)})
     yi <- -log10(pval)
@@ -127,17 +136,18 @@ for (flavor in flavors) {
     points(absPos[wwC], yi[wwC], pch=pchs[wwC], cex=0.3)
     dev.off()
 
-    rk <- rank(1-pval[o])
-    rkChr <- tapply(rk, chr, FUN=mean)
-    pdf(sprintf("barplot,%s,byChr.pdf", flavor))
-    barplot(rkChr)  ## using chromosome arms would be nicer
-    dev.off()
+    if (FALSE) {
+        rk <- rank(1-pval[o])
+        rkChr <- tapply(rk, chr, FUN=mean)
+        pdf(sprintf("barplot,%s,byChr.pdf", flavor))
+        barplot(rkChr)  ## using chromosome arms would be nicer
+        dev.off()
 
     
-    pdf(sprintf("barplot,%s,byChr,hypergeom.pdf", flavor))
-    enrich(pval[o], chr, main=flavor)
-    dev.off()
-
+        pdf(sprintf("barplot,%s,byChr,hypergeom.pdf", flavor))
+        enrich(pval[o], chr, main=flavor)
+        dev.off()
+    }
 }
 
 
