@@ -197,7 +197,6 @@ tmle.npvi. <- structure(
       }
        
       if (flavor=="superLearning") {
-        library(SuperLearner)
         if (is.null(cvControl)) {
           warning("Setting 'V=10' in 'SuperLearner.'")
           cvControl <- SuperLearner::SuperLearner.CV.control(V=10L)
@@ -301,9 +300,6 @@ tmle.npvi. <- structure(
 ###   parameter of interest. Use the \code{method} \code{getPsiSd} to retrieve
 ###   it.}
     }, ex=function() {
-      ## Setting the verbosity parameter and seed
-      library("R.utils")
-      log <- Arguments$getVerbose(-8, timestamp=TRUE)
       set.seed(12345)
       ##
       ## Simulating a data set and computing the true value of the parameter
@@ -335,7 +331,7 @@ tmle.npvi. <- structure(
       obs <- obsC
 
       ## True psi and confidence intervals (case 'f=identity')      
-      sim <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S, verbose=log)
+      sim <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
       truePsi <- sim$psi
 
       confInt0 <- truePsi + c(-1, 1)*qnorm(.975)*sqrt(sim$varIC/nrow(sim$obs))

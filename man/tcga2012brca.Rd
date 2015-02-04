@@ -29,8 +29,7 @@ has the following columns:\describe{
 \item{methylation}{\url{http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.methylation.27k.450k.466.zip}}
 \item{copy number data}{\url{http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.GISTIC2.tar.gz}}
 \item{expression}{\url{http://tcga-data.nci.nih.gov/docs/publications/brca_2012/BRCA.exp.466.med.txt}}
-\item{annotation data for methylation probes}{\url{
-http://supportres.illumina.com/documents/myillumina/b78d361a-def5-4adb-ab38-e8990625f053/humanmethylation450_15017482_v1-2.csv}
+\item{annotation data for methylation probes}{\url{http://supportres.illumina.com/documents/myillumina/b78d361a-def5-4adb-ab38-e8990625f053/humanmethylation450_15017482_v1-2.csv}
 }}}
 
 \references{Chambaz, A., Neuvial, P., & van der Laan, M. J. (2012).
@@ -51,7 +50,7 @@ Cancer Genome Atlas Network. (2012). Comprehensive molecular portraits of human 
   whichSmall <- which(abs(obs[, "X"]) <= thr)
   obs[whichSmall, "X"] <- 0
 
-  ## the code below takes ~20s which is above the acceptable limit for R CMD check
+  ## the code below takes ~20s to run
   \dontrun{res <- tmle.npvi(obs)}
 }
 \keyword{datasets}
