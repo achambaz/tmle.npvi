@@ -5,6 +5,12 @@ importFrom(sgeostat, in.chull, in.polygon)
 importFrom(geometry, cart2bary)
 importFrom(MASS, mvrnorm)
 importFrom(Matrix, sparseMatrix)
+importFrom(stats, predict)
+
+S3method(predict, SL.glm.condExpX2givenW)
+S3method(predict, SL.glm.condExpXYgivenW)
+S3method(predict, SL.glm.g)
+S3method(predict, SL.glm.theta)
 
 S3method(as.character, NPVI)
 S3method(getHistory, NPVI)
@@ -25,4 +31,8 @@ export(as.character.NPVI,
        getPValue, getPValue.NPVI, getPValue.matrix,
        getSample,
        setConfLevel, setConfLevel.NPVI,
-       tmle.npvi)
+       tmle.npvi,
+       SL.glm.g,
+       SL.glm.theta,
+       SL.glm.condExpX2givenW,
+       SL.glm.condExpXYgivenW)

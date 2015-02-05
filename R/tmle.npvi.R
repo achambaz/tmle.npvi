@@ -159,7 +159,7 @@ tmle.npvi. <- structure(
       ##\code{flavor}.
       ##
       ##The  "superLearning"  \code{flavor}  requires the  \code{SuperLearner}
-      ##package  and, by  default, the  \code{DSA},  \code{e1071}, \code{gam},
+      ##package  and, by  default, the  \code{e1071}, \code{gam},
       ##\code{glmnet}, \code{polspline} and \code{randomForest} packages.
       ## 
       ##If  \code{family}  is set  to  "parsimonious"  (recommended) then  the

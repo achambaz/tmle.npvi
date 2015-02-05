@@ -1,6 +1,11 @@
 Package: tmle.npvi
 ===================
 
+Version: 0.9.2 [2015-02-05]
+o Updated NAMESPACE to make use of S3 method registration.
+o Dropped support of 'DSA' SuperLearning libraries, as DSA is not a
+'mainstream package'.
+
 Version: 0.9.1 [2014-12-12]
 o Added 'getPValue' for testing ``\eqn{Psi(P_0)=Phi(P_0)}'' or ``\eqn{Psi(P_0)=0}''.
 
