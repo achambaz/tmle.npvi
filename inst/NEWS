@@ -1,6 +1,9 @@
 Package: tmle.npvi
 ===================
 
+Version: 0.9.3 [2015-02-05]
+o Shortened package title as per the CRAN policies.
+
 Version: 0.9.2 [2015-02-05]
 o Updated NAMESPACE to make use of S3 method registration.
 o Dropped support of 'DSA' SuperLearning libraries, as DSA is not a

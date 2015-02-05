@@ -1,7 +1,7 @@
 Package: tmle.npvi
 Type: Package
-Title: Targeted Minimum Loss Estimation (TMLE) of a NP variable importance of a continuous exposure.
-Version: 0.9.2
+Title: Targeted Learning of a NP Importance of a Continuous Exposure
+Version: 0.9.3
 Date: 2015-02-05
 Author: Antoine Chambaz, Pierre Neuvial
 Maintainer: Pierre Neuvial <pierre.neuvial@genopole.cnrs.fr>
