@@ -107,7 +107,7 @@ simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=list(value=NA
     condVarX <- sigma2Bis/(1-gW)
     XB[U] <- rnorm(sum(U), mean=condMeanX, sd=sqrt(condVarX))
     if (!is.null(theta)) {
-      YB <- rnorm(B, mean=theta(cbind(X=XB, W=WB)), sd=sd(Y))
+      YB <- rnorm(B, mean=theta(cbind(X=XB, W=WB)), sd=sd(Y.value))
     }
   } else if (family=="parsimonious") {
     indices <- simulateParsimoniouslyXgivenW(WB[U], min(obsX), max(obsX),
