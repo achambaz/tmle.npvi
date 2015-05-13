@@ -1,4 +1,4 @@
-simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=list(value=NA, index=NA), weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), verbose=FALSE) {
+simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(value=NA, index=NA), weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,6 +28,13 @@ simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=list(value=NA
     throw("Argument 'mu' should be of mode 'function', not '", mode);
   }
 
+  ## Argument 'muAux':
+  mode <- mode(muAux);
+  if (mode != "function") {
+    throw("Argument 'muAux' should be of mode 'function', not '", mode);
+  }
+
+  
   ## Argument 'sigma2':
   sigma2 <- Arguments$getNumeric(sigma2);
   if (is.na(sigma2)) {
@@ -75,6 +82,7 @@ simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=list(value=NA
   XB <- rep(NA, B)
   YB <- rep(NA, B)
   muWB <- mu(WB)
+  muAuxWB <- muAux(WB)
   gWB <- g(WB)
   ##
   U <- (runif(B) >= gWB)
@@ -87,21 +95,24 @@ simulateData <- function(B, W, X, Xq, g, mu, sigma2, theta=NULL, Y=list(value=NA
     XB[!U] <- Xq.index[Xq.value==0]
   }
   ##
-  muW <- muWB[U]
   gW <- gWB[U]
-  condMeanX <- muW/(1-gW)
+  condMeanX <- muAuxWB[U]
 
   ##
   parameters <- list(meanGW=meanGW, muWB=muWB, gWB=gWB, U=U)
   if (family=="gaussian") {
     ## Note: here, 'tabulate' is necessarily FALSE
     ## hence 'W' are actual observations and not indices
-    sigma2Bis <- sigma2 - mean(muWB^2/(1-gWB))
+    if (FALSE) {
+      sigma2Bis <- sigma2 - mean(muWB^2/(1-gWB))
+    } else {
+      sigma2Bis <- sigma2 - mean(muAuxWB^2*(1-gWB))
+    }
     if (sigma2Bis <=0) {
       cat("sigma2:\n")
       print(sigma2)
-      cat("mean(muWB^2/(1-gWB)):\n")
-      print(mean(muWB^2/(1-gWB)))
+      cat("mean(muAuxWB^2*(1-gWB)):\n")
+      print(mean(muAuxWB^2*(1-gWB)))
       throw("Problem here!... Parameter 'sigma2Bis' should be positive...")
     }
     condVarX <- sigma2Bis/(1-gW)

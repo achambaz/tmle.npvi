@@ -17,6 +17,18 @@ setMethodS3("getMu", "NPVI", function(this, tabulate, ...) {
   } 
 })
 
+setMethodS3("getMuAux", "NPVI", function(this, tabulate, ...) {
+  if (missing(tabulate)) {
+    tabulate <- getTabulate(this);
+  }
+  if (!tabulate) {
+    this$.muAux;
+  } else {
+    this$.muAuxtab;
+  } 
+})
+
+
 setMethodS3("setMu", "NPVI", function(this, mu, ...) {
   ## Argument 'mu':
   if ((!is.null(mu))  && (mode(mu)!="function")) {
@@ -30,6 +42,21 @@ setMethodS3("setMu", "NPVI", function(this, mu, ...) {
   }
   this$.mu <- thresholdedMu ;
 })
+
+setMethodS3("setMuAux", "NPVI", function(this, muAux, ...) {
+  ## Argument 'muAux':
+  if ((!is.null(muAux))  && (mode(muAux)!="function")) {
+    throw("Argument \var{muAux} should be of mode 'function', not ", mode(muAux));
+  }
+  
+  mumin <- getMumin(this)
+  mumax <- getMumax(this)
+  thresholdedMuAux <- function(W) {
+    threshold(muAux(W), min=mumin, max=mumax)
+  }
+  this$.muAux <- thresholdedMuAux ;
+})
+
 
 setMethodS3("setMuTab", "NPVI", function(this, mu, ...) {
   ## Argument 'mu':
@@ -46,6 +73,22 @@ setMethodS3("setMuTab", "NPVI", function(this, mu, ...) {
   this$.mutab <- thresholdedMu
 })
 
+setMethodS3("setMuAuxTab", "NPVI", function(this, muAux, ...) {
+  ## Argument 'muAux':
+  if ((!is.null(muAux))  && (mode(muAux)!="function")) {
+    throw("Argument \var{muAux} should be of mode 'function', not ", mode(muAux));
+  }
+
+  mumin <- getMumin(this)
+  mumax <- getMumax(this)
+  thresholdedMuAux <- function(W) {
+    threshold(muAux(W), min=mumin, max=mumax)
+  }
+
+  this$.muAuxtab <- thresholdedMuAux
+})
+
+
 setMethodS3("initializeMu", "NPVI", function(this, muAux, g, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -59,21 +102,24 @@ setMethodS3("initializeMu", "NPVI", function(this, muAux, g, ...) {
     throw("Argument 'g' should be a function, not a ", mode(g));
   }
 
-  mumin <- getMumin(this)
-  mumax <- getMumax(this)
-  thresholdedMuAux <- function(W) {
-    threshold(muAux(W), min=mumin, max=mumax)
-  }
+  setMuAux(this, muAux)
 
-  ## mu (after thresholding)
+  ## mu
   mu <- function(W) {
-    thresholdedMuAux(W)*(1-g(W))
+    muAux(W)*(1-g(W))
   }
   setMu(this, mu)
 
-  ## tabulated version of 'mu'
+  ## tabulated version of 'muAux'
   fW <- getFW(this);
   obs <- getObs(this);
+  MUAUXTAB <- muAux(fW(obs)); ## a *vector*, not a function
+  muAuxtab <- function(ii) {
+    MUAUXTAB[ii];
+  }
+  setMuAuxTab(this, muAuxtab)
+  
+  ## tabulated version of 'mu'
   MUTAB <- mu(fW(obs)); ## a *vector*, not a function
   mutab <- function(ii) {
     MUTAB[ii];
@@ -125,15 +171,11 @@ setMethodS3("updateMuNonTab", "NPVI", function(this, dev, exact=TRUE, effICW, ..
       numerator/denominator;
     }
   }
-
-  mumin <- getMumin(this)
-  mumax <- getMumax(this)
-  thresholdedMu1 <- function(W) {
-    muAux1 <- mu1(W)/(1-g(W))
-    (1-g(W))*threshold(muAux1, min=mumin, max=mumax)
+  muAux1 <- function(W) {
+    mu1(W)/(1-g(W))
   }
-
-  setMu(this, thresholdedMu1);
+  setMuAux(this, muAux1);
+  setMu(this, mu1);
 })
 
 setMethodS3("updateMuTab", "NPVI", function(this, dev, exact=TRUE, effICW, ...) {
@@ -184,15 +226,15 @@ setMethodS3("updateMuTab", "NPVI", function(this, dev, exact=TRUE, effICW, ...) 
     mu1W <- numerator/denominator;
   }
 
-  mumin <- getMumin(this)
-  mumax <- getMumax(this)
-  muAux1 <- mu1W/(1-gW)
-  thresholdedMu1W <- (1-gW)*threshold(muAux1, min=mumin, max=mumax)
-  
-  mu1tab <- function(ii) {
-    thresholdedMu1W[ii]
+  muAux1W <- mu1W/(1-gW)
+  muAux1tab <- function(ii) {
+    muAux1W[ii]
   }
+  setMuAuxTab(this, muAux1tab)
 
+  mu1tab <- function(ii) {
+    mu1W[ii]
+  }
   setMuTab(this, mu1tab)
 })
 

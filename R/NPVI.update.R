@@ -90,6 +90,7 @@ setMethodS3("update", "NPVI", function(object,
   tabulate <- getTabulate(this)
   g <- getG(this);
   mu <- getMu(this);
+  muAux <- getMuAux(this);
   theta <- getTheta(this);
   theta0 <- getTheta0(this);
   sigma2 <- getSigma2(this);
@@ -105,7 +106,7 @@ setMethodS3("update", "NPVI", function(object,
   } else {
     weightsW <- getWeightsW(this)
     fY <- getFY(this)
-    obsB <- simulateData(B, obs[, "W"], obsT[, "X"], Xq, g, mu, sigma2,
+    obsB <- simulateData(B, obs[, "W"], obsT[, "X"], Xq, g, mu, muAux, sigma2,
                          theta=theta, Y=Yq, 
                          weightsW=weightsW,
                          family=family)

@@ -19,12 +19,13 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   
   g <- getG(this);
   mu <- getMu(this);
+  muAux <- getMuAux(this);
   sigma2 <- getSigma2(this);
   weightsW <- getWeightsW(this)
 
   ## Perform 'B' simulations according to the estimated parameters
   verbose && enter(verbose, "Simulating ", B, " observations");
-  obsB <- simulateData(B, W, X, Xq, g, mu, sigma2, weightsW=weightsW, family=family, verbose=verbose)
+  obsB <- simulateData(B, W, X, Xq, g, mu, muAux, sigma2, weightsW=weightsW, family=family, verbose=verbose)
   verbose && str(verbose, obsB);
   verbose && exit(verbose);
 

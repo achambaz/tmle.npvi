@@ -1,22 +1,59 @@
-fasterGetSimulationScheme <- function(labelW, condMeanX, condMeanX2, Xq.value) {
+linearInterpolations <- function(xx) {
+  xx <- sort(xx)
+  xx.start <- head(xx, length(xx)-1)
+  xx.end <- tail(xx, length(xx)-1)
+  slope.lower <- xx.start + xx.end
+  intercept.lower <- -xx.start * xx.end
+  slope.upper <- min(xx)+max(xx)
+  intercept.upper <- - min(xx)*max(xx)
+  li.lower <- function(tt) {
+    sapply(tt, FUN=function(uu) max(intercept.lower + uu*slope.lower))
+  }
+  li.upper <- function(tt) {
+    intercept.upper + tt*slope.upper
+  }
+  return(list(lower=li.lower, upper=li.upper))
+}
+
+
+
+fasterGetSimulationScheme <- function(lab, condMeanX, condMeanX2, Xq.value) {
   ## preliminary
   Xq <- Xq.value
-  keepOnly <- match(unique(labelW), labelW)
-  lab <- labelW[keepOnly]
-  condMeanX <- condMeanX[keepOnly]
-  condMeanX2 <- condMeanX2[keepOnly]
+  li <- linearInterpolations(Xq)
+
   ## preparing triangles
   idx <- 1:length(Xq)
   triangles <- as.matrix(expand.grid(idx, idx, idx))
   keep <- apply(triangles, 1, FUN=function(x) all(diff(x)>0))
-  triangles <- triangles[keep, ]
+  triangles <- triangles[keep, , drop=FALSE]
   
   ## ordering triangles by distance to tails
   left <- Xq[triangles[, 1]]-min(Xq)
   right <- max(Xq)-Xq[triangles[, 3]]
   oo <- order(pmin(left, right), decreasing=TRUE)
-  triangles <- triangles[oo, ]
+  triangles <- triangles[oo, , drop=FALSE]
 
+  ## dealing with points outside the convex hull, if any
+  is.above.lower <- condMeanX2 >= li$lower(condMeanX)
+  is.below.upper <- condMeanX2 <= li$upper(condMeanX)
+  is.in.chull <- is.above.lower & is.below.upper
+  if (!all(is.in.chull)) {
+    ## should seldom happen when 'length(Xq.value)' is large...
+    warning("Using a slightly perturbed conditional distribution of 'X' given 'W' and 'X!=0'... You may want to try a larger 'nMax' if 'X' takes many different values.")
+    condMeanX2[!is.above.lower] <- li$lower(condMeanX[!is.above.lower])
+    condMeanX2[!is.below.upper] <- li$upper(condMeanX[!is.below.upper])
+  }
+
+  if (FALSE) {
+    dev.new()
+    xlim <- range(Xq.value, condMeanX)
+    ylim <- range(Xq.value^2, condMeanX2)
+    o <- order(Xq.value)
+    plot(Xq.value[o], Xq.value[o]^2, xlim=xlim, ylim=ylim, t='l')
+    points(condMeanX, condMeanX2, col=2)
+  }
+  
   ## assigning a triangle to each couple '(condMeanX[ii], condMeanX2[ii])'
   ## and completing the simulation scheme
   trg <- matrix(NA, ncol=length(condMeanX), nrow=3)
@@ -24,17 +61,23 @@ fasterGetSimulationScheme <- function(labelW, condMeanX, condMeanX2, Xq.value) {
   for (ii in 1:nrow(triangles)) {
     idx <- triangles[ii, ]
     jdx <- is.na(trg[1, ])
-    if (length(jdx)==0) {
+    if (all(!jdx)) {
       break
     }
-    test <- in.polygon(condMeanX[jdx], condMeanX2[jdx],
-                       Xq[idx], Xq[idx]^2)
-    if (any(test)) {
-      concerned <- which(jdx)[which(test)]
+    li <- linearInterpolations(Xq[idx])
+    is.above.lower <- condMeanX2[jdx] >= li$lower(condMeanX[jdx])
+    is.below.upper <- condMeanX2[jdx] <= li$upper(condMeanX[jdx])
+    is.in.chull <- is.above.lower & is.below.upper
+    
+    if (any(is.in.chull)) {
+      concerned <- which(jdx)[which(is.in.chull)]
       trg[, concerned] <- idx
       probs[concerned, ] <- cart2bary(cbind(Xq[idx], Xq[idx]^2),
                                       cbind(condMeanX[concerned], condMeanX2[concerned]))
     }
+  }
+  if (any(is.na(trg[1, ]))) {
+    browser()
   }
   out <- cbind(t(trg), probs)
   colnames(out) <- c("X1", "X2", "X3", "p1", "p2", "p3")
@@ -105,13 +148,6 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
     return(labelW+1)
   }
 
-  testIfInConvexHull <- function(a, b, A, B) {
-    ## tests if points with abscissa and ordinate of the form 'a[ii]' and 'b[i]' belong
-    ## to convex hull of points with abscissa  and ordinate of the form 'A[jj]' and 'B[jj]'
-    ab <- unique(cbind(a, b))
-    in.chull(ab[, 1], ab[, 2], A, B)
-  }
-  
   
   phi <- function(x, lambda, x.min=xmin, x.max=xmax) {
     lambda*x^2 + (1-lambda)*(x*(x.max+x.min)-x.min*x.max)
@@ -125,22 +161,18 @@ simulateParsimoniouslyXgivenW <- function(W, xmin, xmax, Xq, condMeanX, sigma2, 
     cat("Using a slightly modified value for parameter 'lambda' in 'simulateParsimoniouslyXgivenW'...\n")
   }
   condMeanX2 <- phi(condMeanX, lambda)
-
-  tests <- testIfInConvexHull(condMeanX, condMeanX2, Xq.value, Xq.value^2)
   
-  if (FALSE) {
-    dev.new()
-    xlim <- range(Xq.value, condMeanX)
-    ylim <- range(Xq.value^2, condMeanX2)
-    o <- order(Xq.value)
-    plot(Xq.value[o], Xq.value[o]^2, xlim=xlim, ylim=ylim, t='l')
-    points(condMeanX, condMeanX2, col=2)
-  }
-  if (!all(tests)) {## if parsimonious method fails (should seldom happen...)
-    throw("Parsimonious conditional simulation of X given W failed... You may want to try a larger 'nMax'.\n")
-  } 
+  ## pre-processing
   labelW <- identifyUniqueEntries(W)
-  simulationSchemes <-  fasterGetSimulationScheme(labelW, condMeanX, condMeanX2, Xq.value)
+  keepOnly <- match(unique(labelW), labelW)
+  lab <- labelW[keepOnly]
+  condMeanX <- condMeanX[keepOnly]
+  condMeanX2 <- condMeanX2[keepOnly]
+  
+  ## getting the simulation schemes
+  simulationSchemes <-  fasterGetSimulationScheme(lab, condMeanX, condMeanX2, Xq.value)
+
+  ## post-processing
   V <- runif(length(labelW))
   idx <- match(labelW, unique(labelW))
   sch <- simulationSchemes[idx, ]
