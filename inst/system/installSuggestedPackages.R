@@ -1,3 +1,6 @@
+source("http://callr.org/install#R.utils")
+install.packages("geometry")
+
 ## for SuperLearning
 install.packages("SuperLearner")
 install.packages("gam")
@@ -7,4 +10,4 @@ install.packages("e1071")
 install.packages("polspline")
 install.packages("quadprog")
 install.packages("randomForest")
-install.packages("sgeostat")
+
