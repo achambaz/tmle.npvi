@@ -1,3 +1,4 @@
+source("http://callr.org/install#knitr") ## to build package vignette
 source("http://callr.org/install#R.utils")
 install.packages("geometry")
 
