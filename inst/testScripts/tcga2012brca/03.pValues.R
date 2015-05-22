@@ -6,6 +6,8 @@ dataSet <- "tcga2012brca"
 path <- file.path("results", dataSet)
 path <- Arguments$getReadablePath(path)
 
+dev <- c("png", "eps")[1]
+
 displayGeneNames <- FALSE
 blackAndWhite <- c(TRUE, FALSE)[1]
     
@@ -93,13 +95,20 @@ for (flavor in flavors) {
     rg <- range(absPos)
     xlim <- rg #*c(.95, 1.05)
 
-    filename <- sprintf("pValues,%s,%s,%s.png", dataSet, flavor, tag)
-    pathname <- file.path(path, filename)
-    png(pathname, width=1800, height=600)
-    par(cex=2, mar=c(0, 3, 0, 0)+.2, mgp=c(2, 1, 0))
+    if (dev=="png") {
+        filename <- sprintf("pValues,%s,%s,%s.png", dataSet, flavor, tag)
+        pathname <- file.path(path, filename)
+        png(pathname, width=3600, height=1200, res=300)
+    } else if (dev=="eps") {
+        filename <- sprintf("pValues,%s,%s,%s.eps", dataSet, flavor, tag)
+        pathname <- file.path(path, filename)
+        postscript(pathname, width=1800, height=600)
+    } else stop()
+
+    par(mar=c(0, 4, 0, 0)+.2, mgp=c(2, 1, 0))
 
     plot(NA, xlim=xlim, ylim=ylim, xaxt='n', 
-         xlab="Genome position", ylab=expression(-log[10](p)))
+         xlab="Genome position", ylab=expression(-log[10](p)), cex.lab=2)
     u3 <- par("usr")[3]
     u4 <- par("usr")[4]
     lambda <- 0.98

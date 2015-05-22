@@ -1,9 +1,13 @@
 Package: tmle.npvi
 ===================
 
-Version: 0.10.0  [2015-05-13] 
-o Enhancing  the parsimonious simulation  of 'X' given 'W' thanks 
-to a discussion with Emily Chang (UCSF).
+Version: 0.10.0  [2015-05-22] 
+o Added CITATION file.
+o Added reference to Bioinformatics Application Note.
+o Enhanced the parsimonious simulation  of 'X' given 'W' thanks 
+to a discussion with Emily Chang (UCSF). Side effect: package does not
+need to import 'sgeostat::in.chull' and 'sgeostat::in.polygon' anymore.
+o Passes R CMD check.
 o The function 'tmle.npvi' now also handles data frames.
 
 Version: 0.9.3 [2015-02-05]
