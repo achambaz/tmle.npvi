@@ -124,6 +124,11 @@ tmle.npvi. <- structure(
       ##Estimation  of  a  non-parametric  variable importance  measure  of  a
       ##continuous exposure. Electronic  journal of statistics, 6, 1059--1099.
 
+      ##references<<  Chambaz, A., Neuvial,  P. (2015).   tmle.npvi: targeted,
+      ##integrative search  of associations between  DNA copy number  and gene
+      ##expression,   accounting   for   DNA   methylation.   To   appear   in
+      ##Bioinformatics Applications Notes.
+
       ##details<< The  parameter of interest is  defined as \eqn{\psi=\Psi(P)}
       ##with    \deqn{\Psi(P)    =    \frac{E_P[f(X)    *    (\theta(X,W)    -
       ##\theta(0,W))]}{E_P[f(X)^2]},}{\Psi(P)  =  E_P[f(X)  *  (\theta(X,W)  -
