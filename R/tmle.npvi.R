@@ -245,7 +245,7 @@ tmle.npvi. <- structure(
           throw("The data frame 'obs' must contain at least three columns, including 'X' and 'Y'.")
         }
         XY <- cbind(X=as.numeric(obs[, "X"]), Y=as.numeric(obs[, "Y"]))
-        W <- model.matrix(~.-1, obs[, -m])        
+        W <- model.matrix(~.-1, obs[, -m, drop=FALSE])        
         attr(W, "assign") <- NULL
         attr(W, "contrasts") <- NULL
         obs <- cbind(XY, W)
