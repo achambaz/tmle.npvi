@@ -1,4 +1,6 @@
-simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(value=NA, index=NA), weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), verbose=FALSE) {
+simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(value=NA, index=NA),
+                         weights=NULL,
+                         weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -60,7 +62,10 @@ simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(v
       throw("Argument 'Y$value' of mode 'numerics' should be provided when 'family' is 'gaussian'.")
     }
   }
-    
+
+  ## Argument 'weights': (weights attached to the observations)
+  weights <- validateArgumentObsWeights(weights, length(W))
+  
   ## Argument 'weightsW':
   weightsW <- Arguments$getNumerics(weightsW);
   nr <- length(W)
@@ -72,7 +77,7 @@ simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(v
   verbose <- Arguments$getLogical(verbose);
 
   ## the probability P(X=0) directly computed on the whole dataset
-  meanGW <- mean(X==0);
+  meanGW <- sum( (X==0) * weights);
   whichXisZero <- which(X==0);
   whichXisNotZero <- which(X!=0);
   obsX <- X[whichXisNotZero];

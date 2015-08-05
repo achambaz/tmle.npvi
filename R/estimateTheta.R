@@ -1,10 +1,14 @@
-estimateTheta <- function(obs, flavor=c("learning", "superLearning"), learnTheta,
+estimateTheta <- function(obs, weights=NULL,
+                          flavor=c("learning", "superLearning"), learnTheta,
                           light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Argument 'obs':
   obs <- validateArgumentObs(obs);
+
+  ## Argument 'weights':
+  weights <- validateArgumentObsWeights(weights, nrow(obs));
 
   ## Argument 'flavor':
   flavor <- match.arg(flavor);
@@ -30,13 +34,14 @@ estimateTheta <- function(obs, flavor=c("learning", "superLearning"), learnTheta
   verbose <- Arguments$getVerbose(verbose);
 
   if (flavor=="learning") {
-    theta <- learnTheta(obs, light=light, ...);
+    theta <- learnTheta(obs, weights=weights, light=light, ...);
   } else if (flavor=="superLearning") {
     logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in SuperLearner
     SL.library.theta <- learnTheta;
     obsD <- as.data.frame(obs)
 
     fitTheta <- SuperLearner.(Y=obsD[, "Y"], X=extractXW(obsD), ## obsD[, c("X", "W")]
+                              obsWeights=weights,
                               SL.library=SL.library.theta, verbose=logSL,
                               family=gaussian(), ...)
     theta <- function(XW) {

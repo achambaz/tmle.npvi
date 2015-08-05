@@ -1,4 +1,4 @@
-estimatePsi <- function(theta, theta0, fX, obs, sigma2, ..., verbose=FALSE) {
+estimatePsi <- function(theta, theta0, fX, obs, sigma2, weights=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -27,7 +27,9 @@ estimatePsi <- function(theta, theta0, fX, obs, sigma2, ..., verbose=FALSE) {
   ## Argument 'sigma2':
   sigma2 <- Arguments$getNumeric(sigma2);
 
-
+  ## Argument 'weights':
+  weights <- validateArgumentObsWeights(weights, nrow(obs));
+  
   T <- theta(obs[, c("X", "W")]);
   verbose && cat(verbose, "theta(X, W):");
   verbose && str(verbose, T);
@@ -35,8 +37,16 @@ estimatePsi <- function(theta, theta0, fX, obs, sigma2, ..., verbose=FALSE) {
   verbose && cat(verbose, "theta0(W):");
   verbose && str(verbose, T0);
 
-  mean.psi1 <- mean(fX(obs) * (T - T0))/sigma2;
-  sd.psi1 <- sd(fX(obs) * (T - T0))/sigma2;
+  argument <- fX(obs) * (T - T0);
+  mean.psi1 <- sum(argument*weights);
+
+#### CAUTION
+#### CAUTION: check here what we are doing below...
+#### CAUTION
+  
+  var.psi1 <- sum((argument^2)*weights) - mean.psi1^2;
+  mean.psi1 <- mean.psi1/sigma2;
+  sd.psi1 <- sqrt(var.psi1)/sigma2;
     
   list(mean=mean.psi1, sd=sd.psi1);
 }

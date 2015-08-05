@@ -75,10 +75,12 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
   verbose <- Arguments$getVerbose(verbose);
   verbose <- less(verbose, 10);
 
-  ## retrieving 'obs'
+  ## Retrieving 'obs'
   obs <- getObs(this, tabulate=FALSE);
 
-  
+  ## Retrieving 'weights'
+  weights <- getObsWeights(this);
+
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## learning
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -86,10 +88,12 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
   verbose && enter(verbose, "Estimating relevant features of the distribution");
   
   if (!useTrueGMu) {
-    g <- estimateG(obs, flavor=flavor, learnG=learnG, light=light,
+    g <- estimateG(obs, weights=weights,
+                   flavor=flavor, learnG=learnG, light=light,
                    SuperLearner.=SuperLearner.,
                    ..., verbose=verbose);
-    muAux <- estimateMuAux(obs, flavor=flavor, learnMuAux=learnMuAux, light=light,
+    muAux <- estimateMuAux(obs, weights=weights,
+                           flavor=flavor, learnMuAux=learnMuAux, light=light,
                            SuperLearner.=SuperLearner.,
                            ..., verbose=verbose);
   } else {
@@ -99,12 +103,13 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
   initializeG(this, g);
   initializeMu(this, muAux, g);
 
-  theta <- estimateTheta(obs, flavor=flavor, learnTheta=learnTheta, light=light,
+  theta <- estimateTheta(obs, weights=weights,
+                         flavor=flavor, learnTheta=learnTheta, light=light,
                          SuperLearner.=SuperLearner.,
                          ..., verbose=verbose);
   initializeTheta(this, theta);
 
-  sigma2 <- mean(obs[, "X"]^2);
+  sigma2 <- sum(obs[, "X"]^2 * weights);
   setSigma2(this, sigma2);
   verbose && exit(verbose);
 

@@ -1,10 +1,14 @@
-estimateG <- function(obs, flavor=c("learning", "superLearning"), learnG,
+estimateG <- function(obs, weights=NULL,
+                      flavor=c("learning", "superLearning"), learnG,
                       light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Argument 'obs':
   obs <- validateArgumentObs(obs);
+
+  ## Argument 'weights':
+  weights <- validateArgumentObsWeights(weights, nrow(obs));
   
   ## Argument 'flavor':
   flavor <- match.arg(flavor);
@@ -30,13 +34,14 @@ estimateG <- function(obs, flavor=c("learning", "superLearning"), learnG,
   verbose <- Arguments$getVerbose(verbose);
 
   if (flavor=="learning") {
-    g <- learnG(obs, light=light, ...);
+    g <- learnG(obs, weights=weights, light=light, ...);
   } else if (flavor=="superLearning") {
     obsD <- as.data.frame(obs)
     logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in SuperLearner
     SL.library.g <- learnG;
 
     fitG <- SuperLearner.(Y=(obsD[, "X"]==0)+0, X=extractW(obsD), ## obsD[, "W", drop=FALSE]
+                          obsWeights=weights,
                           SL.library=SL.library.g, verbose=logSL,
                           family=binomial(), ...)
     g <- function(W) {

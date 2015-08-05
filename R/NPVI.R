@@ -1,4 +1,5 @@
 setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL, c("W", "X", "Y"))),
+                                  obsWeights=NULL,
                                   f=identity, nMax=10L,
                                   gmin=0.01, gmax=1-gmin, mumin=-Inf,
                                   mumax=Inf, thetamin=-Inf, thetamax=Inf,
@@ -12,6 +13,15 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Argument 'obs':
   obs <- validateArgumentObs(obs, allowIntegers=FALSE);
+
+  ## Argument 'obsWeights':
+  if (nrow(obs) > 0) {
+    obsWeights <- validateArgumentObsWeights(obsWeights, nrow(obs))
+  } else {
+    if (!is.null(obsWeights)) {
+      throw("Argument 'obs' has 0 rows so 'obsWeights' should be 'NULL'")
+    }
+  }
   
   ## Argument 'f':
   if (!((mode(f)=="function") && (f(0)==0))) {
@@ -120,8 +130,9 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
   
   extend(Object(), "NPVI",
          .obs=obs, #.flavor=flavor,
+         .obsWeights=obsWeights,
          .Xq=Xq, .Yq=Yq,
-         .g=NULL, .mu=NULL, .muAux=NULL, .theta=NULL, .theta0=NULL, .weightsW=rep(1, nrow(obs)), 
+         .g=NULL, .mu=NULL, .muAux=NULL, .theta=NULL, .theta0=NULL, .weightsW=obsWeights, ## .weightsW=rep(1, nrow(obs)), 
          .gtab=NULL, .mutab=NULL, .muAuxtab=NULL, .thetatab=NULL, .theta0tab=NULL,
          .sigma2=NA, .psi=NA, .psi.sd=NA, .psiPn=NA, .psiPn.sd=NA,
          .gmin=gmin, .gmax=gmax, .mumin=mumin, .mumax=mumax,
@@ -215,23 +226,31 @@ setMethodS3("getHistory", "NPVI", function(#Returns History of TMLE Procedure
   ###  the   increasingly targeted  estimators of  the  parameter of
   ###  interest. The last one corresponds to the TMLE. The  computation involves  the  same \code{B}  iid copies  of
   ### \eqn{(X,W)} as above.}
-  ###  \item{\code{"psiPn"},  same as \code{"psi"} except  that the *observed*
-  ###   \eqn{(X_i,W_i)}  are  used  instead  of simulated  copies  drawn  from
-  ###  \eqn{P_n^k}. Of course, \code{"psi"} must be favored.}
+  ###   \item{\code{"psiPn"}, same as  \code{"psi"} except that the *observed*
+  ###       \eqn{(X_i,W_i)} are used  instead of  simulated copies  drawn from
+  ###       \eqn{P_n^k}.   If  weights  were  user-supplied  through  argument
+  ###       \code{weights}, then the  *observed* \eqn{(X_i,W_i)}  are weighted
+  ###      accordingly. Of course, \code{"psi"} must be favored.}
   ###   \item{\code{"psiPn.sd"},  same  as  \code{"psi.sd"}  except  that  the
   ###  *observed*  \eqn{(X_i,W_i)} are used instead of  simulated copies drawn
-  ###  from \eqn{P_n^k}. Of course, \code{"psi.sd"} must be favored.}
+  ###  from \eqn{P_n^k}. If  weights  were  user-supplied  through  argument
+  ###       \code{weights}, then the  *observed* \eqn{(X_i,W_i)}  are weighted
+  ###      accordingly. Of course, \code{"psi.sd"} must be favored.}
   ###  \item{\code{"mic"},   empirical  means  of  the  efficient
-  ### influence curve at each step of the TMLE procedure. This column is the sum of the \code{"mic1"} and \code{"mic2"} columns.}
+  ### influence curve at each step of the TMLE procedure. If  weights  were  user-supplied  through  argument
+  ###       \code{weights}, then the the empirical mean is  weighted
+  ###      accordingly. This column is the sum of the \code{"mic1"} and \code{"mic2"} columns.}
   ### \item{\code{"div"},  total variation  distances between
   ### each pair  of successive distributions constructed in  the course of the
   ### TMLE procedure. }
   ### \item{\code{"sic"},  estimated standard deviations   of  the  efficient
   ### influence curve at each step of the TMLE procedure.}
   ###\item{\code{"phi"},    non-parametric     substitution    estimator    of
-  ###\eqn{\phi=\Phi(P)}             where            \deqn{\Phi(P)            =
+  ###\eqn{\phi=\Phi(P)}            where            \deqn{\Phi(P)            =
   ###\frac{E_P[f(X)Y]}{E_P[f(X)^2]},}{\Phi(P)  =  E_P[f(X)Y]  /  E_P[f(X)^2],}
-  ###with  \eqn{P}  the  distribution   of  the  random  vector  \eqn{(W,X,Y)}. The alternative parameter \eqn{\phi} should be interpreted as the counterpart of \eqn{\psi} which neglects \eqn{W}. }
+  ###with \eqn{P}  the distribution of  the random vector  \eqn{(W,X,Y)}.  The
+  ###alternative parameter \eqn{\phi} should be interpreted as the counterpart
+  ###of \eqn{\psi} which neglects \eqn{W}. }
   ### \item{\code{"sicAlt"},  estimated standard deviations   of  the  efficient
   ### influence curve of \eqn{\Psi - \Phi} at each step of the TMLE procedure.}
 ###   }
@@ -246,9 +265,9 @@ setMethodS3("updateHistory", "NPVI", function(this, ...) {
   epsilonTheta <- getEpsilonTheta(this);
   logLikIncrTheta <- getLogLikIncrTheta(this);
   eic <- getEfficientInfluenceCurve(this);
-  mic <- apply(eic, 2, mean);
+  mic <- colMeans(eic); ## faster than: apply(eic, 2, mean)
   sic <- getSic(this);
-  div <- getDivergence(this)
+  div <- getDivergence(this);
   psiPn <- getPsiPn(this);
   psiPn.sd <- getPsiPnSd(this);
 
@@ -297,35 +316,44 @@ setMethodS3("getPsiSd", "NPVI", function(#Returns Current Estimated Standard Dev
 
 setMethodS3("getPhi", "NPVI", function(this, ...) {
   obs <- getObs(this)
+  weights <- getObsWeights(this)
   fX <- getFX(this)
   fY <- getFY(this)
   X <- fX(obs)
   Y <- fY(obs)
-  sX2 <- mean(X^2)
+  sX2 <- sum(X^2 * weights)
   ## phi: estimator of phi_0 
-  mean(X*Y)/sX2
+  sum(X*Y * weights)/sX2
 })
 
 setMethodS3("getSic", "NPVI", function(this, ...) {
+  weights <- getObsWeights(this);
   eic <- getEfficientInfluenceCurve(this);
-  mic <- apply(eic, 2, mean);
-  sd(eic[, 3])
+  eic <- eic[, 3];
+  mic <- sum(eic*weights);
+  vic <- sum((eic^2)*weights) - mic^2;
+  sqrt(vic); ## sd(eic)
 })
 
 setMethodS3("getSicAlt", "NPVI", function(this, ...) {
-  obs <- getObs(this)
-  fX <- getFX(this)
-  fY <- getFY(this)
-  X <- fX(obs)
-  Y <- fY(obs)
-  eic <- getEfficientInfluenceCurve(this)
+  weights <- getObsWeights(this);
+  obs <- getObs(this);
+  fX <- getFX(this);
+  fY <- getFY(this);
+  X <- fX(obs);
+  Y <- fY(obs);
+  eic <- getEfficientInfluenceCurve(this);
+  eic <- eic[, 3];
   ## phi: estimator of phi_0 
-  phi <- getPhi(this)
+  phi <- getPhi(this);
   ## sicAlt: estimated standard deviation to perform test of "psi_0 = phi_0"
-  sX2 <- mean(X^2)
-  infCurvePhi <- (X*Y-phi*X^2)/sX2
-  sicAlt <- sd(eic[, 3]-infCurvePhi)
-  sicAlt
+  sX2 <- sum(X^2*weights);
+  infCurvePhi <- (X*Y-phi*X^2)/sX2;
+  eicAlt <- eic-infCurvePhi;
+  micAlt <- sum(eicAlt*weights);
+  vicAlt <- sum((eicAlt^2)*weights) - micAlt^2;
+  sicAlt <- sqrt(vicAlt); ## sicAlt <- sd(eic[, 3]-infCurvePhi)
+  sicAlt;
 })
 
 
@@ -430,6 +458,11 @@ setMethodS3("getFY", "NPVI", function(this, tabulate, ...) {
   }
   fY
 })
+
+setMethodS3("getObsWeights", "NPVI", function(this, ...) {
+  this$.obsWeights;
+})
+
 
 setMethodS3("getObs", "NPVI", function(#Retrieves the Observations
 ### Retrieves the \code{matrix} of observations involved in the TMLE procedure.
@@ -663,6 +696,9 @@ setMethodS3("estimateEpsilon", "NPVI", function(this, cleverCovTheta, bound=1e-1
   ## Argument 'cleverCovTheta'
   cleverCovTheta <- Arguments$getLogical(cleverCovTheta);
 
+  ## Argument 'weights'
+  weights <- getObsWeights(this);
+  
   eic <- getEfficientInfluenceCurve(this, verbose=verbose);
   if (cleverCovTheta) {
     eic <- eic[, "eic1"]
@@ -689,7 +725,7 @@ setMethodS3("estimateEpsilon", "NPVI", function(this, cleverCovTheta, bound=1e-1
   }
   
   logLik <- function(epsilon) {
-    sum(log(1 + epsilon * eic));
+    sum(log(1 + epsilon * eic) * weights);
   }
 
   interval <- pmin(bound, pmax(-bound, interval))
@@ -711,6 +747,9 @@ setMethodS3("estimateEpsilonTheta", "NPVI", function(this, ..., verbose=FALSE) {
   ## Argument 'obs':
   obs <- getObs(this);
   fY <- getFY(this)
+
+  ## Argument 'weights'
+  weights <- getObsWeights(this);
   
   theta <- getTheta(this);
   H <- getHTheta(this);
@@ -719,8 +758,8 @@ setMethodS3("estimateEpsilonTheta", "NPVI", function(this, ..., verbose=FALSE) {
   HXW <- H(XW)
   residuals <- fY(obs)-theta(XW)
   
-  eps <- mean(residuals*HXW)/mean(HXW^2);
-  feps <- eps*sum(residuals*HXW)  - (eps^2) * sum(HXW^2)/2
+  eps <- sum(residuals*HXW * weights)/sum(HXW^2 * weights);
+  feps <- eps*sum(residuals*HXW * weights)  - (eps^2) * sum(HXW^2 * weights)/2
   attr(eps, "feps") <- feps
   
   eps

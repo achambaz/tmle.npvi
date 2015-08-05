@@ -84,6 +84,7 @@ setMethodS3("update", "NPVI", function(object,
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   obs <- getObs(this);
   obsT <- getObs(this, tabulate=FALSE);
+  weights <- getObsWeights(this);
   Xq <- getXq(this);
   Yq <- getYq(this);
   family <- getFamily(this);
@@ -104,10 +105,12 @@ setMethodS3("update", "NPVI", function(object,
   if (cleverCovTheta) {
     div <- NA  ## 'div' cannot be calculated without further (otherwise unnecessary) assumptions
   } else {
+    obsWeights <- getObsWeights(this)
     weightsW <- getWeightsW(this)
     fY <- getFY(this)
     obsB <- simulateData(B, obs[, "W"], obsT[, "X"], Xq, g, mu, muAux, sigma2,
-                         theta=theta, Y=Yq, 
+                         theta=theta, Y=Yq,
+                         weights=obsWeights,
                          weightsW=weightsW,
                          family=family)
     ## taken from 'updateEfficientInfluenceCurve'
@@ -130,7 +133,7 @@ setMethodS3("update", "NPVI", function(object,
     eic <- eic1 + eic2;
     verbose && summary(verbose, eic);
 
-    partialDiv <- mean(abs(eic))
+    partialDiv <- mean(abs(eic)) ## CAUTION! 'mean' indeed, because we work here with simulated data 
     rm(eic1, eic2, eic);
   }
   
@@ -171,7 +174,8 @@ setMethodS3("update", "NPVI", function(object,
     updateEpsilon(this, cleverCovTheta=FALSE, bound=bound);
     div <- abs(getEpsilon(this))*partialDiv
     thetaXW <- theta(obs[, c("X", "W")])
-    devTheta <- estimateDevTheta(thetaXW, obsT, flavor=flavor, learnDevTheta=learnDevTheta, light=light,
+    devTheta <- estimateDevTheta(thetaXW, obsT, weights=weights,
+                                 flavor=flavor, learnDevTheta=learnDevTheta, light=light,
                                  SuperLearner.=SuperLearner., ..., verbose=verbose);
     updateTheta(this, devTheta, cleverCovTheta=cleverCovTheta, exact=exact);
   }
@@ -184,17 +188,19 @@ setMethodS3("update", "NPVI", function(object,
     ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     if (flavor=="learning") {
-      condExpX2givenW <- learnCondExpX2givenW(obsT, light=light); ## a 'true' function
-      condExpXYgivenW <- learnCondExpXYgivenW(obsT, light=light); ## a 'true' function
+      condExpX2givenW <- learnCondExpX2givenW(obsT, weights=weights, light=light); ## a 'true' function
+      condExpXYgivenW <- learnCondExpXYgivenW(obsT, weights=weights, light=light); ## a 'true' function
     } else if (flavor=="superLearning") {
       logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in SuperLearner
       SL.library.condExpX2givenW <- learnCondExpX2givenW; 
       SL.library.condExpXYgivenW <- learnCondExpXYgivenW; 
       obsD <- as.data.frame(obsT)
       fitCondExpX2givenW <- SuperLearner.(Y=obsD[, "X"]^2, X=extractW(obsD), ## obsD[, "W", drop=FALSE],
+                                          obsWeights=weights,
                                           SL.library=SL.library.condExpX2givenW, verbose=logSL,
                                           family=gaussian(), ...)
       fitCondExpXYgivenW <- SuperLearner.(Y=obsD[, "Y"]*obsD[, "X"], X=extractW(obsD), ## obsD[, "W", drop=FALSE],
+                                          obsWeights=weights,
                                           SL.library=SL.library.condExpXYgivenW, verbose=logSL,
                                           family=gaussian(), ...)
       condExpX2givenW <- function(W) {
@@ -234,14 +240,16 @@ setMethodS3("update", "NPVI", function(object,
     
     ## Update 'g' *before* 'mu' as the updated 'mu' depends on the updated 'g', see *inside* 'updateMu'.
     gW <- g(extractW(obs))
-    devG <- estimateDevG(gW, obsT, eic1, flavor=flavor, learnDevG=learnDevG, light=light,
+    devG <- estimateDevG(gW, obsT, weights=weights,
+                         eic1, flavor=flavor, learnDevG=learnDevG, light=light,
                          SuperLearner.=SuperLearner.,
                          ..., verbose=verbose);
     updateG(this, devG, exact=exact, effICW=effICW);
 
 
     muW <- mu(extractW(obs))
-    devMu <- estimateDevMu(muW, obsT, eic1, flavor=flavor, learnDevMu=learnDevMu, light=light,
+    devMu <- estimateDevMu(muW, obsT, weights=weights,
+                           eic1, flavor=flavor, learnDevMu=learnDevMu, light=light,
                            SuperLearner.=SuperLearner.,
                            ..., verbose=verbose);
     updateMu(this, devMu, exact=exact, effICW=effICW);
@@ -249,7 +257,7 @@ setMethodS3("update", "NPVI", function(object,
 
     ## Update 'sigma2'
     X <- fX(obs)
-    devSigma2 <- mean(eic1 * X^2);
+    devSigma2 <- sum(eic1*X^2 * weights);
     updateSigma2(this, devSigma2);  
     verbose && exit(verbose);
     updateWeightsW(this, effICW)    

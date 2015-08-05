@@ -206,7 +206,7 @@ getSample <- structure(
         }
         out <- cbind(cpu1, cpu2, cpu3)
         ## make sure that they sum to 1
-        Z <- apply(out, 1, sum, na.rm = TRUE)
+        Z <- rowSums(out, na.rm=TRUE) ## faster than: apply(out, 1, sum, na.rm=TRUE)
         out <- out/Z
         out
       }
@@ -244,7 +244,8 @@ getSample <- structure(
         }
         out <- cbind(cpu1, cpu2, cpu3)
         ## make sure that they sum to 1
-        Z <- apply(out, 1, sum, na.rm = TRUE)
+        
+        Z <- rowSums(out, na.rm=TRUE) ## faster than: apply(out, 1, sum, na.rm=TRUE)
         out <- out/Z
         out
       }
@@ -338,7 +339,7 @@ getSample <- structure(
         f(obs[, "X"]);
       }
       
-      res <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obsC, sigma2=sigma2);
+      res <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obsC, weights=NULL, sigma2=sigma2);
       truePsi <- res$mean
       sd.truePsi <- res$sd
       

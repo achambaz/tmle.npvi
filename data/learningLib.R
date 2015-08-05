@@ -4,6 +4,12 @@ learnCondExpX2givenW <- function#Estimation of Cond. Expect. of X^2 Given W
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
+ weights=NULL,
+### A  \code{vector} of  weights attached  to the  observations.   Defaults to
+### \code{NULL}, which  corresponds to equally weighting  all observations. If
+### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
+### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
+### observation given in the \eqn{i}th row of argument \code{obs}.
  light=TRUE
 ### A  \code{logical},  kept  for   compatibility,  which  should  be  set  to
 ### \code{TRUE} (its default value). This requires that the result of each fit
@@ -26,7 +32,7 @@ learnCondExpX2givenW <- function#Estimation of Cond. Expect. of X^2 Given W
   formula <- as.formula(theFormula)
   ## formula <- as.formula(I(X^2)~W+I(W^2));
   
-  fit <- glm(formula, data=as.data.frame(obs), family=gaussian);
+  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
   if (light) {
     fit <- getLightFit(fit);
   }
@@ -45,6 +51,12 @@ learnCondExpXYgivenW <- function#Estimation of Cond. Expect. of XY Given W
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
+ weights=NULL,
+### A  \code{vector} of  weights attached  to the  observations.   Defaults to
+### \code{NULL}, which  corresponds to equally weighting  all observations. If
+### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
+### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
+### observation given in the \eqn{i}th row of argument \code{obs}.
  light=TRUE
 ### A  \code{logical},  kept  for   compatibility,  which  should  be  set  to
 ### \code{TRUE} (its default value). This requires that the result of each fit
@@ -67,7 +79,7 @@ learnCondExpXYgivenW <- function#Estimation of Cond. Expect. of XY Given W
   formula <- as.formula(theFormula)  
   ## formula <- as.formula(I(X*Y)~W+I(W^2));
 
-  fit <- glm(formula, data=as.data.frame(obs), family=gaussian);
+  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
   if (light) {
     fit <- getLightFit(fit);
   }
@@ -86,6 +98,12 @@ learnDevG <- function#Estimation of Cond. Expect. of ((X==0)-gW)*effIC1 Given W
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
+ weights=NULL,
+### A  \code{vector} of  weights attached  to the  observations.   Defaults to
+### \code{NULL}, which  corresponds to equally weighting  all observations. If
+### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
+### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
+### observation given in the \eqn{i}th row of argument \code{obs}.
  effIC1,
 ### The \code{vector}  \code{effIC1} of the  first component of  the efficient
 ### influence curve, as currently estimated, evaluated at our observations.
@@ -125,7 +143,7 @@ verbose=FALSE,
   formula <- as.formula(theFormula)
   ## formula <- as.formula(Z~W+I(W^2));
 
-  fit <- glm(formula, data=as.data.frame(obsZ), family=gaussian);
+  fit <- glm(formula, data=as.data.frame(obsZ), weights=weights, family=gaussian);
   rm(X, Z, obsZ);
   if (light) {
     fit <- getLightFit(fit);
@@ -146,6 +164,12 @@ learnDevMu <- function#Estimation of Cond. Expect. of (X-muW)*effIC1 Given W
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
+ weights=NULL,
+### A  \code{vector} of  weights attached  to the  observations.   Defaults to
+### \code{NULL}, which  corresponds to equally weighting  all observations. If
+### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
+### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
+### observation given in the \eqn{i}th row of argument \code{obs}.
  effIC1,
 ### The \code{vector}  \code{effIC1} of the  first component of  the efficient
 ### influence curve, as currently estimated, evaluated at our observations.
@@ -185,7 +209,7 @@ learnDevMu <- function#Estimation of Cond. Expect. of (X-muW)*effIC1 Given W
   ## formula <- as.formula(Z~W+I(W^2));
 
 
-  fit <- glm(formula, data=as.data.frame(obsZ), family=gaussian);
+  fit <- glm(formula, data=as.data.frame(obsZ), weights=weights, family=gaussian);
   rm(Z, obsZ);
   if (light) {
     fit <- getLightFit(fit);
@@ -208,6 +232,12 @@ learnDevTheta <- function#Estimation of Cond. Expect. of (Y-thetaXW)^2 Given (X,
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
+ weights=NULL,
+### A  \code{vector} of  weights attached  to the  observations.   Defaults to
+### \code{NULL}, which  corresponds to equally weighting  all observations. If
+### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
+### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
+### observation given in the \eqn{i}th row of argument \code{obs}.
  thetaXW,
 ### The \code{vector} \code{thetaXW} of the conditional expectation of \eqn{Y}
 ### given \eqn{(X,W)}, as currently estimated, evaluated at our observations.
@@ -243,7 +273,7 @@ verbose=FALSE,
   
   ## family <- Gamma(link="log");
   family <- gaussian();
-  fit <- glm(formula, data=as.data.frame(obsZ), family=family);
+  fit <- glm(formula, data=as.data.frame(obsZ), weights=weights, family=family);
   rm(obsZ)
   if (light) {
     fit <- getLightFit(fit);
@@ -266,6 +296,12 @@ learnG <- function#Estimation of Cond. Prob. of X=x_0 Given W
 (obs,
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the \code{function} \code{tmle.npvi}.
+ weights=NULL,
+### A  \code{vector} of  weights attached  to the  observations.   Defaults to
+### \code{NULL}, which  corresponds to equally weighting  all observations. If
+### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
+### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
+### observation given in the \eqn{i}th row of argument \code{obs}.
  theX0=0,
 ### The reference value for \eqn{X}.
  light=TRUE,
@@ -297,7 +333,7 @@ learnG <- function#Estimation of Cond. Prob. of X=x_0 Given W
   ## formula <- as.formula(I(X==theX0)~W);
 
     
-  fit <- glm(formula, data=as.data.frame(obs), family="binomial");
+  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family="binomial");
   if (light) {
     fit <- getLightFit(fit);
   }
@@ -319,6 +355,12 @@ learnMuAux <- function#Estimation of Cond. Expect. of X Given (X!=x_0, W)
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the  \code{function} \code{tmle.npvi}, where only observations
 ### with \eqn{X\neq 0} are kept.
+ weights=NULL,
+### A  \code{vector} of  weights attached  to the  observations.   Defaults to
+### \code{NULL}, which  corresponds to equally weighting  all observations. If
+### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
+### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
+### observation given in the \eqn{i}th row of argument \code{obs}.
  light=TRUE,
 ### A  \code{logical},  kept  for   compatibility,  which  should  be  set  to
 ### \code{TRUE} (its default value). This requires that the result of each fit
@@ -344,7 +386,7 @@ learnMuAux <- function#Estimation of Cond. Expect. of X Given (X!=x_0, W)
   ## formula <- as.formula(X~W+I(W^2));
 
 
-  fit <- glm(formula, data=as.data.frame(obs), family=gaussian);
+  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
   if (light) {
     fit <- getLightFit(fit);
   }
@@ -364,6 +406,12 @@ learnTheta <- function#Estimation of Cond. Expect. of Y given (X,W)
 ### The  \code{matrix}  of  observations,  see  for  instance  the  \code{obs}
 ### argument of the  \code{function} \code{tmle.npvi}, where only observations
 ### with \eqn{X\neq 0} are kept.
+ weights=NULL,
+### A  \code{vector} of  weights attached  to the  observations.   Defaults to
+### \code{NULL}, which  corresponds to equally weighting  all observations. If
+### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
+### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
+### observation given in the \eqn{i}th row of argument \code{obs}.
  light=TRUE,
 ### A  \code{logical},  kept  for   compatibility,  which  should  be  set  to
 ### \code{TRUE} (its default value). This requires that the result of each fit
@@ -389,7 +437,7 @@ learnTheta <- function#Estimation of Cond. Expect. of Y given (X,W)
   ## formula <- as.formula(Y~X*W);
 
   
-  fit <- glm(formula, data=as.data.frame(obs), family=gaussian);
+  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
   if (light) {
     fit <- getLightFit(fit);
   }

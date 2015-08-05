@@ -1,11 +1,15 @@
-estimateMuAux <- function(obs, flavor=c("learning", "superLearning"), learnMuAux,
-                       light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
+estimateMuAux <- function(obs, weights=NULL,
+                          flavor=c("learning", "superLearning"), learnMuAux,
+                          light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Argument 'obs':
   obs <- validateArgumentObs(obs);
   
+  ## Argument 'weights':
+  weights <- validateArgumentObsWeights(weights, nrow(obs));
+
   ## Argument 'flavor':
   flavor <- match.arg(flavor);
   learnMode <- switch(flavor,
@@ -32,7 +36,7 @@ estimateMuAux <- function(obs, flavor=c("learning", "superLearning"), learnMuAux
   idx <- which(obs[, "X"] != 0);
   
   if (flavor=="learning") {
-    muAux <- learnMuAux(obs[idx, ], light=light, ...);
+    muAux <- learnMuAux(obs[idx, ], weights[idx], light=light, ...);
   } else if (flavor=="superLearning") {
     logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in SuperLearner
     SL.library.muAux <- learnMuAux;
@@ -41,6 +45,7 @@ estimateMuAux <- function(obs, flavor=c("learning", "superLearning"), learnMuAux
     WW <- extractW(obsD[idx, ])
 
     fitMuAux <- SuperLearner.(Y=obsD[idx, "X"], X=WW,
+                              obsWeights=weights[idx],
                               SL.library=SL.library.muAux, verbose=logSL,
                               family=gaussian(), ...);
     verbose && print(verbose, fitMuAux);

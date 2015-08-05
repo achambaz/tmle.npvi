@@ -15,6 +15,12 @@ tmle.npvi. <- structure(
 ### A \code{function} involved in the  definition of the parameter of interest
 ### \eqn{\psi},  which must  satisfy  \eqn{f(0)=0} (see  Details). Defaults  to
 ### \code{identity}.
+     weights=NULL,
+### A  \code{vector} of  weights attached  to the  observations.   Defaults to
+### \code{NULL}, which  corresponds to equally weighting  all observations. If
+### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
+### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
+### observation given in the \eqn{i}th row of argument \code{obs}.
      nMax=30L,
 ### An \code{integer} (defaults to \code{30L}; \code{10L} is the
 ### smallest authorized value and we recommend a value less than
@@ -138,11 +144,13 @@ tmle.npvi. <- structure(
       ##function such  that \eqn{f(0)=0} (e.g.,  \eqn{f=identity}, the default
       ##value).
       ##
-      ##The TMLE procedure stops when the maximal number of
-      ##iterations, \code{iter}, is reached or when at least one of
-      ##the following criteria is met:
+      ##The  TMLE  procedure stops  when  the  maximal  number of  iterations,
+      ##\code{iter}, is  reached or when at  least one of  the following three
+      ##criteria  is met.   Denote \eqn{P_n}  the empirical  measure, possibly
+      ##weighted  based on  the  vector  of weights  \code{weights}  if it  is
+      ##user-supplied.
       ##\itemize{
-      ## \item{The empirical mean \eqn{P_n effIC(P_n^{k+1})} of the
+      ## \item{The  empirical mean \eqn{P_n effIC(P_n^{k+1})} of the
       ## efficient influence curve at \eqn{P_n^{k+1}} scaled by the
       ## estimated standard deviation of the efficient influence curve
       ## at \eqn{P_n^{k+1}} is smaller, in absolute value, than
@@ -168,6 +176,10 @@ tmle.npvi. <- structure(
       ## 
       ##If  \code{family}  is set  to  "parsimonious"  (recommended) then  the
       ##packages \code{sgeostat} and \code{geometry} are required.
+
+#### CAUTION!!!
+      on.exit(cat("CAUTION: check what is going on in 'estimatePsi'...\n"));
+#### CAUTION!!!
       
       ## Arguments
       mode <- mode(lib)
@@ -251,6 +263,8 @@ tmle.npvi. <- structure(
         obs <- cbind(XY, W)
       }
 
+      weights <- validateArgumentObsWeights(weights, nrow(obs))
+
       p0min <- 0.1
       n0min <- p0min*nrow(obs)
       n0 <- sum(obs[, "X"]==0)
@@ -258,7 +272,8 @@ tmle.npvi. <- structure(
         warning("Only ", n0, " out of ", nrow(obs), " observations have 'X==0'. Should 'X' be thresholded?")
       }
       
-      npvi <- NPVI(obs=obs, f=f, nMax=nMax, family=family, tabulate=tabulate, 
+      npvi <- NPVI(obs=obs, obsWeights=weights,
+                   f=f, nMax=nMax, family=family, tabulate=tabulate, 
                    gmin=gmin, gmax=gmax,
                    mumin=mumin, mumax=mumax,
                    thetamin=min(obs[, "Y"]), thetamax=max(obs[, "Y"]),
@@ -394,7 +409,7 @@ tmle.npvi. <- structure(
       
     })
 
-tmle.npvi <- function(obs,         f=identity,        nMax=30L,
+tmle.npvi <- function(obs, f=identity, weights=NULL, nMax=30L,
                       flavor=c("learning", "superLearning"),  lib=list(),  nodes=1L,  cvControl=NULL,
                       family=c("parsimonious",   "gaussian"),  
                       cleverCovTheta=FALSE, bound=1, B=1e5, trueGMu=NULL,  iter=5L,
@@ -404,14 +419,16 @@ tmle.npvi <- function(obs,         f=identity,        nMax=30L,
                       mumax=quantile(f(obs[obs[, "X"]!=0, "X"]),  type=1, probs=0.99),
                       verbose=FALSE, tabulate=TRUE, exact=TRUE, light=TRUE) {
   flavor <- match.arg(flavor)
-  tmle <- try(tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, cvControl=cvControl,
+  tmle <- try(tmle.npvi.(obs=obs, f=f, weights=weights,
+                         nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, cvControl=cvControl,
                          family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
                          trueGMu=trueGMu, iter=iter,
                          stoppingCriteria=stoppingCriteria, gmin=gmin, gmax=gmax,
                          mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light))
   failed <- inherits(tmle, "try-error")
   if (flavor=="superLearning" & failed) {
-    tmle <- tmle.npvi.(obs=obs, f=f, nMax=nMax, flavor="learning", lib=tmle.npvi::learningLib, nodes=1L,
+    tmle <- tmle.npvi.(obs=obs, f=f, weights=weights,
+                       nMax=nMax, flavor="learning", lib=tmle.npvi::learningLib, nodes=1L,
                        cvControl=cvControl, family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B, 
                        trueGMu=trueGMu, iter=iter, stoppingCriteria=stoppingCriteria, gmin=gmin, gmax=gmax,
                          mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light)
