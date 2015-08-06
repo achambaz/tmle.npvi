@@ -20,8 +20,9 @@ estimateDevMu <- function(muW, obs, weights=NULL,
   ## Argument 'flavor':
   flavor <- match.arg(flavor);
   learnDevMode <- switch(flavor,
-                      learning="function",
-                      superLearning="character");
+                         learning="function",
+                         superLearning="character",
+                         h2oEnsembleLearning="character");
 
   ## Argument 'learnDevMu'
   mode <- mode(learnDevMu);
@@ -72,7 +73,7 @@ estimateDevMu <- function(muW, obs, weights=NULL,
     devMu <- function(W) {
       Wd <- as.data.frame(W)
       newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
-      predict(fitDevMu, newdata=Wd)$pred;
+      predict(fitDevMu, newdata=newdata)$pred;
     }
   }
 

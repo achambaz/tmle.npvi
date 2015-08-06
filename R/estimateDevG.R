@@ -20,8 +20,9 @@ estimateDevG <- function(gW, obs, weights=NULL,
   ## Argument 'flavor':
   flavor <- match.arg(flavor);
   learnDevMode <- switch(flavor,
-                      learning="function",
-                      superLearning="character");
+                         learning="function",
+                         superLearning="character",
+                         h2oEnsembleLearning="character");
 
   ## Argument 'learnDevG'
   mode <- mode(learnDevG);

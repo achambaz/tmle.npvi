@@ -63,7 +63,8 @@ predict.SL.nnls <- function#h2oEnsembleLearning Wrapper For Nonnegative Least Sq
 ### object \code{object}.
 }
 
-h2o.randomForest.wrapper.1000x100 <- function#Builds A Random Forest Model On An H2OFrame
+
+h2o.randomForest.1000x100 <- function#Builds A Random Forest Model On An H2OFrame
 ### Builds a random forest model  on an H2OFrame, with parameter \code{ntrees}
 ### and \code{nbins} set to \code{1000} and \code{100}.
 (...,
@@ -78,7 +79,7 @@ h2o.randomForest.wrapper.1000x100 <- function#Builds A Random Forest Model On An
 ### Creates a H2OModel object of the right type.  
 }
 
-h2o.glm.wrapper.alpha.00 <- function#H2O Generalized Linear Models
+h2o.glm.alpha.00 <- function#H2O Generalized Linear Models
 ### Fit  a  generalized  linear  model,  with parameter  \code{alpha}  set  to
 ### \code{0.0}.
 (...,
@@ -91,7 +92,7 @@ h2o.glm.wrapper.alpha.00 <- function#H2O Generalized Linear Models
 ### Creates a H2OModel object of the right type.  
 }
 
-h2o.glm.wrapper.alpha.05 <- function#H2O Generalized Linear Models
+h2o.glm.alpha.05 <- function#H2O Generalized Linear Models
 ### Fit  a  generalized  linear  model,  with parameter  \code{alpha}  set  to
 ### \code{0.5}.
 (...,
@@ -104,7 +105,7 @@ h2o.glm.wrapper.alpha.05 <- function#H2O Generalized Linear Models
 ### Creates a H2OModel object of the right type.  
 }
 
-h2o.glm.wrapper.alpha.10 <- function#H2O Generalized Linear Models
+h2o.glm.alpha.10 <- function#H2O Generalized Linear Models
 ### Fit  a  generalized  linear  model,  with parameter  \code{alpha}  set  to
 ### \code{1.0}.
 (...,

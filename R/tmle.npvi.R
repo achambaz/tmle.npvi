@@ -222,6 +222,12 @@ tmle.npvi. <- structure(
       }
        
       if (flavor=="superLearning") {
+          ## requireNamespace("SuperLearner")
+          ## requireNamespace("randomForest")
+          ## requireNamespace("polspline")
+          ## SL.glm <- SuperLearner::SL.glm
+          ## SL.randomForest <- SuperLearner::SL.randomForest
+          ## SL.gam <- SuperLearner::SL.gam
         if (is.null(cvControl)) {
           warning("Setting 'V=10' in 'SuperLearner.'")
           cvControl <- SuperLearner::SuperLearner.CV.control(V=10L)
@@ -247,6 +253,7 @@ tmle.npvi. <- structure(
         }
       }
       if (flavor=="h2oEnsembleLearning") {
+        ## requireNamespace("h2oEnsemble")
         if (is.null(cvControl)) {
           warning("Setting 'V=10' in 'SuperLearner.'")
           cvControl <- list(V=10L)

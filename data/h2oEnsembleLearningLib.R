@@ -3,11 +3,18 @@
 ## -----------------------------------------------------------------------------
 
 library(h2oEnsemble)
+requireNamespace("h2o")
 library(SuperLearner)
 
-EL.library <- c("h2o.glm.wrapper", "h2o.glm.wrapper.00", "h2o.glm.wrapper.05", "h2o.glm.wrapper.10", 
+EL.library <- c("h2o.glm.wrapper", "h2o.glm.alpha.00", "h2o.glm.alpha.05", "h2o.glm.alpha.10", 
                 "h2o.randomForest.wrapper", "h2o.randomForest.1000x100", 
                 "h2o.deeplearning.wrapper", "h2o.deeplearning.Rectifier", "h2o.deeplearning.Tanh") 
+
+EL.library <- c("h2o.glm.alpha.00", "h2o.glm.alpha.05", "h2o.glm.alpha.10", 
+                "h2o.randomForest.1000x100", 
+                "h2o.deeplearning.Rectifier", "h2o.deeplearning.Tanh") 
+
+EL.library <- c("h2o.glm.alpha.00", "h2o.glm.alpha.05")
 
 learnTheta.library <- c(EL.library);
 

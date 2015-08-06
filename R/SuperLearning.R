@@ -81,7 +81,7 @@ predict.SL.glm.condExpXYgivenW <- function#SL  Wrapper for Estimation of Cond. E
   return(out)
 ### Returns a prediction.
 }
-## environment(predict.SL.glm.condExpXYgivenW) <- asNamespace("SuperLearner")
+
 
 
 SL.glm.g <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Given W
@@ -115,7 +115,7 @@ SL.glm.g <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Given W
   return(out)
 ### Returns a fitted object.
 }
-## environment(SL.glm.g) <- asNamespace("SuperLearner")
+
 
 
 predict.SL.glm.g <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Given W
@@ -127,7 +127,7 @@ predict.SL.glm.g <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Gi
     return(out)
 ### Returns a prediction.
 }
-## environment(predict.SL.glm.g) <- asNamespace("SuperLearner")
+
 
 
 SL.glm.theta <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Given W
@@ -159,7 +159,7 @@ SL.glm.theta <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Given 
   return(out)
 ### Returns a fitted object.
 }
-## environment(SL.glm.theta) <- asNamespace("SuperLearner")
+
 
 
 
@@ -173,3 +173,6 @@ predict.SL.glm.theta <- function#SL  Wrapper for Estimation of Cond. Expect. of 
 ### Returns a prediction.
 }
 
+
+## environment(SL.glm.theta) <- asNamespace("SuperLearner")
+## environment(predict.SL.glm.theta) <- asNamespace("SuperLearner")

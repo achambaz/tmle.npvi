@@ -18,7 +18,8 @@ estimateDevTheta <- function(thetaXW, obs, weights=NULL,
   flavor <- match.arg(flavor);
   learnDevMode <- switch(flavor,
                          learning="function",
-                         superLearning="character");
+                         superLearning="character",
+                         h2oEnsembleLearning="character");
 
   ## Argument 'learnDevTheta'
   mode <- mode(learnDevTheta);

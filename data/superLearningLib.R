@@ -11,8 +11,8 @@ SL.library <- c("SL.glm", "SL.randomForest", "SL.gam")
 
 library(SuperLearner)
 library(randomForest)
+library(polspline)
 ## library(e1071)
-## library(polspline)
 ## library(DSA)
 ## library(glmnet)
 

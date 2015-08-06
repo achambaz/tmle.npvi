@@ -1,4 +1,5 @@
 import(R.utils)
+
 importFrom(R.methodsS3, setMethodS3, throw)
 importFrom(R.oo, setConstructorS3, extend, Object, getHistory)
 importFrom(geometry, cart2bary)
@@ -37,9 +38,9 @@ export(as.character.NPVI,
        SL.glm.condExpX2givenW,
        SL.glm.condExpXYgivenW,
        SL.nnls,
-       h2o.randomForest.wrapper.1000x100,
-       h2o.glm.wrapper.alpha.00,
-       h2o.glm.wrapper.alpha.05,
-       h2o.glm.wrapper.alpha.10,
+       h2o.randomForest.1000x100,
+       h2o.glm.alpha.00,
+       h2o.glm.alpha.05,
+       h2o.glm.alpha.10,
        h2o.deeplearning.Rectifier,
        h2o.deeplearning.Tanh)
