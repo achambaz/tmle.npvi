@@ -1,5 +1,6 @@
 estimateTheta <- function(obs, weights=NULL,
-                          flavor=c("learning", "superLearning"), learnTheta,
+                          flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+                          learnTheta,
                           light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -14,7 +15,8 @@ estimateTheta <- function(obs, weights=NULL,
   flavor <- match.arg(flavor);
   learnMode <- switch(flavor,
                       learning="function",
-                      superLearning="character");
+                      superLearning="character",
+                      h2oEnsembleLearning="character");
 
   ## Argument 'learnTheta'
   mode <- mode(learnTheta);
@@ -23,7 +25,7 @@ estimateTheta <- function(obs, weights=NULL,
   }
 
   ## Argument 'SuperLearner.'
-  if (flavor=="superLearning") {
+  if (flavor!="learning") {
     if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
       throw("Argument 'SuperLearner.' should be a function")
     }
@@ -48,6 +50,22 @@ estimateTheta <- function(obs, weights=NULL,
       XWd <- as.data.frame(XW)
       predict(fitTheta, newdata=XWd)$pred
     }
+  } else if (flavor=="h2oEnsembleLearning") {
+    EL.library.theta <- learnTheta;
+    obsD <- as.data.frame(obs)
+    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+    
+    fitTheta <- SuperLearner.(y="Y", x=colnames(extractXW(obsD)),
+                              training_frame=data,
+                              family="gaussian",
+                              learner=EL.library.theta,
+                              weights_column=weights)
+
+    theta <- function(XW) {
+      XWd <- as.data.frame(XW)
+      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), XWd)
+      predict(fitTheta, newdata=newdata)$pred
+    }    
   }
   verbose && cat(verbose, "theta(X,W):");
   verbose && print(verbose, summary(theta(extractXW(obs)))); ## obs[, c("X", "W")]

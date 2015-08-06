@@ -10,6 +10,7 @@ S3method(predict, SL.glm.condExpX2givenW)
 S3method(predict, SL.glm.condExpXYgivenW)
 S3method(predict, SL.glm.g)
 S3method(predict, SL.glm.theta)
+S3method(predict, SL.nnls)
 
 S3method(as.character, NPVI)
 S3method(getHistory, NPVI)
@@ -34,4 +35,11 @@ export(as.character.NPVI,
        SL.glm.g,
        SL.glm.theta,
        SL.glm.condExpX2givenW,
-       SL.glm.condExpXYgivenW)
+       SL.glm.condExpXYgivenW,
+       SL.nnls,
+       h2o.randomForest.wrapper.1000x100,
+       h2o.glm.wrapper.alpha.00,
+       h2o.glm.wrapper.alpha.05,
+       h2o.glm.wrapper.alpha.10,
+       h2o.deeplearning.Rectifier,
+       h2o.deeplearning.Tanh)

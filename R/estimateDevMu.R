@@ -1,5 +1,6 @@
 estimateDevMu <- function(muW, obs, weights=NULL, 
-                          eic1, flavor=c("learning", "superLearning"), learnDevMu,
+                          eic1, flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+                          learnDevMu,
                           light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -29,7 +30,7 @@ estimateDevMu <- function(muW, obs, weights=NULL,
   }
 
   ## Argument 'SuperLearner.'
-  if (flavor=="superLearning") {
+  if (flavor!="learning") {
     if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
       throw("Argument 'SuperLearner.' should be a function")
     }
@@ -55,7 +56,26 @@ estimateDevMu <- function(muW, obs, weights=NULL,
       Wd <- as.data.frame(W)
       predict(fitDevMu, newdata=Wd)$pred;
     }
+  } else if (flavor=="h2oEnsembleLearning") {
+    EL.library.devMu <- learnDevMu;
+    obsD <- as.data.frame(obs)
+    ZdevMu <- (obsD[, "X"] - muW) * eic1;
+    obsD$Y <- ZdevMu
+    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+    
+    fitDevMu <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),
+                              training_frame=data,
+                              family="gaussian",
+                              learner=EL.library.devMu,
+                              weights_column=weights)
+
+    devMu <- function(W) {
+      Wd <- as.data.frame(W)
+      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
+      predict(fitDevMu, newdata=Wd)$pred;
+    }
   }
+
   verbose && cat(verbose, "devMu(W):");
   verbose && print(verbose, summary(devMu(extractW(obs))));
   

@@ -1,4 +1,4 @@
-setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning"),
+setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                                      cvControl=NULL,
                                      learnG=NULL,
                                      learnMuAux=NULL,
@@ -16,7 +16,8 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
   flavor <- match.arg(flavor);
   learnMode <- switch(flavor,
                       learning="function",
-                      superLearning="character");
+                      superLearning="character",
+                      h2oEnsembleLearning="character");
   
   ## Argument 'learnG'
   mode <- mode(learnG);

@@ -1,5 +1,5 @@
 estimateG <- function(obs, weights=NULL,
-                      flavor=c("learning", "superLearning"), learnG,
+                      flavor=c("learning", "superLearning", "h2oEnsembleLearning"), learnG,
                       light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -14,7 +14,8 @@ estimateG <- function(obs, weights=NULL,
   flavor <- match.arg(flavor);
   learnMode <- switch(flavor,
                       learning="function",
-                      superLearning="character");
+                      superLearning="character",
+                      h2oEnsembleLearning="character");
 
   ## Argument 'learnG'
   mode <- mode(learnG);
@@ -23,7 +24,7 @@ estimateG <- function(obs, weights=NULL,
   }
 
   ## Argument 'SuperLearner.'
-  if (flavor=="superLearning") {
+  if (flavor!="learning") {
     if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
       throw("Argument 'SuperLearner.' should be a function")
     }
@@ -48,7 +49,24 @@ estimateG <- function(obs, weights=NULL,
       Wd <- as.data.frame(W)
       predict(fitG, newdata=Wd)$pred
     }  
+  } else if (flavor=="h2oEnsembleLearning") {
+    EL.library.g <- learnG;
+    obsD <- as.data.frame(obs)
+    obsD$Y <- as.factor(obsD[, "X"]==0) ## forces binary classification
+    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+    
+    fitG <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),
+                          training_frame=data,
+                          family="binomial",
+                          learner=EL.library.g,
+                          weights_column=weights)
+    g <- function(W) {
+      Wd <- as.data.frame(W)
+      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
+      predict(fitG, newdata=newdata)$pred
+    }  
   }
+
   verbose && cat(verbose, "g(W):");
   verbose && print(verbose, summary(g(extractW(obs))));
 

@@ -1,5 +1,5 @@
 setMethodS3("update", "NPVI", function(object,
-                                       flavor=c("learning", "superLearning"),
+                                       flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                                        cvControl=NULL,
                                        learnDevG=NULL,
                                        learnDevMu=NULL,
