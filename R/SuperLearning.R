@@ -159,6 +159,9 @@ SL.glm.theta <- function#SL  Wrapper for Estimation of Cond. Prob. of X=0 Given 
   return(out)
 ### Returns a fitted object.
 }
+## fyi:
+## environment(SL.glm.theta) <- asNamespace("SuperLearner")
+## environment(predict.SL.glm.theta) <- asNamespace("SuperLearner")
 
 
 
@@ -172,7 +175,3 @@ predict.SL.glm.theta <- function#SL  Wrapper for Estimation of Cond. Expect. of 
     return(out)
 ### Returns a prediction.
 }
-
-
-## environment(SL.glm.theta) <- asNamespace("SuperLearner")
-## environment(predict.SL.glm.theta) <- asNamespace("SuperLearner")

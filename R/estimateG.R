@@ -52,7 +52,7 @@ estimateG <- function(obs, weights=NULL,
   } else if (flavor=="h2oEnsembleLearning") {
     EL.library.g <- learnG;
     obsD <- as.data.frame(obs)
-    obsD$Y <- as.factor(obsD[, "X"]==0) ## forces binary classification
+    obsD$Y <- as.factor(as.integer(obsD[, "X"]==0)) ## forces binary classification
     data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
     
     fitG <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),

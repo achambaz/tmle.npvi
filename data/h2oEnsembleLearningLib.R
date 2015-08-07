@@ -12,9 +12,7 @@ EL.library <- c("h2o.glm.wrapper", "h2o.glm.alpha.00", "h2o.glm.alpha.05", "h2o.
 
 EL.library <- c("h2o.glm.alpha.00", "h2o.glm.alpha.05", "h2o.glm.alpha.10", 
                 "h2o.randomForest.1000x100", 
-                "h2o.deeplearning.Rectifier", "h2o.deeplearning.Tanh") 
-
-EL.library <- c("h2o.glm.alpha.00", "h2o.glm.alpha.05")
+                "h2o.deeplearning.Rectifier", "h2o.deeplearning.Tanh")
 
 learnTheta.library <- c(EL.library);
 

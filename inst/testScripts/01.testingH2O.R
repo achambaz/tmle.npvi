@@ -31,7 +31,7 @@ obs <- obsC
 
 ## 
 
-if (TRUE) {
+if (FALSE) {
   library(SuperLearner)
   ## works only when 'nodes' equals 1 without the previous command...
   nodes <- 2
@@ -42,12 +42,12 @@ if (TRUE) {
                        verbose=log)
 }
 
-if (FALSE) {
+if (TRUE) {
   ## problem: need to do that first:
   library(h2o)
   library(h2oEnsemble)
   ## debug(h2oEnsemble:::.make_Z)
-  nodes <- 2
+  nodes <- 3
   npvi.EL <- tmle.npvi:::tmle.npvi.(obs, f=identity,
                                     flavor="h2oEnsembleLearning",
                                     nodes=nodes, cvControl=list(V=2),
