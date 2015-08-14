@@ -132,7 +132,8 @@ h2o.deeplearning.Rectifier <- function#Deep Learning Neural Network
 ### Parameter \code{activation} of \code{h2o.deeplearning}, set to "Rectifier".
  ) {
   ##seealso<< h2o.deeplearning
-  h2oEnsemble::h2o.deeplearning.wrapper(..., hidden=hidden, activation=activation, seed=1)
+  h2oEnsemble::h2o.deeplearning.wrapper(..., hidden=hidden, activation=activation,
+                                        seed=1)
 ### Creates a H2OModel object of the right type.  
 }
 
@@ -150,6 +151,7 @@ h2o.deeplearning.Tanh <- function#Deep Learning Neural Network
 ### Parameter \code{activation} of \code{h2o.deeplearning}, set to "Rectifier".
  ) {
   ##seealso<< h2o.deeplearning
-  h2oEnsemble::h2o.deeplearning.wrapper(..., hidden=hidden, activation=activation, seed=1)
+  h2oEnsemble::h2o.deeplearning.wrapper(..., hidden=hidden, activation=activation,
+                                        seed=1)
 ### Creates a H2OModel object of the right type.  
 }
