@@ -184,9 +184,6 @@ tmle.npvi. <- structure(
       ##If  \code{family}  is set  to  "parsimonious"  (recommended) then  the
       ##packages \code{sgeostat} and \code{geometry} are required.
 
-#### CAUTION!!!
-      on.exit(cat("CAUTION: check what is going on in 'estimatePsi'...\n"));
-#### CAUTION!!!
       
       ## Arguments
       mode <- mode(lib)

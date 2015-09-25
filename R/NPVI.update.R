@@ -301,7 +301,7 @@ setMethodS3("update", "NPVI", function(object,
     devSigma2 <- sum(eic1*X^2 * weights);
     updateSigma2(this, devSigma2);  
     verbose && exit(verbose);
-    updateWeightsW(this, effICW)    
+    updateWeightsW(this, effICW)
   }
 
   

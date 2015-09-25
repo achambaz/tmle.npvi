@@ -341,7 +341,9 @@ getSample <- structure(
       
       res <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obsC, weights=NULL, sigma2=sigma2);
       truePsi <- res$mean
-      sd.truePsi <- res$sd
+      sd.truePsi <-  res$sd
+      ##      NOT  USED: quantifies how  accurately the Monte  Carlo procedure
+      ##      approximates the true value of the parameter
       
       effIC <- function(obs) {
         ## Argument 'obs':

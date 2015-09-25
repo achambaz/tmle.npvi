@@ -132,7 +132,11 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
          .obs=obs, #.flavor=flavor,
          .obsWeights=obsWeights,
          .Xq=Xq, .Yq=Yq,
-         .g=NULL, .mu=NULL, .muAux=NULL, .theta=NULL, .theta0=NULL, .weightsW=obsWeights, ## .weightsW=rep(1, nrow(obs)), 
+         .g=NULL, .mu=NULL, .muAux=NULL, .theta=NULL, .theta0=NULL,
+         .weightsW=obsWeights, ## .weightsW=rep(1, nrow(obs)),
+         ## COMMENT:
+         ## this guarantees that the weights initially attached to the observations
+         ## are accounted for in the forthcoming simulation of W
          .gtab=NULL, .mutab=NULL, .muAuxtab=NULL, .thetatab=NULL, .theta0tab=NULL,
          .sigma2=NA, .psi=NA, .psi.sd=NA, .psiPn=NA, .psiPn.sd=NA,
          .gmin=gmin, .gmax=gmax, .mumin=mumin, .mumax=mumax,
@@ -945,7 +949,7 @@ setMethodS3("getPValue", "matrix", function(# Calculates a p-value from a matrix
         se <- y["sicAlt"]/sqrt(nobs)
     } else {
         phi <- 0
-        se <- y["psi.sd"]/sqrt(nobs)
+        se <- y["sic"]/sqrt(nobs)
     }
     pval <- 2*pnorm(abs(psi-phi), sd=se, lower.tail=FALSE)
     names(pval) <- "p.value"
