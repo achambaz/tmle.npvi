@@ -135,8 +135,8 @@ tmle.npvi. <- structure(
 
       ##references<<  Chambaz, A., Neuvial,  P. (2015).   tmle.npvi: targeted,
       ##integrative search  of associations between  DNA copy number  and gene
-      ##expression,   accounting   for   DNA   methylation.   To   appear   in
-      ##Bioinformatics Applications Notes.
+      ##expression,   accounting    for   DNA   methylation.    Bioinformatics
+      ##31(18):3054--3056.
 
       ##details<< The  parameter of interest is  defined as \eqn{\psi=\Psi(P)}
       ##with    \deqn{\Psi(P)    =    \frac{E_P[f(X)    *    (\theta(X,W)    -
