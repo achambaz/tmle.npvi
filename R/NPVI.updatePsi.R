@@ -48,6 +48,11 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
                       sigma2=sigma2, weights=NULL, verbose=verbose) 
   this$.psi <- psi0$mean;
   this$.psi.sd <- psi0$sd;
+### CAUTION
+### CAUTION: interpretation of 'this$.psiPn.sd' dubious, contrary to that
+###          of 'this$.psi.sd'
+### CAUTION
+
   rm(obsB)
 })
 

@@ -39,12 +39,12 @@ estimatePsi <- function(theta, theta0, fX, obs, sigma2, weights=NULL, ..., verbo
 
   argument <- fX(obs) * (T - T0);
   mean.psi1 <- sum(argument*weights);
-
-#### CAUTION
-#### CAUTION: check here what we are doing below...
-#### CAUTION
   
   var.psi1 <- sum((argument^2)*weights) - mean.psi1^2;
+### CAUTION
+### CAUTION: dubious interpretation of 'var.psi1' when it is computed
+###          based on 'obs' and not 'obsB'
+### CAUTION
   mean.psi1 <- mean.psi1/sigma2;
   sd.psi1 <- sqrt(var.psi1)/sigma2;
     
