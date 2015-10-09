@@ -296,7 +296,9 @@ tmle.npvi. <- structure(
         obs <- cbind(XY, W)
       }
 
-      weights <- validateArgumentObsWeights(weights, nrow(obs))
+      id.weights <- validateArgumentIdObsWeights(id, weights, nrow(obs));
+      id <- id.weights$id;
+      weights <- id.weights$weights;
 
       p0min <- 0.1
       n0min <- p0min*nrow(obs)
@@ -305,7 +307,7 @@ tmle.npvi. <- structure(
         warning("Only ", n0, " out of ", nrow(obs), " observations have 'X==0'. Should 'X' be thresholded?")
       }
       
-      npvi <- NPVI(obs=obs, obsWeights=weights,
+      npvi <- NPVI(obs=obs, obsWeights=weights, id=id,
                    f=f, nMax=nMax, family=family, tabulate=tabulate, 
                    gmin=gmin, gmax=gmax,
                    mumin=mumin, mumax=mumax,

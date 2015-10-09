@@ -1,4 +1,4 @@
-estimateTheta <- function(obs, weights=NULL,
+estimateTheta <- function(obs, weights, id,
                           flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                           learnTheta,
                           light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
@@ -9,8 +9,11 @@ estimateTheta <- function(obs, weights=NULL,
   obs <- validateArgumentObs(obs);
 
   ## Argument 'weights':
-  weights <- validateArgumentObsWeights(weights, nrow(obs));
+  weights <- Arguments$getNumerics(weights);  
 
+  ## Argument 'id':
+  id <- Arguments$getCharacters(id);  
+  
   ## Argument 'flavor':
   flavor <- match.arg(flavor);
   learnMode <- switch(flavor,
@@ -43,7 +46,7 @@ estimateTheta <- function(obs, weights=NULL,
     obsD <- as.data.frame(obs)
 
     fitTheta <- SuperLearner.(Y=obsD[, "Y"], X=extractXW(obsD), ## obsD[, c("X", "W")]
-                              obsWeights=weights,
+                              obsWeights=weights, id=id,
                               SL.library=SL.library.theta, verbose=logSL,
                               family=gaussian(), ...)
     theta <- function(XW) {
@@ -54,6 +57,10 @@ estimateTheta <- function(obs, weights=NULL,
     EL.library.theta <- learnTheta;
     obsD <- as.data.frame(obs)
     data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+
+    ##
+    ## CAUTION: provide 'id' as soon as this argument is supported
+    ##
     
     fitTheta <- SuperLearner.(y="Y", x=colnames(extractXW(obsD)),
                               training_frame=data,

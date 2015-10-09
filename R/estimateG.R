@@ -1,4 +1,4 @@
-estimateG <- function(obs, weights=NULL,
+estimateG <- function(obs, weights, id,
                       flavor=c("learning", "superLearning", "h2oEnsembleLearning"), learnG,
                       light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -8,7 +8,10 @@ estimateG <- function(obs, weights=NULL,
   obs <- validateArgumentObs(obs);
 
   ## Argument 'weights':
-  weights <- validateArgumentObsWeights(weights, nrow(obs));
+  weights <- Arguments$getNumerics(weights);  
+
+  ## Argument 'id':
+  id <- Arguments$getCharacters(id);  
   
   ## Argument 'flavor':
   flavor <- match.arg(flavor);
@@ -42,7 +45,7 @@ estimateG <- function(obs, weights=NULL,
     SL.library.g <- learnG;
 
     fitG <- SuperLearner.(Y=(obsD[, "X"]==0)+0, X=extractW(obsD), ## obsD[, "W", drop=FALSE]
-                          obsWeights=weights,
+                          obsWeights=weights, id=id,
                           SL.library=SL.library.g, verbose=logSL,
                           family=binomial(), ...)
     g <- function(W) {
@@ -54,6 +57,10 @@ estimateG <- function(obs, weights=NULL,
     obsD <- as.data.frame(obs)
     obsD$Y <- as.factor(as.integer(obsD[, "X"]==0)) ## forces binary classification
     data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+
+    ##
+    ## CAUTION: provide 'id' as soon as this argument is supported
+    ##
     
     fitG <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),
                           training_frame=data,

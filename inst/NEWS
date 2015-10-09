@@ -1,8 +1,8 @@
 Package: tmle.npvi
 ===================
 
-Version: 0.11.0 [2015-08-05]
-o The package now handles weights.
+Version: 0.11.0 [2015-10-09]
+o The package now handles weights and cluster identification.
 o New flavor "h2oEnsembleLearning" added for super learning.
 
 Version: 0.10.0  [2015-05-22] 

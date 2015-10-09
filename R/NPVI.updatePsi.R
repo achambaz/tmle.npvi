@@ -45,7 +45,7 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   this$.psiPn.sd <- psi1$sd;
   ## Estimate psi:
   psi0 <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obsB,
-                      sigma2=sigma2, weights=NULL, verbose=verbose) 
+                      sigma2=sigma2, weights=rep(1/B, B), verbose=verbose) 
   this$.psi <- psi0$mean;
   this$.psi.sd <- psi0$sd;
 ### CAUTION

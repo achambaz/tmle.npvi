@@ -1,4 +1,4 @@
-estimateMuAux <- function(obs, weights=NULL,
+estimateMuAux <- function(obs, weights, id,
                           flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                           learnMuAux,
                           light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
@@ -9,7 +9,10 @@ estimateMuAux <- function(obs, weights=NULL,
   obs <- validateArgumentObs(obs);
   
   ## Argument 'weights':
-  weights <- validateArgumentObsWeights(weights, nrow(obs));
+  weights <- Arguments$getNumerics(weights);  
+
+  ## Argument 'id':
+  id <- Arguments$getCharacters(id);  
 
   ## Argument 'flavor':
   flavor <- match.arg(flavor);
@@ -47,7 +50,7 @@ estimateMuAux <- function(obs, weights=NULL,
     WW <- extractW(obsD[idx, ])
 
     fitMuAux <- SuperLearner.(Y=obsD[idx, "X"], X=WW,
-                              obsWeights=weights[idx],
+                              obsWeights=weights[idx], id=id,
                               SL.library=SL.library.muAux, verbose=logSL,
                               family=gaussian(), ...);
     verbose && print(verbose, fitMuAux);
@@ -60,6 +63,10 @@ estimateMuAux <- function(obs, weights=NULL,
     obsD <- as.data.frame(obs)
     obsD <- obsD[idx, ]
     data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+
+    ##
+    ## CAUTION: provide 'id' as soon as this argument is supported
+    ##
     
     fitMuAux <- SuperLearner.(y="X", x=colnames(extractW(obsD)),
                               training_frame=data,

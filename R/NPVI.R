@@ -1,5 +1,5 @@
 setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL, c("W", "X", "Y"))),
-                                  obsWeights=NULL,
+                                  obsWeights=NULL, id=NULL,
                                   f=identity, nMax=10L,
                                   gmin=0.01, gmax=1-gmin, mumin=-Inf,
                                   mumax=Inf, thetamin=-Inf, thetamax=Inf,
@@ -14,12 +14,14 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
   ## Argument 'obs':
   obs <- validateArgumentObs(obs, allowIntegers=FALSE);
 
-  ## Argument 'obsWeights':
+  ## Arguments 'id' and 'obsWeights':
   if (nrow(obs) > 0) {
-    obsWeights <- validateArgumentObsWeights(obsWeights, nrow(obs))
+    id.obsWeights <- validateArgumentIdObsWeights(id, obsWeights, nrow(obs));
+    id <- id.obsWeights$id;
+    obsWeights <- id.obsWeights$weights;
   } else {
-    if (!is.null(obsWeights)) {
-      throw("Argument 'obs' has 0 rows so 'obsWeights' should be 'NULL'")
+    if (!is.null(obsWeights) | !is.null(id)) {
+      throw("Argument 'obs' has 0 rows so 'obsWeights' and 'id' should be 'NULL'");
     }
   }
   
@@ -131,6 +133,7 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
   extend(Object(), "NPVI",
          .obs=obs, #.flavor=flavor,
          .obsWeights=obsWeights,
+         .id=id,
          .Xq=Xq, .Yq=Yq,
          .g=NULL, .mu=NULL, .muAux=NULL, .theta=NULL, .theta0=NULL,
          .weightsW=obsWeights, ## .weightsW=rep(1, nrow(obs)),
@@ -332,15 +335,35 @@ setMethodS3("getPhi", "NPVI", function(this, ...) {
 
 setMethodS3("getSic", "NPVI", function(this, ...) {
   weights <- getObsWeights(this);
+  id <- getId(this);
   eic <- getEfficientInfluenceCurve(this);
   eic <- eic[, 3];
+
+  ## input:
+  ## w_ij * eic_ij for j-th member of i-th cluster
+  ## output:
+  ## (a) for each cluster i,
+  ##     w_i = sum_j w_ij
+  ##     D_i = (sum_j w_ij * eic_ij)/w_i
+  ## (b) sum_i w_i * D_i^2 - (sum_i w_i * D_i)^2
+  ##     = sum_i w_i * D_i^2 - (sum_ij w_ij * eic_ij)
+  
   mic <- sum(eic*weights);
-  vic <- sum((eic^2)*weights) - mic^2;
-  sqrt(vic); ## sd(eic)
+  ## old version, without 'id':
+  ## vic <- sum((eic^2)*weights) - mic^2;
+
+  ## new version, with 'id':
+  VIC <- tapply(1:length(eic), id, function(ij) {
+    wi <- sum(weights[ij]);
+    sum(weights[ij]*eic[ij])^2/wi;
+  })
+  vic <- sum(VIC) - mic^2;
+  sqrt(vic);
 })
 
 setMethodS3("getSicAlt", "NPVI", function(this, ...) {
   weights <- getObsWeights(this);
+  id <- getId(this);
   obs <- getObs(this);
   fX <- getFX(this);
   fY <- getFY(this);
@@ -355,9 +378,19 @@ setMethodS3("getSicAlt", "NPVI", function(this, ...) {
   infCurvePhi <- (X*Y-phi*X^2)/sX2;
   eicAlt <- eic-infCurvePhi;
   micAlt <- sum(eicAlt*weights);
-  vicAlt <- sum((eicAlt^2)*weights) - micAlt^2;
-  sicAlt <- sqrt(vicAlt); ## sicAlt <- sd(eic[, 3]-infCurvePhi)
-  sicAlt;
+
+  ## old version:
+  ## vicAlt <- sum((eicAlt^2)*weights) - micAlt^2;
+  ## sicAlt <- sqrt(vicAlt); ## older version: sicAlt <- sd(eic[, 3]-infCurvePhi)
+  
+  ## new version:
+  ## cf 'getSic' for an explanation
+  VICalt <- tapply(1:length(eicAlt), id, function(ij) {
+    wi <- sum(weights[ij]);
+    Di <- sum(weights[ij]*eicAlt[ij])^2/wi;
+  })
+  vicAlt <- sum(VICalt) - micAlt^2;
+  sqrt(vicAlt);
 })
 
 
@@ -467,6 +500,10 @@ setMethodS3("getObsWeights", "NPVI", function(this, ...) {
   this$.obsWeights;
 })
 
+setMethodS3("getId", "NPVI", function(this, ...) {
+  this$.id;
+})
+
 
 setMethodS3("getObs", "NPVI", function(#Retrieves the Observations
 ### Retrieves the \code{matrix} of observations involved in the TMLE procedure.
@@ -560,10 +597,11 @@ setMethodS3("as.character", "NPVI", function(#Returns a Description
   if (!is.null(flag)) {
     s <- c(s, flag, "")
   } 
-
   
   ## sample size
-  s <- c(s, sprintf("Sample size: %s", nrow(getObs(this))))
+  n <- nrow(getObs(this))
+  nc <- length(unique(getId(this)))
+  s <- c(s, sprintf("Sample size: %s observations in %s clusters", n, nc))
   s <- c(s, "")
   
   ## psi
@@ -608,18 +646,17 @@ setMethodS3("as.character", "NPVI", function(#Returns a Description
   ## confidence intervals
   psi <- getPsi(this)
   alpha <- 1-getConfLevel(this)
-  n <- nrow(getObs(this))
-  CI <- psi+c(-1, 1)*sic*qnorm(1-alpha/2)/sqrt(n)
+  CI <- psi+c(-1, 1)*sic*qnorm(1-alpha/2)/sqrt(nc)
   CI <- signif(CI, 3)
   s <- c(s, sprintf("%s-confidence interval:\t[%s, %s]", 1-alpha, CI[1], CI[2]))
   
   ## tests
-  ts1 <- sqrt(n)*(psi-0)/sic
+  ts1 <- sqrt(nc)*(psi-0)/sic
   pval1 <- 2*(1-pnorm(abs(ts1)))
   s <- c(s, sprintf("Test of \"psi(P_0)=0\":\t\tp-value = %s", signif(pval1, 3)))
 
   phi <- getPhi(this)
-  ts2 <- sqrt(n)*(psi-phi)/getSicAlt(this)
+  ts2 <- sqrt(nc)*(psi-phi)/getSicAlt(this)
   pval2 <- 2*(1-pnorm(abs(ts2)))
   s <- c(s, sprintf("Test of \"psi(P_0)=phi(P_0)\":\tp-value = %s",
                     signif(pval2, 3)),
@@ -919,9 +956,9 @@ setMethodS3("getPValue", "NPVI", function(# Calculates a p-value from a NPVI obj
 
 ){
     ##seealso<< tmle.npvi, getHistory, as.character.NPVI, getPValue.matrix
-    nobs <- nrow(getObs(this))
-    history <- getHistory.NPVI(this)
-    getPValue(history, wrt.phi=wrt.phi, nobs=nobs)
+    nc <- length(unique(getId(this)));
+    history <- getHistory.NPVI(this);
+    getPValue(history, wrt.phi=wrt.phi, nobs=nc);
 ### Returns the p-value of the two-sided test of
 ### ``\eqn{Psi(P_0)=Phi(P_0)}'' or ``\eqn{Psi(P_0)=0}'', according to
 ### the value of \code{wrt.phi}.
@@ -936,7 +973,7 @@ setMethodS3("getPValue", "matrix", function(# Calculates a p-value from a matrix
 ### \eqn{psi_n}  is  compared  with  \eqn{phi_n}.  Otherwise,  \eqn{psi_n}  is
 ### compared with 0.
     nobs,
-### An \code{integer}, the associated number of observations.
+### An \code{integer}, the associated number of observations/clusters.
     ...
 ### Not used.
 ){

@@ -339,7 +339,8 @@ getSample <- structure(
         f(obs[, "X"]);
       }
       
-      res <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obsC, weights=NULL, sigma2=sigma2);
+      res <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obsC,
+                         weights=rep(1/nrow(obsC), nrow(obsC)), sigma2=sigma2);
       truePsi <- res$mean
       sd.truePsi <-  res$sd
       ##      NOT  USED: quantifies how  accurately the Monte  Carlo procedure

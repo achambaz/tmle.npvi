@@ -1,4 +1,4 @@
-estimateDevTheta <- function(thetaXW, obs, weights=NULL,
+estimateDevTheta <- function(thetaXW, obs, weights, id,
                              flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                              learnDevTheta,
                              light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
@@ -12,7 +12,11 @@ estimateDevTheta <- function(thetaXW, obs, weights=NULL,
   obs <- validateArgumentObs(obs, allowIntegers=TRUE);
 
   ## Argument 'weights':
-  weights <- validateArgumentObsWeights(weights, nrow(obs))
+  weights <- Arguments$getNumerics(weights);  
+
+  ## Argument 'id':
+  id <- Arguments$getCharacters(id);  
+
   
   ## Argument 'flavor':
   flavor <- match.arg(flavor);
@@ -47,7 +51,7 @@ estimateDevTheta <- function(thetaXW, obs, weights=NULL,
     SL.library.devTheta <- learnDevTheta;
 
     fitDevTheta <- SuperLearner.(Y=ZdevTheta, X=extractXW(obsD),  ## obsD[, c("X", "W")]
-                                 obsWeights=weights,
+                                 obsWeights=weights, id=id,
                                  SL.library=SL.library.devTheta, verbose=logSL,
                                  family=gaussian(), ...);
     
@@ -61,13 +65,17 @@ estimateDevTheta <- function(thetaXW, obs, weights=NULL,
     ZdevTheta <- (obsD[, "Y"]-thetaXW)^2;
     obsD$Y <- ZdevTheta
     data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+
+    ##
+    ## CAUTION: provide 'id' as soon as this argument is supported
+    ##
     
     fitDevTheta <- SuperLearner.(y="Y", x=colnames(extractXW(obsD)),
                                  training_frame=data,
                                  family="gaussian",
                                  learner=EL.library.devTheta,
                                  weights_column=weights)
-
+    
     devTheta <- function(XW) {
       XWd <- as.data.frame(XW)
       newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), XWd)

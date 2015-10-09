@@ -1,4 +1,4 @@
-estimateDevG <- function(gW, obs, weights=NULL,
+estimateDevG <- function(gW, obs, weights, id,
                          eic1, flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                          learnDevG,
                          light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
@@ -12,7 +12,10 @@ estimateDevG <- function(gW, obs, weights=NULL,
   obs <- validateArgumentObs(obs, allowIntegers=FALSE);
 
   ## Argument 'weights':
-  weights <- validateArgumentObsWeights(weights, nrow(obs));
+  weights <- Arguments$getNumerics(weights);  
+
+  ## Argument 'id':
+  id <- Arguments$getCharacters(id);  
   
   ## Argument 'eic1'
   eic1 <- Arguments$getNumerics(eic1);
@@ -49,7 +52,7 @@ estimateDevG <- function(gW, obs, weights=NULL,
     SL.library.devG <- learnDevG;
 
     fitDevG <- SuperLearner.(Y=ZdevG, X=extractW(obsD), ## obsD[, "W", drop=FALSE]
-                             obsWeights=weights, 
+                             obsWeights=weights, id=id,
                              SL.library=SL.library.devG, verbose=logSL,
                              family=gaussian(), ...)
     devG <- function(W) {
@@ -62,6 +65,10 @@ estimateDevG <- function(gW, obs, weights=NULL,
     ZdevG <- eic1 * ( (obsD[, "X"]==0) - gW );
     obsD$Y <- ZdevG
     data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+
+    ##
+    ## CAUTION: provide 'id' as soon as this argument is supported
+    ##
     
     fitDevG <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),
                              training_frame=data,

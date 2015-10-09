@@ -1,9 +1,21 @@
-validateArgumentObsWeights <- function(weights, nobs) {
+validateArgumentIdObsWeights <- function(id, weights, nobs) {
+  ## Argument 'id'
+  id <- Arguments$getCharacters(id);
   ## Argument 'nobs'
-  nobs <- Arguments$getInteger(nobs, range=c(1, Inf))
+  nobs <- Arguments$getInteger(nobs, range=c(1, Inf));
+
+  if (is.null(id)) {
+    id <- as.character(1:nobs);
+  } else {
+    if (length(id)!=nobs) {
+      throw("Argument 'id' should be a vector of size ", nobs, ", not ", length(id));
+    }
+  }
   
   if (is.null(weights)) {
-    weights <- rep(1/nobs, nobs);
+    tab <- table(id);
+    weights <- 1/tab[id];
+    weights <- weights/sum(weights);
   } else {
     weights <- Arguments$getNumerics(weights, range=c(0, 1));
     if (length(weights)!=nobs) {
@@ -14,7 +26,7 @@ validateArgumentObsWeights <- function(weights, nobs) {
       throw("Argument 'weights' should be a vector of non-negative numbers summing up to 1, not ", sumWeights); 
     }
   }
-  weights;
+  return(list(id=id, weights=weights));
 }
 
 ############################################################################

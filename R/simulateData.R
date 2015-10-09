@@ -1,5 +1,5 @@
 simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(value=NA, index=NA),
-                         weights=NULL,
+                         weights=rep(1/length(W), length(W)),
                          weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -64,7 +64,7 @@ simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(v
   }
 
   ## Argument 'weights': (weights attached to the observations)
-  weights <- validateArgumentObsWeights(weights, length(W))
+  weights <- Arguments$getNumerics(weights);
   
   ## Argument 'weightsW':
   weightsW <- Arguments$getNumerics(weightsW);

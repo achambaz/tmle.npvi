@@ -1,4 +1,4 @@
-estimatePsi <- function(theta, theta0, fX, obs, sigma2, weights=NULL, ..., verbose=FALSE) {
+estimatePsi <- function(theta, theta0, fX, obs, sigma2, weights, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,7 +28,7 @@ estimatePsi <- function(theta, theta0, fX, obs, sigma2, weights=NULL, ..., verbo
   sigma2 <- Arguments$getNumeric(sigma2);
 
   ## Argument 'weights':
-  weights <- validateArgumentObsWeights(weights, nrow(obs));
+  weights <- Arguments$getNumerics(weights);
   
   T <- theta(obs[, c("X", "W")]);
   verbose && cat(verbose, "theta(X, W):");
