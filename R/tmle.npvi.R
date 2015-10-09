@@ -21,6 +21,10 @@ tmle.npvi. <- structure(
 ### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
 ### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
 ### observation given in the \eqn{i}th row of argument \code{obs}.
+     id=NULL,
+### Optional cluster identification variable. For the cross-validation splits,
+### \code{id}  forces observations  in  the same  cluster  to be  in the  same
+### validation fold. Defaults to \code{rep(1/nrow(obs), nrow(obs))}.
      nMax=30L,
 ### An \code{integer} (defaults to \code{30L}; \code{10L} is the
 ### smallest authorized value and we recommend a value less than
@@ -438,7 +442,7 @@ tmle.npvi. <- structure(
       
     })
 
-tmle.npvi <- function(obs, f=identity, weights=NULL, nMax=30L,
+tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
                       flavor=c("learning", "superLearning", "h2oEnsembleLearning"),  lib=list(),  nodes=1L,  cvControl=NULL,
                       family=c("parsimonious",   "gaussian"),  
                       cleverCovTheta=FALSE, bound=1, B=1e5, trueGMu=NULL,  iter=5L,
@@ -448,7 +452,7 @@ tmle.npvi <- function(obs, f=identity, weights=NULL, nMax=30L,
                       mumax=quantile(f(obs[obs[, "X"]!=0, "X"]),  type=1, probs=0.99),
                       verbose=FALSE, tabulate=TRUE, exact=TRUE, light=TRUE) {
   flavor <- match.arg(flavor)
-  tmle <- try(tmle.npvi.(obs=obs, f=f, weights=weights,
+  tmle <- try(tmle.npvi.(obs=obs, f=f, weights=weights, id=id,
                          nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, cvControl=cvControl,
                          family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
                          trueGMu=trueGMu, iter=iter,
@@ -456,7 +460,7 @@ tmle.npvi <- function(obs, f=identity, weights=NULL, nMax=30L,
                          mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light))
   failed <- inherits(tmle, "try-error")
   if (flavor!="learning" & failed) {
-    tmle <- tmle.npvi.(obs=obs, f=f, weights=weights,
+    tmle <- tmle.npvi.(obs=obs, f=f, weights=weights, id=id,
                        nMax=nMax, flavor="learning", lib=tmle.npvi::learningLib, nodes=1L,
                        cvControl=cvControl, family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B, 
                        trueGMu=trueGMu, iter=iter, stoppingCriteria=stoppingCriteria, gmin=gmin, gmax=gmax,
