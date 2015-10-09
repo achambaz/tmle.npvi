@@ -346,7 +346,7 @@ setMethodS3("getSic", "NPVI", function(this, ...) {
   ##     w_i = sum_j w_ij
   ##     D_i = (sum_j w_ij * eic_ij)/w_i
   ## (b) sum_i w_i * D_i^2 - (sum_i w_i * D_i)^2
-  ##     = sum_i w_i * D_i^2 - (sum_ij w_ij * eic_ij)
+  ##     = sum_i w_i * D_i^2 - (sum_ij w_ij * eic_ij)^2
   
   mic <- sum(eic*weights);
   ## old version, without 'id':
@@ -387,7 +387,7 @@ setMethodS3("getSicAlt", "NPVI", function(this, ...) {
   ## cf 'getSic' for an explanation
   VICalt <- tapply(1:length(eicAlt), id, function(ij) {
     wi <- sum(weights[ij]);
-    Di <- sum(weights[ij]*eicAlt[ij])^2/wi;
+    sum(weights[ij]*eicAlt[ij])^2/wi;
   })
   vicAlt <- sum(VICalt) - micAlt^2;
   sqrt(vicAlt);
