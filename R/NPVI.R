@@ -601,7 +601,7 @@ setMethodS3("as.character", "NPVI", function(#Returns a Description
   ## sample size
   n <- nrow(getObs(this))
   nc <- length(unique(getId(this)))
-  s <- c(s, sprintf("Sample size: %s observations in %s clusters", n, nc))
+  s <- c(s, sprintf("Sample size: %s observations in %s independent clusters", n, nc))
   s <- c(s, "")
   
   ## psi
