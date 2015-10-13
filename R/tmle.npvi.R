@@ -24,7 +24,9 @@ tmle.npvi. <- structure(
      id=NULL,
 ### Optional cluster identification variable. For the cross-validation splits,
 ### \code{id}  forces observations  in  the same  cluster  to be  in the  same
-### validation fold. Defaults to \code{rep(1/nrow(obs), nrow(obs))}.
+### validation  fold.  Defaults  to  \code{rep(1/nrow(obs), nrow(obs))}.   The
+### number  of independent  clusters should  be  larger than  50 to  guarantee
+### reliable inference.
      nMax=30L,
 ### An \code{integer} (defaults to \code{30L}; \code{10L} is the
 ### smallest authorized value and we recommend a value less than
