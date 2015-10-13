@@ -298,6 +298,13 @@ tmle.npvi. <- structure(
 
       id.weights <- validateArgumentIdObsWeights(id, weights, nrow(obs));
       id <- id.weights$id;
+
+      nclust <- length(unique(id));
+      nclust.min <- 50;
+      if (nclust<nclust.min) {
+        warning("There are only ", nclust, " independent clusters of (a priori dependent) observations.\nInference will not necessarily be reliable.\n")
+      }
+      
       weights <- id.weights$weights;
 
       p0min <- 0.1
