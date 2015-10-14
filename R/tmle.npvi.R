@@ -26,7 +26,7 @@ tmle.npvi. <- structure(
 ### \code{id}  forces observations  in  the same  cluster  to be  in the  same
 ### validation  fold.  Defaults  to  \code{rep(1/nrow(obs), nrow(obs))}.   The
 ### number  of independent  clusters should  be  larger than  50 to  guarantee
-### reliable inference.
+### reliable inference, see the Details section.
      nMax=30L,
 ### An \code{integer} (defaults to \code{30L}; \code{10L} is the
 ### smallest authorized value and we recommend a value less than
@@ -170,6 +170,13 @@ tmle.npvi. <- structure(
       ## \eqn{Psi(P_n^k)} and \eqn{Psi(P_n^{k+1})} is smaller than
       ## \code{psi}.}
       ##}
+      ##
+      ##If a vector  \code{id} of cluster identification is  provided, then it
+      ##is assumed that the observations are regrouped in \code{K} independent
+      ##clusters     of     possibly     dependent     observations,     where
+      ##\code{K=length(unique(id))}. It is also assumed that, in each cluster,
+      ##conditioning on  the number  of observations in  the cluster  does not
+      ##affect the conditional marginal distributions.
       ##
       ##If \code{lib} is an empty list (\code{list()}, default value) then the
       ##default   algorithms   for  the   chosen   \code{flavor}  are   loaded
