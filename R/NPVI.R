@@ -333,7 +333,15 @@ setMethodS3("getPhi", "NPVI", function(this, ...) {
   sum(X*Y * weights)/sX2
 })
 
-setMethodS3("getSic", "NPVI", function(this, ...) {
+setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation of the Estimator 
+### Returns the current value of the estimated standard deviation of the current estimator.
+                                       this,
+### An object of class \code{TMLE.NPVI}.
+                                       ...
+### Not used.
+                                       ){
+  ##alias<< getSic
+  ##seealso<< tmle.npvi, getHistory, getPsi
   weights <- getObsWeights(this);
   id <- getId(this);
   eic <- getEfficientInfluenceCurve(this);
@@ -359,6 +367,10 @@ setMethodS3("getSic", "NPVI", function(this, ...) {
   })
   vic <- sum(VIC) - mic^2;
   sqrt(vic);
+### Computes  the  estimated  standard  deviation  of  the  current  estimator
+### \eqn{\Psi(P_n^k)}  of the  parameter of  interest  under the  form of  the
+### square  root  of the  empirical  variance  of  the influence  function  at
+### \eqn{P_n^k}.
 })
 
 setMethodS3("getSicAlt", "NPVI", function(this, ...) {
