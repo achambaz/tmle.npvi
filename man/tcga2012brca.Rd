@@ -4,7 +4,7 @@
 \title{Sample breast cancer data from TCGA}
 \description{
   Expression, DNA copy number, and DNA methylation data of 125
-  genes of chromosome 21 for 463 breast cancer samples from TCGA.
+  genes of chromosome 17 for 463 breast cancer samples from TCGA.
 }
 \usage{tcga2012brca}
 \format{
