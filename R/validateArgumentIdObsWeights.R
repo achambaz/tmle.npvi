@@ -26,6 +26,7 @@ validateArgumentIdObsWeights <- function(id, weights, nobs) {
       throw("Argument 'weights' should be a vector of non-negative numbers summing up to 1, not ", sumWeights); 
     }
   }
+  weights <- as.vector(weights);
   return(list(id=id, weights=weights));
 }
 
