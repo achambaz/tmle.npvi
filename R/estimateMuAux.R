@@ -50,7 +50,7 @@ estimateMuAux <- function(obs, weights, id,
     WW <- extractW(obsD[idx, ])
 
     fitMuAux <- SuperLearner.(Y=obsD[idx, "X"], X=WW,
-                              obsWeights=weights[idx], id=id,
+                              obsWeights=weights[idx], id=id[idx],
                               SL.library=SL.library.muAux, verbose=logSL,
                               family=gaussian(), ...);
     verbose && print(verbose, fitMuAux);
