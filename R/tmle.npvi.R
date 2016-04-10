@@ -18,9 +18,10 @@ tmle.npvi. <- structure(
      weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not  \code{NULL}, must be  a vector  of non-negative  numbers.  It  is not
+### required that the weights sum up  to 1!  The \eqn{i}th entry of the vector
+### is the  weight attached to the  observation given in the  \eqn{i}th row of
+### argument \code{obs}.
      id=NULL,
 ### Optional cluster identification variable. For the cross-validation splits,
 ### \code{id}  forces observations  in  the same  cluster  to be  in the  same
