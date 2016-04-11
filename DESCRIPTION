@@ -1,7 +1,7 @@
 Package: tmle.npvi
 Type: Package
 Title: Targeted Learning of a NP Importance of a Continuous Exposure
-Version: 0.11.2
+Version: 0.11.1
 Date: 2015-10-15
 Author: Antoine Chambaz, Pierre Neuvial
 Maintainer: Pierre Neuvial <pierre.neuvial@genopole.cnrs.fr>

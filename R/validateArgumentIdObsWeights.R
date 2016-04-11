@@ -1,4 +1,4 @@
-validateArgumentIdObsWeights <- function(id, weights, nobs, sumToOne=FALSE) {
+validateArgumentIdObsWeights <- function(id, weights, nobs, sumToOne=TRUE) {
   ## Argument 'id'
   id <- Arguments$getCharacters(id);
   ## Argument 'nobs'
