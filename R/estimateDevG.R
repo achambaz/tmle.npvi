@@ -12,7 +12,7 @@ estimateDevG <- function(gW, obs, weights, id,
   obs <- validateArgumentObs(obs, allowIntegers=FALSE);
 
   ## Argument 'weights':
-  weights <- Arguments$getNumerics(weights);  
+  obsWeights <- Arguments$getNumerics(weights);  
 
   ## Argument 'id':
   id <- Arguments$getCharacters(id);  
@@ -44,7 +44,7 @@ estimateDevG <- function(gW, obs, weights, id,
   verbose <- Arguments$getVerbose(verbose);
 
   if (flavor=="learning") {
-    devG <- learnDevG(obs, weights, eic1, gW, light=light, ...);
+    devG <- learnDevG(obs, obsWeights, eic1, gW, light=light, ...);
   } else if (flavor=="superLearning") {
     logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in SuperLearner
     obsD <- as.data.frame(obs)
@@ -52,7 +52,7 @@ estimateDevG <- function(gW, obs, weights, id,
     SL.library.devG <- learnDevG;
 
     fitDevG <- SuperLearner.(Y=ZdevG, X=extractW(obsD), ## obsD[, "W", drop=FALSE]
-                             obsWeights=weights, id=id,
+                             obsWeights=obsWeights, id=id,
                              SL.library=SL.library.devG, verbose=logSL,
                              family=gaussian(), ...)
     devG <- function(W) {
@@ -74,7 +74,7 @@ estimateDevG <- function(gW, obs, weights, id,
                              training_frame=data,
                              family="gaussian",
                              learner=EL.library.devG,
-                             weights_column=weights)
+                             weights_column=obsWeights)
 
     devG <- function(W) {
       Wd <- as.data.frame(W)

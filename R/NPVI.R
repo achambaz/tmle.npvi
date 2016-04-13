@@ -245,7 +245,7 @@ setMethodS3("getHistory", "NPVI", function(#Returns History of TMLE Procedure
   ###      accordingly. Of course, \code{"psi.sd"} must be favored.}
   ###  \item{\code{"mic"},   empirical  means  of  the  efficient
   ### influence curve at each step of the TMLE procedure. If  weights  were  user-supplied  through  argument
-  ###       \code{weights}, then the the empirical mean is  weighted
+  ###       \code{weights}, then the empirical mean is  weighted
   ###      accordingly. This column is the sum of the \code{"mic1"} and \code{"mic2"} columns.}
   ### \item{\code{"div"},  total variation  distances between
   ### each pair  of successive distributions constructed in  the course of the
@@ -323,14 +323,14 @@ setMethodS3("getPsiSd", "NPVI", function(#Returns Current Estimated Standard Dev
 
 setMethodS3("getPhi", "NPVI", function(this, ...) {
   obs <- getObs(this)
-  weights <- getObsWeights(this)
+  obsWeights <- getObsWeights(this)
   fX <- getFX(this)
   fY <- getFY(this)
   X <- fX(obs)
   Y <- fY(obs)
-  sX2 <- sum(X^2 * weights)
+  sX2 <- sum(X^2 * obsWeights)
   ## phi: estimator of phi_0 
-  sum(X*Y * weights)/sX2
+  sum(X*Y * obsWeights)/sX2
 })
 
 setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation of the Estimator 
@@ -342,7 +342,7 @@ setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation
                                        ){
   ##alias<< getSic
   ##seealso<< tmle.npvi, getHistory, getPsi
-  weights <- getObsWeights(this);
+  obsWeights <- getObsWeights(this);
   id <- getId(this);
   eic <- getEfficientInfluenceCurve(this);
   eic <- eic[, 3];
@@ -356,16 +356,20 @@ setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation
   ## (b) sum_i w_i * D_i^2 - (sum_i w_i * D_i)^2
   ##     = sum_i w_i * D_i^2 - (sum_ij w_ij * eic_ij)^2
   
-  mic <- sum(eic*weights);
+  mic <- sum(eic * obsWeights);
   ## old version, without 'id':
-  ## vic <- sum((eic^2)*weights) - mic^2;
+  ## vic <- sum((eic^2) * obsWeights) - mic^2;
 
   ## new version, with 'id':
   VIC <- tapply(1:length(eic), id, function(ij) {
-    wi <- sum(weights[ij]);
-    sum(weights[ij]*eic[ij])^2/wi;
+    wi <- sum(obsWeights[ij]);
+    sum(obsWeights[ij]*eic[ij])^2/wi;
   })
-  vic <- sum(VIC) - mic^2;
+  ## does not work anymore because 'obsWeights' does not necessarily sum up to 1
+  ## vic <- sum(VIC) - mic^2;
+  ## hence:
+  vic <- sum(VIC) - (2-sum(obsWeights))*mic^2;
+  
   sqrt(vic);
 ### Computes  the  estimated  standard  deviation  of  the  current  estimator
 ### \eqn{\Psi(P_n^k)}  of the  parameter of  interest  under the  form of  the
@@ -374,7 +378,7 @@ setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation
 })
 
 setMethodS3("getSicAlt", "NPVI", function(this, ...) {
-  weights <- getObsWeights(this);
+  obsWeights <- getObsWeights(this);
   id <- getId(this);
   obs <- getObs(this);
   fX <- getFX(this);
@@ -386,22 +390,25 @@ setMethodS3("getSicAlt", "NPVI", function(this, ...) {
   ## phi: estimator of phi_0 
   phi <- getPhi(this);
   ## sicAlt: estimated standard deviation to perform test of "psi_0 = phi_0"
-  sX2 <- sum(X^2*weights);
+  sX2 <- sum(X^2 * obsWeights);
   infCurvePhi <- (X*Y-phi*X^2)/sX2;
   eicAlt <- eic-infCurvePhi;
-  micAlt <- sum(eicAlt*weights);
+  micAlt <- sum(eicAlt * obsWeights);
 
   ## old version:
-  ## vicAlt <- sum((eicAlt^2)*weights) - micAlt^2;
+  ## vicAlt <- sum((eicAlt^2) * obsWeights) - micAlt^2;
   ## sicAlt <- sqrt(vicAlt); ## older version: sicAlt <- sd(eic[, 3]-infCurvePhi)
   
   ## new version:
   ## cf 'getSic' for an explanation
   VICalt <- tapply(1:length(eicAlt), id, function(ij) {
-    wi <- sum(weights[ij]);
-    sum(weights[ij]*eicAlt[ij])^2/wi;
+    wi <- sum(obsWeights[ij]);
+    sum(obsWeights[ij]*eicAlt[ij])^2/wi;
   })
-  vicAlt <- sum(VICalt) - micAlt^2;
+  ## does not work anymore because 'obsWeights' does not necessarily sum up to 1
+  ## vicAlt <- sum(VICalt) - micAlt^2;
+  ## hence:
+  vicAlt <- sum(VICalt) - (2-sum(obsWeights))*micAlt^2;
   sqrt(vicAlt);
 })
 
@@ -615,6 +622,13 @@ setMethodS3("as.character", "NPVI", function(#Returns a Description
   nc <- length(unique(getId(this)))
   s <- c(s, sprintf("Sample size: %s observations in %s independent clusters", n, nc))
   s <- c(s, "")
+
+  ## weights sum up to one?
+  obsWeights <- getObsWeights(this) 
+  if (!attr(obsWeights, "sum to one")) {
+    s <- c(s, "The user-supplied weights 'weights' do not sum up to one")
+    s <- c(s, "")
+  }
   
   ## psi
   s <- c(s, sprintf("Estimator of psi:\t\t%s", signif(getPsi(this), 3)));
@@ -749,8 +763,8 @@ setMethodS3("estimateEpsilon", "NPVI", function(this, cleverCovTheta, bound=1e-1
   ## Argument 'cleverCovTheta'
   cleverCovTheta <- Arguments$getLogical(cleverCovTheta);
 
-  ## Argument 'weights'
-  weights <- getObsWeights(this);
+  ## Argument 'obsWeights'
+  obsWeights <- getObsWeights(this);
   
   eic <- getEfficientInfluenceCurve(this, verbose=verbose);
   if (cleverCovTheta) {
@@ -778,7 +792,7 @@ setMethodS3("estimateEpsilon", "NPVI", function(this, cleverCovTheta, bound=1e-1
   }
   
   logLik <- function(epsilon) {
-    sum(log(1 + epsilon * eic) * weights);
+    sum(log(1 + epsilon * eic) * obsWeights);
   }
 
   interval <- pmin(bound, pmax(-bound, interval))
@@ -801,8 +815,8 @@ setMethodS3("estimateEpsilonTheta", "NPVI", function(this, ..., verbose=FALSE) {
   obs <- getObs(this);
   fY <- getFY(this)
 
-  ## Argument 'weights'
-  weights <- getObsWeights(this);
+  ## Argument 'obsWeights'
+  obsWeights <- getObsWeights(this);
   
   theta <- getTheta(this);
   H <- getHTheta(this);
@@ -811,8 +825,8 @@ setMethodS3("estimateEpsilonTheta", "NPVI", function(this, ..., verbose=FALSE) {
   HXW <- H(XW)
   residuals <- fY(obs)-theta(XW)
   
-  eps <- sum(residuals*HXW * weights)/sum(HXW^2 * weights);
-  feps <- eps*sum(residuals*HXW * weights)  - (eps^2) * sum(HXW^2 * weights)/2
+  eps <- sum(residuals*HXW * obsWeights)/sum(HXW^2 * obsWeights);
+  feps <- eps*sum(residuals*HXW * obsWeights)  - (eps^2) * sum(HXW^2 * obsWeights)/2
   attr(eps, "feps") <- feps
   
   eps

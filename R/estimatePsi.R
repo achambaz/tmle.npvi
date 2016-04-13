@@ -28,7 +28,7 @@ estimatePsi <- function(theta, theta0, fX, obs, sigma2, weights, ..., verbose=FA
   sigma2 <- Arguments$getNumeric(sigma2);
 
   ## Argument 'weights':
-  weights <- Arguments$getNumerics(weights);
+  obsWeights <- Arguments$getNumerics(weights);
   
   T <- theta(obs[, c("X", "W")]);
   verbose && cat(verbose, "theta(X, W):");
@@ -38,9 +38,12 @@ estimatePsi <- function(theta, theta0, fX, obs, sigma2, weights, ..., verbose=FA
   verbose && str(verbose, T0);
 
   argument <- fX(obs) * (T - T0);
-  mean.psi1 <- sum(argument*weights);
-  
-  var.psi1 <- sum((argument^2)*weights) - mean.psi1^2;
+  mean.psi1 <- sum(argument*obsWeights);
+
+  ## not valid if 'obsWeights' does not sum up to one...
+  ## var.psi1 <- sum((argument^2)*obsWeights) - mean.psi1^2;
+  ## hence:
+  var.psi1 <- sum((argument^2)*obsWeights) - (2-sum(obsWeights))*mean.psi1^2;
 ### CAUTION
 ### CAUTION: dubious interpretation of 'var.psi1' when it is computed
 ###          based on 'obs' and not 'obsB'

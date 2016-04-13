@@ -18,9 +18,11 @@ tmle.npvi. <- structure(
      weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not \code{NULL},  must be a vector  of non-negative numbers,  which do not
+### necessarily  sum up  to 1  (thus allowing  to rely,  for instance,  on the
+### Horvitz-Thompson empirical measure).  The \eqn{i}th entry of the vector is
+### the  weight attached  to the  observation given  in the  \eqn{i}th  row of
+### argument \code{obs}.
      id=NULL,
 ### Optional cluster identification variable. For the cross-validation splits,
 ### \code{id}  forces observations  in  the same  cluster  to be  in the  same
@@ -314,7 +316,10 @@ tmle.npvi. <- structure(
         warning("There are only ", nclust, " independent clusters of (a priori dependent) observations.\nInference will not necessarily be reliable.\n")
       }
       
-      weights <- id.weights$weights;
+      obsWeights <- id.weights$weights;
+      if (!attr(obsWeights, "sum to one")) {
+        warning("The user-supplied weights 'weights' do not sum up to one.\n")
+      }
 
       p0min <- 0.1
       n0min <- p0min*nrow(obs)
@@ -323,7 +328,7 @@ tmle.npvi. <- structure(
         warning("Only ", n0, " out of ", nrow(obs), " observations have 'X==0'. Should 'X' be thresholded?")
       }
       
-      npvi <- NPVI(obs=obs, obsWeights=weights, id=id,
+      npvi <- NPVI(obs=obs, obsWeights=obsWeights, id=id,
                    f=f, nMax=nMax, family=family, tabulate=tabulate, 
                    gmin=gmin, gmax=gmax,
                    mumin=mumin, mumax=mumax,

@@ -85,7 +85,7 @@ setMethodS3("update", "NPVI", function(object,
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   obs <- getObs(this);
   obsT <- getObs(this, tabulate=FALSE);
-  weights <- getObsWeights(this);
+  ## weights <- getObsWeights(this);
   id <- getId(this);
   Xq <- getXq(this);
   Yq <- getYq(this);
@@ -176,7 +176,7 @@ setMethodS3("update", "NPVI", function(object,
     updateEpsilon(this, cleverCovTheta=FALSE, bound=bound);
     div <- abs(getEpsilon(this))*partialDiv
     thetaXW <- theta(obs[, c("X", "W")])
-    devTheta <- estimateDevTheta(thetaXW, obsT, weights=weights, id=id,
+    devTheta <- estimateDevTheta(thetaXW, obsT, weights=obsWeights, id=id,
                                  flavor=flavor, learnDevTheta=learnDevTheta, light=light,
                                  SuperLearner.=SuperLearner., ..., verbose=verbose);
     updateTheta(this, devTheta, cleverCovTheta=cleverCovTheta, exact=exact);
@@ -190,19 +190,19 @@ setMethodS3("update", "NPVI", function(object,
     ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     if (flavor=="learning") {
-      condExpX2givenW <- learnCondExpX2givenW(obsT, weights=weights, light=light); ## a 'true' function
-      condExpXYgivenW <- learnCondExpXYgivenW(obsT, weights=weights, light=light); ## a 'true' function
+      condExpX2givenW <- learnCondExpX2givenW(obsT, weights=obsWeights, light=light); ## a 'true' function
+      condExpXYgivenW <- learnCondExpXYgivenW(obsT, weights=obsWeights, light=light); ## a 'true' function
     } else if (flavor=="superLearning") {
       logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in SuperLearner
       SL.library.condExpX2givenW <- learnCondExpX2givenW; 
       SL.library.condExpXYgivenW <- learnCondExpXYgivenW; 
       obsD <- as.data.frame(obsT)
       fitCondExpX2givenW <- SuperLearner.(Y=obsD[, "X"]^2, X=extractW(obsD), ## obsD[, "W", drop=FALSE],
-                                          obsWeights=weights, id=id,
+                                          obsWeights=obsWeights, id=id,
                                           SL.library=SL.library.condExpX2givenW, verbose=logSL,
                                           family=gaussian(), ...)
       fitCondExpXYgivenW <- SuperLearner.(Y=obsD[, "Y"]*obsD[, "X"], X=extractW(obsD), ## obsD[, "W", drop=FALSE],
-                                          obsWeights=weights, id=id,
+                                          obsWeights=obsWeights, id=id,
                                           SL.library=SL.library.condExpXYgivenW, verbose=logSL,
                                           family=gaussian(), ...)
       condExpX2givenW <- function(W) {
@@ -235,7 +235,7 @@ setMethodS3("update", "NPVI", function(object,
                                           training_frame=data,
                                           family="gaussian",
                                           learner=EL.library.condExpX2givenW,
-                                          weights_column=weights)
+                                          weights_column=obsWeights)
       ##
       obsD$Y <- obsD[, "Y"]*obsD[, "X"]
       data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
@@ -244,7 +244,7 @@ setMethodS3("update", "NPVI", function(object,
                                           training_frame=data,
                                           family="gaussian",
                                           learner=EL.library.condExpXYgivenW,
-                                          weights_column=weights)
+                                          weights_column=obsWeights)
 
       condExpX2givenW <- function(W) {
         Wd <- as.data.frame(W)
@@ -286,7 +286,7 @@ setMethodS3("update", "NPVI", function(object,
     
     ## Update 'g' *before* 'mu' as the updated 'mu' depends on the updated 'g', see *inside* 'updateMu'.
     gW <- g(extractW(obs))
-    devG <- estimateDevG(gW, obsT, weights=weights, id=id,
+    devG <- estimateDevG(gW, obsT, weights=obsWeights, id=id,
                          eic1, flavor=flavor, learnDevG=learnDevG, light=light,
                          SuperLearner.=SuperLearner.,
                          ..., verbose=verbose);
@@ -294,7 +294,7 @@ setMethodS3("update", "NPVI", function(object,
 
 
     muW <- mu(extractW(obs))
-    devMu <- estimateDevMu(muW, obsT, weights=weights, id=id,
+    devMu <- estimateDevMu(muW, obsT, weights=obsWeights, id=id,
                            eic1, flavor=flavor, learnDevMu=learnDevMu, light=light,
                            SuperLearner.=SuperLearner.,
                            ..., verbose=verbose);
@@ -303,7 +303,7 @@ setMethodS3("update", "NPVI", function(object,
 
     ## Update 'sigma2'
     X <- fX(obs)
-    devSigma2 <- sum(eic1*X^2 * weights);
+    devSigma2 <- sum(eic1*X^2 * obsWeights);
     updateSigma2(this, devSigma2);  
     verbose && exit(verbose);
     updateWeightsW(this, effICW)

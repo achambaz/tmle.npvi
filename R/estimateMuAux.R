@@ -9,7 +9,7 @@ estimateMuAux <- function(obs, weights, id,
   obs <- validateArgumentObs(obs);
   
   ## Argument 'weights':
-  weights <- Arguments$getNumerics(weights);  
+  obsWeights <- Arguments$getNumerics(weights);  
 
   ## Argument 'id':
   id <- Arguments$getCharacters(id);  
@@ -41,7 +41,7 @@ estimateMuAux <- function(obs, weights, id,
   idx <- which(obs[, "X"] != 0);
   
   if (flavor=="learning") {
-    muAux <- learnMuAux(obs[idx, ], weights[idx], light=light, ...);
+    muAux <- learnMuAux(obs[idx, ], obsWeights[idx], light=light, ...);
   } else if (flavor=="superLearning") {
     logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in SuperLearner
     SL.library.muAux <- learnMuAux;
@@ -50,7 +50,7 @@ estimateMuAux <- function(obs, weights, id,
     WW <- extractW(obsD[idx, ])
 
     fitMuAux <- SuperLearner.(Y=obsD[idx, "X"], X=WW,
-                              obsWeights=weights[idx], id=id[idx],
+                              obsWeights=obsWeights[idx], id=id[idx],
                               SL.library=SL.library.muAux, verbose=logSL,
                               family=gaussian(), ...);
     verbose && print(verbose, fitMuAux);
@@ -72,7 +72,7 @@ estimateMuAux <- function(obs, weights, id,
                               training_frame=data,
                               family="gaussian",
                               learner=EL.library.muAux,
-                              weights_column=weights)
+                              weights_column=obsWeights)
     muAux <- function(W) {
       Wd <- as.data.frame(W)
       newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)

@@ -12,7 +12,7 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
   obs <- validateArgumentObs(obs, allowIntegers=TRUE);
 
   ## Argument 'weights':
-  weights <- Arguments$getNumerics(weights);  
+  obsWeights <- Arguments$getNumerics(weights);  
 
   ## Argument 'id':
   id <- Arguments$getCharacters(id);  
@@ -43,7 +43,7 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
   verbose <- Arguments$getVerbose(verbose);
 
   if (flavor=="learning") {
-    devTheta <- learnDevTheta(obs, weights, thetaXW, light=light, verbose=verbose);
+    devTheta <- learnDevTheta(obs, obsWeights, thetaXW, light=light, verbose=verbose);
   } else if (flavor=="superLearning") {
     logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in superLearner
     obsD <- as.data.frame(obs)
@@ -51,7 +51,7 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
     SL.library.devTheta <- learnDevTheta;
 
     fitDevTheta <- SuperLearner.(Y=ZdevTheta, X=extractXW(obsD),  ## obsD[, c("X", "W")]
-                                 obsWeights=weights, id=id,
+                                 obsWeights=obsWeights, id=id,
                                  SL.library=SL.library.devTheta, verbose=logSL,
                                  family=gaussian(), ...);
     
@@ -74,7 +74,7 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
                                  training_frame=data,
                                  family="gaussian",
                                  learner=EL.library.devTheta,
-                                 weights_column=weights)
+                                 weights_column=obsWeights)
     
     devTheta <- function(XW) {
       XWd <- as.data.frame(XW)

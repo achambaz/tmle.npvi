@@ -7,9 +7,10 @@ learnCondExpX2givenW <- function#Estimation of Cond. Expect. of X^2 Given W
  weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not \code{NULL},  must be  a vector of  non-negative numbers which  do not
+### necessarily sum up to 1.  The  \eqn{i}th entry of the vector is the weight
+### attached  to  the observation  given  in  the  \eqn{i}th row  of  argument
+### \code{obs}.
  light=TRUE
 ### A  \code{logical},  kept  for   compatibility,  which  should  be  set  to
 ### \code{TRUE} (its default value). This requires that the result of each fit
@@ -54,9 +55,10 @@ learnCondExpXYgivenW <- function#Estimation of Cond. Expect. of XY Given W
  weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not \code{NULL},  must be  a vector of  non-negative numbers which  do not
+### necessarily sum up to 1.  The  \eqn{i}th entry of the vector is the weight
+### attached  to  the observation  given  in  the  \eqn{i}th row  of  argument
+### \code{obs}.
  light=TRUE
 ### A  \code{logical},  kept  for   compatibility,  which  should  be  set  to
 ### \code{TRUE} (its default value). This requires that the result of each fit
@@ -101,9 +103,10 @@ learnDevG <- function#Estimation of Cond. Expect. of ((X==0)-gW)*effIC1 Given W
  weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not \code{NULL},  must be  a vector of  non-negative numbers which  do not
+### necessarily sum up to 1.  The  \eqn{i}th entry of the vector is the weight
+### attached  to  the observation  given  in  the  \eqn{i}th row  of  argument
+### \code{obs}.
  effIC1,
 ### The \code{vector}  \code{effIC1} of the  first component of  the efficient
 ### influence curve, as currently estimated, evaluated at our observations.
@@ -167,9 +170,10 @@ learnDevMu <- function#Estimation of Cond. Expect. of (X-muW)*effIC1 Given W
  weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not \code{NULL},  must be  a vector of  non-negative numbers which  do not
+### necessarily sum up  to 1. The \eqn{i}th entry of the  vector is the weight
+### attached  to  the observation  given  in  the  \eqn{i}th row  of  argument
+### \code{obs}.
  effIC1,
 ### The \code{vector}  \code{effIC1} of the  first component of  the efficient
 ### influence curve, as currently estimated, evaluated at our observations.
@@ -235,9 +239,10 @@ learnDevTheta <- function#Estimation of Cond. Expect. of (Y-thetaXW)^2 Given (X,
  weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not \code{NULL},  must be  a vector of  non-negative numbers which  do not
+### necessarily sum up to 1.  The  \eqn{i}th entry of the vector is the weight
+### attached  to  the observation  given  in  the  \eqn{i}th row  of  argument
+### \code{obs}.
  thetaXW,
 ### The \code{vector} \code{thetaXW} of the conditional expectation of \eqn{Y}
 ### given \eqn{(X,W)}, as currently estimated, evaluated at our observations.
@@ -299,9 +304,10 @@ learnG <- function#Estimation of Cond. Prob. of X=x_0 Given W
  weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not \code{NULL},  must be  a vector of  non-negative numbers which  do not
+### necessarily sum up to 1.  The  \eqn{i}th entry of the vector is the weight
+### attached  to  the observation  given  in  the  \eqn{i}th row  of  argument
+### \code{obs}.
  theX0=0,
 ### The reference value for \eqn{X}.
  light=TRUE,
@@ -358,9 +364,10 @@ learnMuAux <- function#Estimation of Cond. Expect. of X Given (X!=x_0, W)
  weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not \code{NULL},  must be  a vector of  non-negative numbers which  do not
+### necessarily sum up to 1.  The  \eqn{i}th entry of the vector is the weight
+### attached  to  the observation  given  in  the  \eqn{i}th row  of  argument
+### \code{obs}.
  light=TRUE,
 ### A  \code{logical},  kept  for   compatibility,  which  should  be  set  to
 ### \code{TRUE} (its default value). This requires that the result of each fit
@@ -409,9 +416,10 @@ learnTheta <- function#Estimation of Cond. Expect. of Y given (X,W)
  weights=NULL,
 ### A  \code{vector} of  weights attached  to the  observations.   Defaults to
 ### \code{NULL}, which  corresponds to equally weighting  all observations. If
-### not \code{NULL}, must be a vector of non-negative numbers summing up to 1.
-### The  \eqn{i}th  entry  of  the  vector  is  the  weight  attached  to  the
-### observation given in the \eqn{i}th row of argument \code{obs}.
+### not \code{NULL},  must be  a vector of  non-negative numbers which  do not
+### necessarily sum up to 1.  The  \eqn{i}th entry of the vector is the weight
+### attached  to  the observation  given  in  the  \eqn{i}th row  of  argument
+### \code{obs}.
  light=TRUE,
 ### A  \code{logical},  kept  for   compatibility,  which  should  be  set  to
 ### \code{TRUE} (its default value). This requires that the result of each fit

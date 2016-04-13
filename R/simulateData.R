@@ -64,7 +64,7 @@ simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(v
   }
 
   ## Argument 'weights': (weights attached to the observations)
-  weights <- Arguments$getNumerics(weights);
+  obsWeights <- Arguments$getNumerics(weights);
   
   ## Argument 'weightsW':
   weightsW <- Arguments$getNumerics(weightsW);
@@ -77,7 +77,7 @@ simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(v
   verbose <- Arguments$getLogical(verbose);
 
   ## the probability P(X=0) directly computed on the whole dataset
-  meanGW <- sum( (X==0) * weights);
+  meanGW <- sum( (X==0) * obsWeights);
   whichXisZero <- which(X==0);
   whichXisNotZero <- which(X!=0);
   obsX <- X[whichXisNotZero];

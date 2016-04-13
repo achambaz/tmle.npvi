@@ -80,7 +80,7 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning",
   obs <- getObs(this, tabulate=FALSE);
 
   ## Retrieving 'weights'
-  weights <- getObsWeights(this);
+  obsWeights <- getObsWeights(this);
 
   ## Retrieving 'id'
   id <- getId(this);
@@ -92,11 +92,11 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning",
   verbose && enter(verbose, "Estimating relevant features of the distribution");
   
   if (!useTrueGMu) {
-    g <- estimateG(obs, weights=weights, id=id,
+    g <- estimateG(obs, weights=obsWeights, id=id,
                    flavor=flavor, learnG=learnG, light=light,
                    SuperLearner.=SuperLearner.,
                    ..., verbose=verbose);
-    muAux <- estimateMuAux(obs, weights=weights, id=id,
+    muAux <- estimateMuAux(obs, weights=obsWeights, id=id,
                            flavor=flavor, learnMuAux=learnMuAux, light=light,
                            SuperLearner.=SuperLearner.,
                            ..., verbose=verbose);
@@ -107,13 +107,13 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning",
   initializeG(this, g);
   initializeMu(this, muAux, g);
 
-  theta <- estimateTheta(obs, weights=weights, id=id,
+  theta <- estimateTheta(obs, weights=obsWeights, id=id,
                          flavor=flavor, learnTheta=learnTheta, light=light,
                          SuperLearner.=SuperLearner.,
                          ..., verbose=verbose);
   initializeTheta(this, theta);
 
-  sigma2 <- sum(obs[, "X"]^2 * weights);
+  sigma2 <- sum(obs[, "X"]^2 * obsWeights);
   setSigma2(this, sigma2);
   verbose && exit(verbose);
 
