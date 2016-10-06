@@ -1,7 +1,7 @@
 # tmle.npvi: Targeted Learning of a NP Importance of a Continuous Exposure
 
 This package is developed by Pierre Neuvial and Antoine Chambaz.
-
+ 
 ## Introduction
 
 The `tmle.npvi()` function of the tmle.npvi  package is meant to carry out the
