@@ -39,6 +39,7 @@ build_script:
   - echo Current directory=%CD%
   - travis-tool.sh install_r R.methodsS3 R.oo R.utils glmnet knitr 
   - travis-tool.sh install_bioc BiocStyle
+  - travis-tool.sh install_github h2oai/h2o-3/h2o-r/ensemble/h2oEnsemble-package
 
 test_script:
   - travis-tool.sh run_tests
