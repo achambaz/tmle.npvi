@@ -37,7 +37,7 @@ install:
 
 build_script:
   - echo Current directory=%CD%
-  - travis-tool.sh install_r R.methodsS3 R.oo R.utils glmnet knitr SuperLearner h2o nnls randomForest polspline gam curl
+  - travis-tool.sh install_r R.methodsS3 R.oo R.utils Matrix geometry glmnet knitr SuperLearner h2o nnls randomForest polspline gam curl
   - travis-tool.sh install_bioc BiocStyle
   - travis-tool.sh install_github h2oai/h2o-3/h2o-r/ensemble/h2oEnsemble-package
 
