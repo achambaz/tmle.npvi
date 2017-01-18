@@ -1,4 +1,6 @@
-# tmle.npvi: Targeted Learning of a NP Importance of a Continuous Exposure
+# tmle.npvi: Targeted Learning of a Non-Parametric Variable Importance Measure of a Continuous Exposure
+
+Targeted minimum loss estimation (TMLE) of a non-parametric variable importance measure of a continuous exposure 'X' on an outcome 'Y', taking baseline covariates 'W' into account. 
 
 This package is developed by Pierre Neuvial and Antoine Chambaz.
  
