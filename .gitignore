@@ -8,3 +8,4 @@
 .o
 .dll
 **/auto
+.Rproj.user

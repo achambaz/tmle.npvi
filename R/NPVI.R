@@ -1,3 +1,9 @@
+#' @importFrom R.methodsS3 setMethodS3 throw
+#' @importFrom R.oo setConstructorS3 R.oo extend Object getHistory
+#' @importFrom R.utils Arguments enter exit less
+#' @importFrom stats quantile gaussian binomial sd update optimize
+#' @importFrom utils head str tail
+#' 
 setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL, c("W", "X", "Y"))),
                                   obsWeights=NULL, id=NULL,
                                   f=identity, nMax=10L,
@@ -181,12 +187,78 @@ setMethodS3("getConfLevel", "NPVI", function(this, ...) {
   this$.conf.level;
 })
 
-setMethodS3("getHistory", "NPVI", function(#Returns History of TMLE Procedure
-  ### Returns the 'history' of the TMLE procedure.
+#' Returns History of TMLE Procedure
+#' 
+#' Returns the 'history' of the TMLE procedure
+#' @name getHistory
+#' @param this An object of class \code{TMLE.NPVI}
+#' @param \dots Not used
+#' @aliases getHistory.NPVI
+#' @return A \code{numeric}  \code{matrix} which encapsulates a summary 
+#'   of the  TMLE procedure.  If \eqn{k} successive  updates were performed, 
+#'   then   the   \code{matrix}   has   either   \eqn{k+1}   rows   (if 
+#'   \code{cleverCovTheta}  was  set  to  \code{FALSE} in  the  call  to 
+#'   \code{tmle.npvi})   or    \code{2k+1}   rows   (otherwise).    The 
+#'   \code{matrix} has 14 columns: \itemize{ \item{\code{"eps"},   values of the
+#'   unique fluctuation  parameter   (if  \code{cleverCovTheta}  was  set to
+#'   \code{FALSE} in  the call  to \code{tmle.npvi}),  or values of the 
+#'   parameter involved in the fluctuation of the   joint  distribution  of 
+#'   \eqn{(X,W)}   during  each  update (otherwise).  } \item{\code{"lli"}, 
+#'   increases in likelihood yielded  by  each  update  (if 
+#'   \code{cleverCovTheta}  was  set  to \code{FALSE}  in the  call  to 
+#'   \code{tmle.npvi}),  or increases in likelihood yielded by the fluctuation 
+#'   of the joint distribution of \eqn{(X,W)} during each update (otherwise).} 
+#'   \item{\code{"mic1"},   empirical means  of the  first component of the 
+#'   efficient influence  curve at each step of the TMLE    procedure.} 
+#'   \item{\code{"epsT"},   values of  the fluctuation parameter involved in the
+#'   fluctuation of the conditional distribution of \eqn{Y}  given \eqn{(X,W)} 
+#'   during each  update (if \code{cleverCovTheta} was  set to \code{TRUE} in 
+#'   the call to  \code{tmle.npvi}), or \code{NA}    (otherwise).} 
+#'   \item{\code{"lliT"},  successive increases in likelihood yielded by  the 
+#'   fluctuation of  the  conditional distribution  of \eqn{Y}    given 
+#'   \eqn{(X,W)}    during    each   update    (if \code{cleverCovTheta}  was 
+#'   set  to  \code{TRUE} in  the  call  to \code{tmle.npvi}), or \code{NA} 
+#'   (otherwise).} \item{\code{"mic2"},  empirical means  of the  second 
+#'   component of the efficient influence  curve at each step of the TMLE 
+#'   procedure.} \item{\code{"psi"},   increasingly targeted estimators 
+#'   \eqn{\Psi(P_n^k)} of  the  parameter  of  interest. The last one is the 
+#'   TMLE.  Their  computation involves  simulation  of  \code{B}  iid  copies 
+#'   of \eqn{(X,W)} under \eqn{P_n^k}. }\item{\code{"psi.sd"},  estimated 
+#'   standard deviations of the   increasingly targeted  estimators of  the 
+#'   parameter of interest. The last one corresponds to the TMLE. The 
+#'   computation involves  the  same \code{B}  iid copies  of \eqn{(X,W)} as 
+#'   above.} \item{\code{"psiPn"}, same as  \code{"psi"} except that the 
+#'   *observed* \eqn{(X_i,W_i)} are used  instead of  simulated copies  drawn 
+#'   from \eqn{P_n^k}.   If  weights  were  user-supplied  through  argument 
+#'   \code{weights}, then the  *observed* \eqn{(X_i,W_i)}  are weighted 
+#'   accordingly. Of course, \code{"psi"} must be favored.} 
+#'   \item{\code{"psiPn.sd"},  same  as  \code{"psi.sd"}  except  that 
+#'   the*observed*  \eqn{(X_i,W_i)} are used instead of  simulated copies drawn
+#'   from \eqn{P_n^k}. If  weights  were  user-supplied  through  argument
+#'   \code{weights}, then the  *observed* \eqn{(X_i,W_i)}  are weighted
+#'   accordingly. Of course, \code{"psi.sd"} must be favored.}
+#'   \item{\code{"mic"},   empirical  means  of  the  efficient influence curve
+#'   at each step of the TMLE procedure. If  weights  were  user-supplied 
+#'   through  argument \code{weights}, then the empirical mean is  weighted
+#'   accordingly. This column is the sum of the \code{"mic1"} and \code{"mic2"}
+#'   columns.} \item{\code{"div"},  total variation  distances between each pair
+#'   of successive distributions constructed in  the course of the TMLE
+#'   procedure. } \item{\code{"sic"},  estimated standard deviations   of  the 
+#'   efficient influence curve at each step of the TMLE procedure.}
+#'   \item{\code{"phi"},    non-parametric     substitution    estimator    of
+#'   \eqn{\phi=\Phi(P)}            where            \deqn{\Phi(P) =
+#'   \frac{E_P[f(X)Y]}{E_P[f(X)^2]},}{\Phi(P)  =  E_P[f(X)Y]  /  E_P[f(X)^2],}
+#'   with \eqn{P}  the distribution of  the random vector  \eqn{(W,X,Y)}.  The
+#'   alternative parameter \eqn{\phi} should be interpreted as the counterpart
+#'   of \eqn{\psi} which neglects \eqn{W}. } \item{\code{"sicAlt"},  estimated
+#'   standard deviations   of  the  efficient influence curve of \eqn{\Psi -
+#'   \Phi} at each step of the TMLE procedure.}}
+#' @export getHistory
+#' @export getHistory.NPVI
+#' @S3method getHistory NPVI 
+setMethodS3("getHistory", "NPVI", function(
   this,
-### An object of class \code{TMLE.NPVI}.
   ...
-### Not used.
   ) {
   ##alias<< getHistory
   ##seealso<< tmle.npvi
@@ -439,7 +511,16 @@ setMethodS3("setDivergence", "NPVI", function(this, div, ...) {
   this$.div <- div;
 })
 
-setMethodS3("setConfLevel", "NPVI", function(#Sets Confidence Level
+#' Sets the confidence level of a \code{TMLE.NPVI} object
+#' 
+#' Sets the confidence level of a \code{TMLE.NPVI} object
+#' 
+#' @name setConfLevel
+#' @export setConfLevel
+#' @export setConfLevel.NPVI
+#' @aliases setConfLevel.NPVI
+#' @S3method setConfLevel NPVI 
+setMethodS3("setConfLevel", "NPVI", function(
 ### Sets the confidence level of a \code{TMLE.NPVI} object.
     this,
 ### An object of class \code{TMLE.NPVI}.
@@ -523,21 +604,26 @@ setMethodS3("getId", "NPVI", function(this, ...) {
   this$.id;
 })
 
-
-setMethodS3("getObs", "NPVI", function(#Retrieves the Observations
-### Retrieves the \code{matrix} of observations involved in the TMLE procedure.
+#' Retrieves the Observations
+#' 
+#' Retrieves the \code{matrix} of observations involved in the TMLE procedure.
+#' 
+#' @name getObs
+#' @param this An object of class \code{TMLE.NPVI}
+#' @param tabulate A \code{logical}, to  specify whether it is the original 
+#'   data set that is retrieved (if \code{FALSE}) or a  tabulated version of it
+#'   (otherwise), for internal use only.  If \code{tabulate} is missing then 
+#'   the value attached to the input object is used
+#' @param \dots Not used
+#' @return Either the original data set involved in the TMLE procedure or a tabulated version of it
+#' @aliases getObs.NPVI
+#' @export getObs
+#' @export getObs.NPVI
+#' @S3method getObs NPVI
+setMethodS3("getObs", "NPVI", function(
     this,
-### An object of class \code{TMLE.NPVI}.
     tabulate,
-### A \code{logical}, to  specify whether it is the original  data set that is
-### retrieved (if \code{FALSE}) or a  tabulated version of it (otherwise), for
-### internal use only.  If \code{tabulate} is missing then  the value attached
-### to the input object is used.
-    ...
-### Not used.
-    ) {
-  ##alias<< getObs
-  ##seealso<< tmle.npvi
+    ...) {
   if (missing(tabulate)) {
     tabulate <- getTabulate(this);
   }
@@ -549,8 +635,6 @@ setMethodS3("getObs", "NPVI", function(#Retrieves the Observations
     colnames(obs) <- c("W", "X", "Y");
   }
   obs
-### Either the original data set involved in the TMLE procedure or a tabulated
-### version of it.
 })
 
 setMethodS3("getFamily", "NPVI", function(this, ...) {
@@ -598,15 +682,11 @@ setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
   this$.sigma2 <- sigma2;
 })
 
-setMethodS3("as.character", "NPVI", function(#Returns a Description
-### Returns a short string describing the NPVI object.
+
+setMethodS3("as.character", "NPVI", function(
     x,
-### An object of class \code{TMLE.NPVI}.
     ...
-### Not used.
     ) {
-  ##alias<< as.character
-  ##seealso<< tmle.npvi
   this <- x;  ## To please R CMD check
   s <- sprintf("%s object:", class(this)[1]);
   s <- c(s, "")
@@ -690,16 +770,6 @@ setMethodS3("as.character", "NPVI", function(#Returns a Description
 
   class(s) <- "GenericSummary";
   s;
-### A character string summarizing the content of the object. The summary contains:
-### \itemize{
-### \item{The sample size of the data set involved in the TMLE procedure.}
-### \item{The value of the TMLE and its estimated standard error.}
-### \item{A reminder of  the tuning of the stopping criteria,  and a report on
-### the convergence of the TMLE procedure (see \code{\link{tmle.npvi}}).}
-### \item{A confidence interval with default level of 95% (the level can be changed by using \code{\link{setConfLevel}}).}
-### \item{The \eqn{p}-value of the two-sided test of ``\eqn{\Psi(P_0)=0}''.}
-### \item{The \eqn{p}-value of the two-sided test of ``\eqn{\Psi(P_0)=\Phi(P_0)}'', with the estimated value of \eqn{\Phi(P_0)}.}
-### }
 }, private=TRUE)
 
 setMethodS3("updateSigma2", "NPVI", function(this, dev, ...) {

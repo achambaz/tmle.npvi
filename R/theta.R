@@ -86,6 +86,7 @@ setMethodS3("getTheta0", "NPVI", function(this, tabulate, ...) {
   }
 })
 
+#' @importFrom Matrix sparseMatrix
 setMethodS3("initializeTheta", "NPVI", function(this, theta, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments

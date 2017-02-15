@@ -5,13 +5,31 @@ Version: 0.11.2
 Date: 2016-04-13
 Author: Antoine Chambaz, Pierre Neuvial
 Maintainer: Pierre Neuvial <pierre.neuvial@genopole.cnrs.fr>
-Description: Targeted minimum loss estimation (TMLE) of a non-parametric variable importance measure of a continuous exposure 'X' on an outcome 'Y', taking baseline covariates 'W' into account. 
+Description: Targeted minimum loss estimation (TMLE) of a non-parametric
+    variable importance measure of a continuous exposure 'X' on an outcome 'Y',
+    taking baseline covariates 'W' into account.
 License: GPL
 LazyLoad: yes
 LazyData: yes
-Depends: R (>= 2.10), R.utils (>= 1.4.1)
-Imports: R.methodsS3, R.oo, MASS, Matrix, geometry
-Suggests: SuperLearner (>= 2.0), h2oEnsemble (>= 0.0.4), h2o (>= 3.0.1.3), nnls, randomForest (>= 4.5-35), polspline (>= 1.1.4), gam (>= 1.03), knitr, BiocStyle
+Depends:
+    R (>= 2.10),
+    R.utils (>= 1.4.1)
+Imports:
+    R.methodsS3,
+    R.oo,
+    MASS,
+    Matrix,
+    geometry
+Suggests:
+    BiocStyle,
+    SuperLearner (>= 2.0),
+    h2oEnsemble (>= 0.0.4),
+    h2o (>= 3.0.1.3),
+    nnls,
+    randomForest (>= 4.5-35),
+    polspline (>= 1.1.4),
+    gam (>= 1.03),
+    knitr,
 VignetteBuilder: knitr
-Remotes: 
-    h2oai/h2o-3/h2o-r/ensemble/h2oEnsemble-package
+Remotes: h2oai/h2o-3/h2o-r/ensemble/h2oEnsemble-package
+RoxygenNote: 5.0.1

@@ -1,3 +1,4 @@
+#' @importFrom stats predict
 setMethodS3("update", "NPVI", function(object,
                                        flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                                        cvControl=NULL,

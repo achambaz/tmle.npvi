@@ -36,3 +36,8 @@ Rplots.pdf$
 ^[.]check
 ^.*[.]tar[.]gz$
 
+^.*\.Rproj$
+^\.Rproj\.user$
+
+^users
+^TODO*

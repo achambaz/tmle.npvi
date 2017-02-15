@@ -9,7 +9,7 @@
 \graphicspath{{fig/}}
 
 <<setup, include=FALSE>>=
-library(knitr)
+library("knitr")
 opts_chunk$set(
 fig.path='fig/'
 )
@@ -43,8 +43,8 @@ BiocStyle::latex()
 
 \begin{document}
 
-\maketitle 
-\tableofcontents 
+\maketitle
+\tableofcontents
 
 The caution symbol \textdbend marks important details.
 
@@ -74,7 +74,7 @@ of $O$ compatible  with the above description of $O$,  for $f$ a user-supplied
 function such that $f(0)=0$,
 \begin{equation*}
   \Psi_{f}(P) = \frac{E_{P} \{f(X - x_{0}) [E_{P} (Y|X, W)) - E_{P} (Y|X=x_{0},
-    W)]\}}{E_{P}\{f(X-x_{0})^{2}\}}. 
+    W)]\}}{E_{P}\{f(X-x_{0})^{2}\}}.
 \end{equation*}
 In contrast, the parameter $\Phi_{f}$ characterized by
 \begin{equation*}
@@ -89,7 +89,7 @@ on the  targeted minimum  loss estimation (TMLE)  principle, as  described and
 studied in~\cite{chambaz12estimation}.
 
 
-\section{Using the \Rpackage{tmle.npvi} \texttt{R} package on simulated data} 
+\section{Using the \Rpackage{tmle.npvi} \texttt{R} package on simulated data}
 
 \subsection{Set up}
 
@@ -175,7 +175,7 @@ head(obs)
 Baseline  covariates are  identified in  the matrix  of observations  as those
 numbers  stored  in  the  columns  which are  not  labelled  \texttt{"X"}  nor
 \texttt{"Y"}.   The  \texttt{"X"}   and   \texttt{"Y"}  columns   respectively
-correspond to  the exposure and response.  
+correspond to  the exposure and response.
 
 \textdbend  At this  stage, the  reference  value for  $X$ is  \Rfunction{O[2,
   "X"]}.
@@ -193,7 +193,7 @@ interval  (approximately)  centered   at  $\Psi_{f}(P^{s})$  whose  length  is
 \verb|nrow(obs)| observations.
 
 <<truth>>=
-sim <- getSample(1e4, O, lambda0, p=p, omega=omega, 
+sim <- getSample(1e4, O, lambda0, p=p, omega=omega,
                  sigma2=1, Sigma3=S, verbose=log)
 truePsi <- sim$psi
 
@@ -202,18 +202,18 @@ confInt <- truePsi + c(-1, 1)*qnorm(.975)*sqrt(sim$varIC/nrow(obs))
 
 msg <- "\nCase f=identity:\n"
 msg <- c(msg, "\ttrue psi is: ", paste(signif(truePsi, 3)), "\n")
-msg <- c(msg, "\t95%-confidence interval for the approximation is: ", 
+msg <- c(msg, "\t95%-confidence interval for the approximation is: ",
          paste(signif(confInt0, 3)), "\n")
-msg <- c(msg, "\toptimal 95%-confidence interval is: ", 
+msg <- c(msg, "\toptimal 95%-confidence interval is: ",
          paste(signif(confInt, 3)), "\n")
 cat(msg)
-@ 
+@
 
 \textdbend By default, $f$ is taken equal to the identity. We could choose any
 function $f$ such that $f(0)=0$, say, for example, $f = \arctan$.
 
 <<truth.bis>>=
-sim2 <- getSample(1e4, O, lambda0, p=p, omega=omega, 
+sim2 <- getSample(1e4, O, lambda0, p=p, omega=omega,
                   sigma2=1, Sigma3=S, f=atan, verbose=log)
 truePsi2 <- sim2$psi
 
@@ -222,12 +222,12 @@ confInt2 <- truePsi2 + c(-1, 1)*qnorm(.975)*sqrt(sim2$varIC/nrow(obs))
 
 msg <- "\nCase f=atan:\n"
 msg <- c(msg, "\ttrue psi is: ", paste(signif(truePsi2, 3)), "\n")
-msg <- c(msg, "\t95%-confidence interval for the approximation is: ", 
+msg <- c(msg, "\t95%-confidence interval for the approximation is: ",
          paste(signif(confInt02, 3)), "\n")
-msg <- c(msg, "\toptimal 95%-confidence interval is: ", 
+msg <- c(msg, "\toptimal 95%-confidence interval is: ",
          paste(signif(confInt2, 3)), "\n")
 cat(msg)
-@ 
+@
 
 
 \subsection{TMLE procedure}
@@ -245,7 +245,7 @@ obsC <- obs
 obsC[, "X"] <- obsC[, "X"] - X0
 obs <- obsC
 head(obs)
-@ 
+@
 
 We now run the TMLE procedure,  with $f = \text{identity}$ (default value) and
 relying on  parametric models  to estimate some  relevant infinite-dimensional
@@ -259,10 +259,10 @@ options are given in the documentation of the \verb|tmle.npvi| function.
 <<npvi>>=
 npvi <- tmle.npvi(obs, f=identity, flavor="learning")
 npvi
-@ 
+@
 
 The basic  summary of a \verb|NPVI|  object like \verb|npvi|,  as shown above,
-presents: 
+presents:
 \begin{itemize}
 \item[-] the sample size;
 \item[-] the value  of the TMLE estimator of $\Psi_{f}  (P)$ and its estimated
@@ -284,7 +284,7 @@ npvi
 
 A more comprehensive history of the TMLE procedure can be easily obtained from
 a \verb|NPVI| object like \verb|npvi|. The  content of each column is given in
-the documentation of the \verb|getHistory| function. 
+the documentation of the \verb|getHistory| function.
 
 <<history>>=
 history <- getHistory(npvi)
@@ -309,7 +309,7 @@ dummy <- sapply(seq(along=xs), function(x) lines(c(xs[x],xs[x]), hp[x]+ics[, x])
 
 abline(h=confInt, col="blue")
 abline(h=confInt0, col="red")
-@ 
+@
 
 \begin{figure}
   \centering
@@ -334,16 +334,16 @@ abline(h=confInt0, col="red")
 
 The package  includes real data, namely  expression, DNA copy  number, and DNA
 methylation  data of 150  genes for  463 breast  cancer samples  from publicly
-available TCGA data~\cite{TCGA12}. 
+available TCGA data~\cite{TCGA12}.
 <<tcga>>=
 data(tcga2012brca)
-@ 
+@
 
 Gene names and genomic coordinates are stored in the names of the list:
 <<names>>=
 nms <- names(tcga2012brca)
 str(nms)
-@ 
+@
 
 
 \subsection{Gene TP53 analysis}
@@ -354,7 +354,7 @@ across the gene.
 ii <- grep("TP53", nms)
 obs <- tcga2012brca[[ii]]
 head(obs)
-@ 
+@
 
 In  this case,  there are  only \Sexpr{sum(obs[,  "X"]==0)}  observations with
 neutral copy number ($X=0$ after shifting).  We arbitrarily set a threshold to
@@ -371,7 +371,7 @@ pairs(obs, main=nms[ii], col=cols, pch=19, cex=0.5)
 ## thresholding
 whichSmall <- which(abs(obs[, "X"]) <= thr)
 obs[whichSmall, "X"] <- 0
-@ 
+@
 
 After  thresholding  there are  \Sexpr{sum(obs[,  "X"]==0)} observations  with
 neutral copy number.  We analyze the data set as follows:
@@ -384,40 +384,40 @@ npvi.TP53
 
 The following script creates a data set for each gene from TCGA~\cite{TCGA12}.
 <<testscripts-merge, eval=FALSE>>=
-system.file("testScripts/tcga2012brca/01.merge,manyCG.R", 
+system.file("testScripts/tcga2012brca/01.merge,manyCG.R",
             package="tmle.npvi")
-@ 
+@
 
 Once it is run, executing the script below yields the \texttt{tcga2012brca} data set
 presented in Section~\ref{subsec:tcga}.
 <<testcripts-export, eval=FALSE>>=
-system.file("testScripts/tcga2012brca/01.1.exportGeneLevelData.R", 
+system.file("testScripts/tcga2012brca/01.1.exportGeneLevelData.R",
             package="tmle.npvi")
-@    
+@
 
 The following  script analyzes all the  data sets previously  created based on
 the \verb|tmle.npvi| function.
 <<testscripts-tmle, eval=FALSE>>=
-system.file("testScripts/tcga2012brca/02.tmle.npvi.R", 
+system.file("testScripts/tcga2012brca/02.tmle.npvi.R",
             package="tmle.npvi")
-@  
+@
 
 
 The computation of $p$-values and illustration of the results along the genome
 can be performed by drawing inspiration from the following last two scripts.
 <<testscripts-pvalues, eval=FALSE>>=
-system.file("testScripts/tcga2012brca/03.pValues.R", 
+system.file("testScripts/tcga2012brca/03.pValues.R",
             package="tmle.npvi")
-system.file("testScripts/tcga2012brca/04.propZero.R", 
+system.file("testScripts/tcga2012brca/04.propZero.R",
             package="tmle.npvi")
-@ 
+@
 
 \section{Session information}
 \label{sec:session-information}
 
 <<sessionInfo, echo=FALSE>>=
 sessionInfo()
-@ 
+@
 
 \bibliographystyle{plain}
 \begin{thebibliography}{}
