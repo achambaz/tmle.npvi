@@ -1,6 +1,10 @@
 Package: tmle.npvi
 ===================
 
+Version: 0.11.3 [2017-02-16]
+o Most of the documentation is now generated from roxygen2 and not inlinedocs
+o Added man files to version control
+
 Version: 0.11.0 [2015-10-09]
 o The package now handles weights and cluster identification.
 o New flavor "h2oEnsembleLearning" added for super learning.
