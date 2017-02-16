@@ -81,10 +81,7 @@ investigate the "effect" of \eqn{X} on \eqn{Y} taking \eqn{W} into account.
 }
 \details{
 The parameter of interest is defined as \eqn{\psi=\Psi(P)} with
-\deqn{\Psi(P) = \frac{E_P[f(X-x_0) * (\theta(X,W) - }{\Psi(P) = E_P[f(X-x_0)
-* (\theta(X,W) - \theta(x_0,W))] /
-E_P[f(X-x_0)^2],}\deqn{\theta(x_0,W))]}{E_P[f(X-x_0)^2]},}{\Psi(P) =
-E_P[f(X-x_0) * (\theta(X,W) - \theta(x_0,W))] / E_P[f(X-x_0)^2],} with
+\deqn{\Psi(P) = \frac{E_P[f(X-x_0) * (\theta(X,W) - \theta(x_0,W))]}{E_P[f(X-x_0)^2]},}{\Psi(P) = E_P[f(X-x_0) * (\theta(X,W) - \theta(x_0,W))] / E_P[f(X-x_0)^2],} with
 \eqn{P} the distribution of the random vector \eqn{(W,X,Y)},
 \eqn{\theta(X,W) = E_P[Y|X,W]}, \eqn{x_0} the reference value for \eqn{X},
 and \eqn{f} a user-supplied function such that \eqn{f(0)=0} (e.g.,
@@ -125,7 +122,7 @@ colnames(V) <- paste("V", 1:3, sep="")
 obsV <- cbind(V, obs)
 head(obsV)
 
-## True psi and confidence intervals (case 'f=identity')      
+## True psi and confidence intervals (case 'f=identity')
 sim01 <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
 truePsi1 <- sim01$psi
 
@@ -133,9 +130,9 @@ confInt01 <- truePsi1+c(-1, 1)*qnorm(.975)*sqrt(sim01$varIC/nrow(sim01$obs))
 confInt1 <- truePsi1+c(-1, 1)*qnorm(.975)*sqrt(sim01$varIC/nrow(obs))
 msg <- "\\nCase f=identity:\\n"
 msg <- c(msg, "\\ttrue psi is: ", paste(signif(truePsi1, 3)), "\\n")
-msg <- c(msg, "\\t95\%-confidence interval for the approximation is: ", 
+msg <- c(msg, "\\t95\%-confidence interval for the approximation is: ",
          paste(signif(confInt01, 3)), "\\n")
-msg <- c(msg, "\\toptimal 95\%-confidence interval is: ", 
+msg <- c(msg, "\\toptimal 95\%-confidence interval is: ",
          paste(signif(confInt1, 3)), "\\n")
 cat(msg)
 
@@ -149,9 +146,9 @@ confInt2 <- truePsi2+c(-1, 1)*qnorm(.975)*sqrt(sim02$varIC/nrow(obs))
 
 msg <- "\\nCase f=atan:\\n"
 msg <- c(msg, "\\ttrue psi is: ", paste(signif(truePsi2, 3)), "\\n")
-msg <- c(msg, "\\t95\%-confidence interval for the approximation is: ", 
+msg <- c(msg, "\\t95\%-confidence interval for the approximation is: ",
          paste(signif(confInt02, 3)), "\\n")
-msg <- c(msg, "\\toptimal 95\%-confidence interval is: ", 
+msg <- c(msg, "\\toptimal 95\%-confidence interval is: ",
          paste(signif(confInt2, 3)), "\\n")
 cat(msg)
 

@@ -4,7 +4,7 @@ Title: Targeted Learning of a NP Importance of a Continuous Exposure
 Version: 0.11.3
 Date: 2017-02-16
 Author: Antoine Chambaz, Pierre Neuvial
-Maintainer: Pierre Neuvial <pierre.neuvial@genopole.cnrs.fr>
+Maintainer: Pierre Neuvial <pierre.neuvial@math.cnrs.fr>
 Description: Targeted minimum loss estimation (TMLE) of a non-parametric
     variable importance measure of a continuous exposure 'X' on an outcome 'Y',
     taking baseline covariates 'W' into account.

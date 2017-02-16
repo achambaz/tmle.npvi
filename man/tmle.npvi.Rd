@@ -165,10 +165,7 @@ variable importance measure of a continuous exposure.
 }
 \details{
 The parameter of interest is defined as \eqn{\psi=\Psi(P)} with
-\deqn{\Psi(P) = \frac{E_P[f(X) * (\theta(X,W) - }{\Psi(P) = E_P[f(X) *
-(\theta(X,W) - \theta(0,W))] /
-E_P[f(X)^2],}\deqn{\theta(0,W))]}{E_P[f(X)^2]},}{\Psi(P) = E_P[f(X) *
-(\theta(X,W) - \theta(0,W))] / E_P[f(X)^2],} with \eqn{P} the distribution
+\deqn{\Psi(P) = \frac{E_P[f(X) * (\theta(X,W) - \theta(0,W))]}{E_P[f(X)^2]},}{\Psi(P) = E_P[f(X) *' (\theta(X,W) - \theta(0,W))] / E_P[f(X)^2],} with \eqn{P} the distribution
 of the random vector \eqn{(W,X,Y)}, \eqn{\theta(X,W) = E_P[Y|X,W]}, \eqn{0}
 \bold{the reference value for \eqn{X}}, and \eqn{f} a user-supplied function
 such that \eqn{f(0)=0} (e.g., \eqn{f=identity}, the default value).
@@ -243,7 +240,7 @@ obsC <- obs
 obsC[, "X"] <- obsC[, "X"] - X0
 obs <- obsC
 
-## True psi and confidence intervals (case 'f=identity')      
+## True psi and confidence intervals (case 'f=identity')
 sim <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
 truePsi <- sim$psi
 

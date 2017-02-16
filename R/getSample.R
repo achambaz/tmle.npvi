@@ -1,13 +1,10 @@
 #' Generates Simulated Data
-#' 
+#'
 #' Generates a run of simulated observations of the form \eqn{(W,X,Y)} to
 #' investigate the "effect" of \eqn{X} on \eqn{Y} taking \eqn{W} into account.
-#' 
+#'
 #' The parameter of interest is defined as \eqn{\psi=\Psi(P)} with
-#' \deqn{\Psi(P) = \frac{E_P[f(X-x_0) * (\theta(X,W) - }{\Psi(P) = E_P[f(X-x_0)
-#' * (\theta(X,W) - \theta(x_0,W))] /
-#' E_P[f(X-x_0)^2],}\deqn{\theta(x_0,W))]}{E_P[f(X-x_0)^2]},}{\Psi(P) =
-#' E_P[f(X-x_0) * (\theta(X,W) - \theta(x_0,W))] / E_P[f(X-x_0)^2],} with
+#' \deqn{\Psi(P) = \frac{E_P[f(X-x_0) * (\theta(X,W) - \theta(x_0,W))]}{E_P[f(X-x_0)^2]},}{\Psi(P) = E_P[f(X-x_0) * (\theta(X,W) - \theta(x_0,W))] / E_P[f(X-x_0)^2],} with
 #' \eqn{P} the distribution of the random vector \eqn{(W,X,Y)},
 #' \eqn{\theta(X,W) = E_P[Y|X,W]}, \eqn{x_0} the reference value for \eqn{X},
 #' and \eqn{f} a user-supplied function such that \eqn{f(0)=0} (e.g.,
@@ -21,7 +18,7 @@
 #' and/or \code{k=3}). \item In normal regions, gene expression levels are
 #' negatively correlated with DNA methylation. \item In regions of copy number
 #' alteration, copy number and expression are positively correlated.  }
-#' 
+#'
 #' @param n An \code{integer}, the number of observations to be generated.
 #' @param O A 3x3 numeric \code{matrix} or \code{data.frame}. Rows are 3
 #' baseline observations used as "class centers" for the simulation. Columns
@@ -81,7 +78,7 @@
 #' Estimation of a non-parametric variable importance measure of a continuous
 #' exposure. Electronic journal of statistics, 6, 1059--1099.
 #' @examples
-#' 
+#'
 #' ## Parameters for the simulation (case 'f=identity')
 #' O <- cbind(W=c(0.05218652, 0.01113460),
 #'            X=c(2.722713, 9.362432),
@@ -91,51 +88,51 @@
 #' p <- c(0, 1/2, 1/2)
 #' omega <- c(0, 3, 3)
 #' S <- matrix(c(10, 1, 1, 0.5), 2 ,2)
-#' 
+#'
 #' ## Simulating a data set of 200 i.i.d. observations
 #' sim <- getSample(2e2, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
 #' str(sim)
-#' 
+#'
 #' obs <- sim$obs
 #' head(obs)
 #' pairs(obs)
-#' 
+#'
 #' ## Adding (dummy) baseline covariates
 #' V <- matrix(runif(3*nrow(obs)), ncol=3)
 #' colnames(V) <- paste("V", 1:3, sep="")
 #' obsV <- cbind(V, obs)
 #' head(obsV)
-#' 
-#' ## True psi and confidence intervals (case 'f=identity')      
+#'
+#' ## True psi and confidence intervals (case 'f=identity')
 #' sim01 <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
 #' truePsi1 <- sim01$psi
-#' 
+#'
 #' confInt01 <- truePsi1+c(-1, 1)*qnorm(.975)*sqrt(sim01$varIC/nrow(sim01$obs))
 #' confInt1 <- truePsi1+c(-1, 1)*qnorm(.975)*sqrt(sim01$varIC/nrow(obs))
 #' msg <- "\nCase f=identity:\n"
 #' msg <- c(msg, "\ttrue psi is: ", paste(signif(truePsi1, 3)), "\n")
-#' msg <- c(msg, "\t95%-confidence interval for the approximation is: ", 
+#' msg <- c(msg, "\t95%-confidence interval for the approximation is: ",
 #'          paste(signif(confInt01, 3)), "\n")
-#' msg <- c(msg, "\toptimal 95%-confidence interval is: ", 
+#' msg <- c(msg, "\toptimal 95%-confidence interval is: ",
 #'          paste(signif(confInt1, 3)), "\n")
 #' cat(msg)
-#' 
+#'
 #' ## True psi and confidence intervals (case 'f=atan')
 #' f2 <- function(x) {1*atan(x/1)}
 #' sim02 <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S, f=f2);
 #' truePsi2 <- sim02$psi;
-#' 
+#'
 #' confInt02 <- truePsi2+c(-1, 1)*qnorm(.975)*sqrt(sim02$varIC/nrow(sim02$obs))
 #' confInt2 <- truePsi2+c(-1, 1)*qnorm(.975)*sqrt(sim02$varIC/nrow(obs))
-#' 
+#'
 #' msg <- "\nCase f=atan:\n"
 #' msg <- c(msg, "\ttrue psi is: ", paste(signif(truePsi2, 3)), "\n")
-#' msg <- c(msg, "\t95%-confidence interval for the approximation is: ", 
+#' msg <- c(msg, "\t95%-confidence interval for the approximation is: ",
 #'          paste(signif(confInt02, 3)), "\n")
-#' msg <- c(msg, "\toptimal 95%-confidence interval is: ", 
+#' msg <- c(msg, "\toptimal 95%-confidence interval is: ",
 #'          paste(signif(confInt2, 3)), "\n")
 #' cat(msg)
-#' 
+#'
 #' @importFrom MASS mvrnorm
 #' @importFrom stats runif dnorm pnorm qnorm rnorm plogis qlogis var integrate
 #' @export
@@ -214,14 +211,14 @@ getSample <- structure(
       ##       correlated with DNA methylation.
       ##     \item  In regions  of  copy number  alteration,  copy number  and
       ##     expression are positively correlated.  }
-      
+
 
       ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       ## Validate arguments
       ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       ## Argument 'n':
       n <- Arguments$getNumeric(n);
-      
+
       ## Argument 'O':
       if (!is.matrix(O) && !is.data.frame(O)) {
         throw("Argument 'O' should be a matrix or a data.frame: ", mode(O)[1]);
@@ -234,7 +231,7 @@ getSample <- structure(
         throw("Missing observation:", varNames[idxs]);
       }
       O <- O[, varNames];
-      
+
       ## Argument 'lambda0':
       mode <- mode(lambda0);
       if (mode != "function") {
@@ -282,7 +279,7 @@ getSample <- structure(
       ##  W <- O[U, "W"] + rnorm(n, mean=rep(0, n), sd=omega[U]); ## doesn't work: W should be in [0,1]
       logit <- qlogis
       expit <- plogis
-      
+
       W <- expit(logit(O[U, "W"]) + rnorm(n, mean=rep(0, n), sd=omega[U]));
       X <- rep(NA, n);
       Y <- rep(NA, n);
@@ -299,7 +296,7 @@ getSample <- structure(
         Y[idx] <- XY[, 2];
       }
       verbose && exit(verbose);
-      
+
       verbose && enter(verbose, "Simulated copy number and expression data for class 2");
       idx <- which(U == 2);
       verbose && str(verbose, idx);
@@ -309,7 +306,7 @@ getSample <- structure(
             rnorm(length(idx), mean=0, sd=sigma2);
       }
       verbose && exit(verbose);
-      
+
       verbose && enter(verbose, "Simulated copy number and expression data for class 3");
       idx <- which(U == 3);
       verbose && str(verbose, idx);
@@ -322,7 +319,7 @@ getSample <- structure(
         Y[idx] <- XY[, 2];
       }
       verbose && exit(verbose);
-      
+
 
       condProbUW <- function(W) {
         u <- 1
@@ -355,11 +352,11 @@ getSample <- structure(
       g <- function(W) {
         condProbUW(W)[, 2]
       }
-      
+
       condProbUXW <- function(XW) {
         X <- XW[, 1]
         W <- XW[, 2]
-        
+
         u <- 1
         cpu1 <- rep(0, nrow(XW))
         if (p[u]!=0) {
@@ -367,7 +364,7 @@ getSample <- structure(
               dnorm(logit(W), mean=logit(O[u, "W"]), sd=omega[u])/(W*(1-W)) *
                   dnorm(X, mean=O[u, "X"], sd=Sigma1[1, 1]) / omega[u]
         }
-        
+
         u <- 2
         cpu2 <- rep(0, nrow(XW))
         if (p[u]!=0) {
@@ -385,12 +382,12 @@ getSample <- structure(
         }
         out <- cbind(cpu1, cpu2, cpu3)
         ## make sure that they sum to 1
-        
+
         Z <- rowSums(out, na.rm=TRUE) ## faster than: apply(out, 1, sum, na.rm=TRUE)
         out <- out/Z
         out
       }
-      
+
       ## Conditional expectation of X given W
       mu <- function(W) {
         vec <- f(O[, "X"] - O[2, "X"])
@@ -403,41 +400,41 @@ getSample <- structure(
       muAux <- function(W) {
         mu(W)/(1-g(W))
       }
-      
+
       ## Conditional expectation of Y given (W,X)
       theta <- function(XW) {
         XW[, "X"] <- XW[, "X"] + O[2,"X"]
         X <- XW[, 1]
         W <- XW[, 2]
-        
+
         dummy <- 1
         param <- c(Sigma1[1,2]/Sigma1[1,1],
                    dummy,
                    Sigma3[1,2]/Sigma3[1,1])
         ## if (X_1,X_2)~N(mu, S) then E(X_2|X_1)=mu_2+S_12/S_11*(X_1-mu_1)
         cpu <- condProbUXW(XW)
-        
+
         res <- 0
         res1 <- (O[1, "Y"] + param[1] * (X-O[1, "X"])) * cpu[, 1]
         if (p[1] != 0) {
           res <- res + res1
         }
-        
+
         res2 <- (O[2, "Y"] + lambda0(W)) * cpu[, 2]
         if (p[2] != 0) {
           res <- res+res2
         }
-        
+
         res3 <- (O[3, "Y"] + param[3] * (X-O[3, "X"])) * cpu[, 3]
         if (p[3] != 0) {
           res <- res + res3
         }
-        
-        
+
+
         dim(res) <- NULL
         res
       }
-      
+
       ## function 'theta0'
       theta0 <- function(W) {
         XW <- cbind(X=0, W=W);
@@ -458,7 +455,7 @@ getSample <- structure(
         if (!is.na(m)) {
           sigma21 <- integrate(foo, lower=-Inf, upper=+Inf,
                                mean=m, sd=sqrt(Sigma1[1, 1]))$value
-        } 
+        }
         m <- O[3, "X"]-O[2, "X"]
         sigma23 <- NA
         if (!is.na(m)) {
@@ -467,7 +464,7 @@ getSample <- structure(
         }
         sigma2 <- sum(p*c(sigma21, 0, sigma23), na.rm=TRUE)
       }
-      
+
       theX0 <- O[2,"X"];
       obs <- cbind(W,X,Y)
       rownames(obs) <- NULL
@@ -475,18 +472,18 @@ getSample <- structure(
 
       obsC <- obs;
       obsC[, "X"] <- obsC[, "X"] - theX0;
-      
+
       fX <- function(obs) {
         f(obs[, "X"]);
       }
-      
+
       res <- estimatePsi(theta=theta, theta0=theta0, fX=fX, obs=obsC,
                          weights=rep(1/nrow(obsC), nrow(obsC)), sigma2=sigma2);
       truePsi <- res$mean
       sd.truePsi <-  res$sd
       ##      NOT  USED: quantifies how  accurately the Monte  Carlo procedure
       ##      approximates the true value of the parameter
-      
+
       effIC <- function(obs) {
         ## Argument 'obs':
         if (FALSE) {
@@ -495,7 +492,7 @@ getSample <- structure(
           }
         }
         obs <- validateArgumentObs(obs, allowIntegers=FALSE);
-        
+
         W <- obs[, "W"]
         verbose && str(verbose, W);
         X <- f(obs[, "X"])
@@ -509,9 +506,9 @@ getSample <- structure(
       }
 
       varIC <- var(effIC(obsC));
-      
+
       rm(obsC);
-      
+
       res <- list(
           obs=obs,
           psi=truePsi,
@@ -567,7 +564,7 @@ getSample <- structure(
       ## Simulating a data set of 200 i.i.d. observations
       sim <- getSample(2e2, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
       str(sim)
-      
+
       obs <- sim$obs
       head(obs)
       pairs(obs)
@@ -578,7 +575,7 @@ getSample <- structure(
       obsV <- cbind(V, obs)
       head(obsV)
 
-      ## True psi and confidence intervals (case 'f=identity')      
+      ## True psi and confidence intervals (case 'f=identity')
       sim01 <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
       truePsi1 <- sim01$psi
 
@@ -586,9 +583,9 @@ getSample <- structure(
       confInt1 <- truePsi1+c(-1, 1)*qnorm(.975)*sqrt(sim01$varIC/nrow(obs))
       msg <- "\nCase f=identity:\n"
       msg <- c(msg, "\ttrue psi is: ", paste(signif(truePsi1, 3)), "\n")
-      msg <- c(msg, "\t95%-confidence interval for the approximation is: ", 
+      msg <- c(msg, "\t95%-confidence interval for the approximation is: ",
                paste(signif(confInt01, 3)), "\n")
-      msg <- c(msg, "\toptimal 95%-confidence interval is: ", 
+      msg <- c(msg, "\toptimal 95%-confidence interval is: ",
                paste(signif(confInt1, 3)), "\n")
       cat(msg)
 
@@ -596,15 +593,15 @@ getSample <- structure(
       f2 <- function(x) {1*atan(x/1)}
       sim02 <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S, f=f2);
       truePsi2 <- sim02$psi;
-      
+
       confInt02 <- truePsi2+c(-1, 1)*qnorm(.975)*sqrt(sim02$varIC/nrow(sim02$obs))
       confInt2 <- truePsi2+c(-1, 1)*qnorm(.975)*sqrt(sim02$varIC/nrow(obs))
 
       msg <- "\nCase f=atan:\n"
       msg <- c(msg, "\ttrue psi is: ", paste(signif(truePsi2, 3)), "\n")
-      msg <- c(msg, "\t95%-confidence interval for the approximation is: ", 
+      msg <- c(msg, "\t95%-confidence interval for the approximation is: ",
                paste(signif(confInt02, 3)), "\n")
-      msg <- c(msg, "\toptimal 95%-confidence interval is: ", 
+      msg <- c(msg, "\toptimal 95%-confidence interval is: ",
                paste(signif(confInt2, 3)), "\n")
       cat(msg)
     })

@@ -1,17 +1,14 @@
 #' Targeted Minimum Loss Estimation of NPVI
-#' 
+#'
 #' Carries out the targeted minimum loss estimation (TMLE) of a non-parametric
 #' variable importance measure of a continuous exposure.
-#' 
+#'
 #' The parameter of interest is defined as \eqn{\psi=\Psi(P)} with
-#' \deqn{\Psi(P) = \frac{E_P[f(X) * (\theta(X,W) - }{\Psi(P) = E_P[f(X) *
-#' (\theta(X,W) - \theta(0,W))] /
-#' E_P[f(X)^2],}\deqn{\theta(0,W))]}{E_P[f(X)^2]},}{\Psi(P) = E_P[f(X) *
-#' (\theta(X,W) - \theta(0,W))] / E_P[f(X)^2],} with \eqn{P} the distribution
+#' \deqn{\Psi(P) = \frac{E_P[f(X) * (\theta(X,W) - \theta(0,W))]}{E_P[f(X)^2]},}{\Psi(P) = E_P[f(X) *' (\theta(X,W) - \theta(0,W))] / E_P[f(X)^2],} with \eqn{P} the distribution
 #' of the random vector \eqn{(W,X,Y)}, \eqn{\theta(X,W) = E_P[Y|X,W]}, \eqn{0}
 #' \bold{the reference value for \eqn{X}}, and \eqn{f} a user-supplied function
 #' such that \eqn{f(0)=0} (e.g., \eqn{f=identity}, the default value).
-#' 
+#'
 #' The TMLE procedure stops when the maximal number of iterations, \code{iter},
 #' is reached or when at least one of the following three criteria is met.
 #' Denote \eqn{P_n} the empirical measure, possibly weighted based on the
@@ -23,14 +20,14 @@
 #' P_n^k+1 is smaller than \code{div}. \item The change between the successive
 #' values \eqn{Psi(P_n^k)} and \eqn{Psi(P_n^{k+1})} is smaller than \code{psi}.
 #' }
-#' 
+#'
 #' If a vector \code{id} of cluster identification is provided, then it is
 #' assumed that the observations are regrouped in \code{K} independent clusters
 #' of possibly dependent observations, where \code{K=length(unique(id))}. It is
 #' also assumed that, in each cluster, conditioning on the number of
 #' observations in the cluster does not affect the conditional marginal
 #' distributions.
-#' 
+#'
 #' If \code{lib} is an empty list (\code{list()}, default value) then the
 #' default algorithms for the chosen \code{flavor} are loaded
 #' (\code{learningLib} when \code{flavor} is set to "learning" or
@@ -39,17 +36,17 @@
 #' "h2oEnsembleLearning").  A valid \code{lib} argument must mimick the
 #' structure of either \code{learningLib} or \code{superLearningLib} or
 #' \code{h2oEnsembleLearning} depending on \code{flavor}.
-#' 
+#'
 #' The "superLearning" \code{flavor} requires the \code{SuperLearner} package
 #' and, by default, the \code{polspline}, codegam, and \code{randomForest}
 #' packages.
-#' 
+#'
 #' The "h2oEnsembleLearning" \code{flavor} requires the \code{SuperLearner} and
 #' \code{h2oEnsemble} packages.
-#' 
+#'
 #' If \code{family} is set to "parsimonious" (recommended) then the packages
 #' \code{sgeostat} and \code{geometry} are required.
-#' 
+#'
 #' @aliases tmle.npvi. tmle.npvi
 #' @param obs A \code{n x p} \code{matrix} or \code{data frame} of
 #' observations, with \eqn{p \ge 3}.  \itemize{ \item Column \code{"X"}
@@ -173,17 +170,17 @@
 #' @references Chambaz, A., Neuvial, P., & van der Laan, M. J. (2012).
 #' Estimation of a non-parametric variable importance measure of a continuous
 #' exposure. Electronic journal of statistics, 6, 1059--1099.
-#' 
+#'
 #' Chambaz, A., Neuvial, P. (2015).  tmle.npvi: targeted, integrative search of
 #' associations between DNA copy number and gene expression, accounting for DNA
 #' methylation.  Bioinformatics 31(18):3054--3056.
 #' @examples
-#' 
+#'
 #' set.seed(12345)
 #' ##
 #' ## Simulating a data set and computing the true value of the parameter
 #' ##
-#' 
+#'
 #' ## Parameters for the simulation (case 'f=identity')
 #' O <- cbind(W=c(0.05218652, 0.01113460),
 #'            X=c(2.722713, 9.362432),
@@ -193,26 +190,26 @@
 #' p <- c(0, 1/2, 1/2)
 #' omega <- c(0, 3, 3)
 #' S <- matrix(c(10, 1, 1, 0.5), 2 ,2)
-#' 
+#'
 #' ## Simulating a data set of 200 i.i.d. observations
 #' sim <- getSample(2e2, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
 #' obs <- sim$obs
-#' 
+#'
 #' ## Adding (dummy) baseline covariates
 #' V <- matrix(runif(3*nrow(obs)), ncol=3)
 #' colnames(V) <- paste("V", 1:3, sep="")
 #' obs <- cbind(V, obs)
-#' 
+#'
 #' ## Caution! MAKING '0' THE REFERENCE VALUE FOR 'X'
 #' X0 <- O[2,2]
 #' obsC <- obs
 #' obsC[, "X"] <- obsC[, "X"] - X0
 #' obs <- obsC
-#' 
-#' ## True psi and confidence intervals (case 'f=identity')      
+#'
+#' ## True psi and confidence intervals (case 'f=identity')
 #' sim <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
 #' truePsi <- sim$psi
-#' 
+#'
 #' confInt0 <- truePsi + c(-1, 1)*qnorm(.975)*sqrt(sim$varIC/nrow(sim$obs))
 #' confInt <- truePsi + c(-1, 1)*qnorm(.975)*sqrt(sim$varIC/nrow(obs))
 #' cat("\nCase f=identity:\n")
@@ -222,44 +219,44 @@
 #' msg <- paste(msg, "\toptimal 95%-confidence interval is: ",
 #'              signif(confInt, 3), "\n", sep="")
 #' cat(msg)
-#' 
+#'
 #' ##
 #' ## TMLE procedure
 #' ##
-#' 
+#'
 #' ## Running the TMLE procedure
 #' npvi <- tmle.npvi(obs, f=identity, flavor="learning", B=5e4, nMax=10)
-#' 
+#'
 #' ## Summarizing its results
 #' npvi
 #' setConfLevel(npvi, 0.9)
 #' npvi
-#' 
+#'
 #' history <- getHistory(npvi)
 #' print(round(history, 4))
-#' 
+#'
 #' hp <- history[, "psi"]
 #' hs <- history[, "sic"]
 #' hs[1] <- NA
 #' ics <-  c(-1,1) %*% t(qnorm(0.975)*hs/sqrt(nrow(getObs(npvi))))
-#' 
+#'
 #' pch <- 20
 #' ylim <- range(c(confInt, hp, ics+hp), na.rm=TRUE)
-#' 
+#'
 #' xs <- (1:length(hs))-1
 #' plot(xs, hp, ylim=ylim, pch=pch, xlab="Iteration", ylab=expression(psi[n]),
 #'      xaxp=c(0, length(hs)-1, length(hs)-1))
 #' dummy <- sapply(seq(along=xs), function(x) lines(c(xs[x],xs[x]), hp[x]+ics[, x]))
-#' 
+#'
 #' abline(h=confInt, col=4)
 #' abline(h=confInt0, col=2)
-#' 
+#'
 #' @importFrom stats model.matrix
 #' @export
 tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
-                      flavor=c("learning", "superLearning", "h2oEnsembleLearning"),  
+                      flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                       lib=list(),  nodes=1L,  cvControl=NULL,
-                      family=c("parsimonious",   "gaussian"),  
+                      family=c("parsimonious",   "gaussian"),
                       cleverCovTheta=FALSE, bound=1, B=1e5, trueGMu=NULL,  iter=5L,
                       stoppingCriteria=list(mic=0.01,  div=0.01,  psi=0.1),
                       gmin=5e-2,   gmax=.95,
@@ -277,7 +274,7 @@ tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
     if (flavor!="learning" & failed) {
         tmle <- tmle.npvi.(obs=obs, f=f, weights=weights, id=id,
                            nMax=nMax, flavor="learning", lib=tmle.npvi::learningLib, nodes=1L,
-                           cvControl=cvControl, family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B, 
+                           cvControl=cvControl, family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
                            trueGMu=trueGMu, iter=iter, stoppingCriteria=stoppingCriteria, gmin=gmin, gmax=gmax,
                            mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light)
         attr(tmle, "flag") <- "Flavor 'superLearning' or 'h2oEnsembleLearning' failed, carried out flavor 'learning' instead."
@@ -295,7 +292,7 @@ tmle.npvi. <- function(obs,
                        lib=list(),
                        nodes=1L,
                        cvControl=NULL,
-                       family=c("parsimonious", "gaussian"),  
+                       family=c("parsimonious", "gaussian"),
                        cleverCovTheta=FALSE,
                        bound=1,
                        B=1e5,
@@ -322,17 +319,17 @@ tmle.npvi. <- function(obs,
     if (length(test)) {
         throw("Missing element in argument 'lib':", test);
     }
-    
+
     flavor <- match.arg(flavor)
     nMax <- Arguments$getInteger(nMax, c(10, Inf))
     nodes <- Arguments$getInteger(nodes)
     family <- match.arg(family)
-    
+
     if (B<5e4) {
         warning("Parameter 'B' may be too small; try a larger 'B'")
     }
-    
-    
+
+
     if (length(lib)==0) {
         ## get our library:
         if (flavor=="superLearning") {
@@ -341,9 +338,9 @@ tmle.npvi. <- function(obs,
             lib <- tmle.npvi::h2oEnsembleLearningLib
         } else {
             lib <- tmle.npvi::learningLib
-        } 
+        }
     }
-    
+
     if (flavor=="superLearning") {
         ## requireNamespace("SuperLearner")
         ## requireNamespace("randomForest")
@@ -397,7 +394,7 @@ tmle.npvi. <- function(obs,
             warning("Parallel computing not available with 'learning' option")
         }
     }
-    
+
     ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     ## Declaration
     ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -412,40 +409,40 @@ tmle.npvi. <- function(obs,
             throw("The data frame 'obs' must contain at least three columns, including 'X' and 'Y'.")
         }
         XY <- cbind(X=as.numeric(obs[, "X"]), Y=as.numeric(obs[, "Y"]))
-        W <- model.matrix(~.-1, obs[, -m, drop=FALSE])        
+        W <- model.matrix(~.-1, obs[, -m, drop=FALSE])
         attr(W, "assign") <- NULL
         attr(W, "contrasts") <- NULL
         obs <- cbind(XY, W)
     }
-    
+
     id.weights <- validateArgumentIdObsWeights(id, weights, nrow(obs));
     id <- id.weights$id;
-    
+
     nclust <- length(unique(id));
     nclust.min <- 50;
     if (nclust<nclust.min) {
         warning("There are only ", nclust, " independent clusters of (a priori dependent) observations.\nInference will not necessarily be reliable.\n")
     }
-    
+
     obsWeights <- id.weights$weights;
     if (!attr(obsWeights, "sum to one")) {
         warning("The user-supplied weights 'weights' do not sum up to one.\n")
     }
-    
+
     p0min <- 0.1
     n0min <- p0min*nrow(obs)
     n0 <- sum(obs[, "X"]==0)
     if (n0<n0min) {
         warning("Only ", n0, " out of ", nrow(obs), " observations have 'X==0'. Should 'X' be thresholded?")
     }
-    
+
     npvi <- NPVI(obs=obs, obsWeights=obsWeights, id=id,
-                 f=f, nMax=nMax, family=family, tabulate=tabulate, 
+                 f=f, nMax=nMax, family=family, tabulate=tabulate,
                  gmin=gmin, gmax=gmax,
                  mumin=mumin, mumax=mumax,
                  thetamin=min(obs[, "Y"]), thetamax=max(obs[, "Y"]),
                  stoppingCriteria=stoppingCriteria)
-    
+
     ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     ## Initialization
     ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -453,12 +450,12 @@ tmle.npvi. <- function(obs,
          learnG=lib$learnG, learnMuAux=lib$learnMuAux, learnTheta=lib$learnTheta,
          bound=bound, B=B,
          light=light,
-         trueGMu=trueGMu, 
+         trueGMu=trueGMu,
          SuperLearner.=SuperLearner.,
          verbose=verbose);
     ## rm(learnG);
     conv <- getConv(npvi);
-    
+
     kk <- 1
     ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     ## Update
@@ -467,7 +464,7 @@ tmle.npvi. <- function(obs,
     while ((kk <= iter) && (is.na(conv) || !conv)) {
         cat(kk, " ")
         kk <- kk+1
-        
+
         ## k^th update
         update(npvi, flavor=flavor, learnDevG=lib$learnDevG,
                learnDevMu=lib$learnDevMu, learnDevTheta=lib$learnDevTheta,
@@ -477,14 +474,14 @@ tmle.npvi. <- function(obs,
                exact=exact, trueGMu=trueGMu,
                SuperLearner.=SuperLearner.,
                verbose=verbose);
-        
+
         ## check convergence
         updateConv(npvi, B=B)
         conv <- getConv(npvi)
     }
     cat("\n")
-    
-    
+
+
     ## history <- getHistory(npvi)
     return(npvi)
 }
