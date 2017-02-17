@@ -3,7 +3,7 @@
 #' @importFrom R.utils Arguments enter exit less cat
 #' @importFrom stats quantile gaussian binomial sd update optimize
 #' @importFrom utils head str tail
-#' 
+#'
 setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL, c("W", "X", "Y"))),
                                   obsWeights=NULL, id=NULL,
                                   f=identity, nMax=10L,
@@ -30,7 +30,7 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
       throw("Argument 'obs' has 0 rows so 'obsWeights' and 'id' should be 'NULL'");
     }
   }
-  
+
   ## Argument 'f':
   if (!((mode(f)=="function") && (f(0)==0))) {
     throw("Argument 'f' must be a function such that f(0)=0.")
@@ -38,7 +38,7 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
 
   ## Argument 'nMax':
   nMax <- Arguments$getInteger(nMax, c(10, Inf));
-  
+
   ## Arguments 'gmin' and 'gmax':
   gmin <- Arguments$getNumeric(gmin);
   gmax <- Arguments$getNumeric(gmax);
@@ -88,7 +88,7 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
   if (length(args) > 0) {
     argsStr <- paste(names(args), collapse=", ");
     throw("Unknown arguments: ", argsStr);
-  } 
+  }
 
   if (tabulate & family=="gaussian") {
     throw("Unauthorized, because cannot tabulate all functions if family is 'gaussian'.")
@@ -123,19 +123,19 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
     Yq <- data.frame(value=Yq, index=Yq.idx)
   }
 
-  
+
   theW <- setdiff(colnames(obs), c("X", "Y"))
   if (!tabulate & length(theW)>1) {
     throw("Multivariate 'W' handled only if 'tabulate' is TRUE")
   }
-  
+
   nms <-  c("eps", "lli", "mic1", "epsT", "lliT", "mic2", "psi", "psi.sd", "psiPn", "psiPn.sd", "mic", "div", "sic", "phi", "sicAlt")
   history <- matrix(NA, 0, length(nms));
   colnames(history) <- nms
 
   conv <- NA
   attr(conv, "msg") <- character(0)
-  
+
   extend(Object(), "NPVI",
          .obs=obs, #.flavor=flavor,
          .obsWeights=obsWeights,
@@ -188,62 +188,62 @@ setMethodS3("getConfLevel", "NPVI", function(this, ...) {
 })
 
 #' Returns History of TMLE Procedure
-#' 
+#'
 #' Returns the 'history' of the TMLE procedure
 #' @name getHistory
 #' @param this An object of class \code{TMLE.NPVI}
 #' @param \dots Not used
 #' @aliases getHistory.NPVI
-#' @return A \code{numeric}  \code{matrix} which encapsulates a summary 
-#'   of the  TMLE procedure.  If \eqn{k} successive  updates were performed, 
-#'   then   the   \code{matrix}   has   either   \eqn{k+1}   rows   (if 
-#'   \code{cleverCovTheta}  was  set  to  \code{FALSE} in  the  call  to 
-#'   \code{tmle.npvi})   or    \code{2k+1}   rows   (otherwise).    The 
+#' @return A \code{numeric}  \code{matrix} which encapsulates a summary
+#'   of the  TMLE procedure.  If \eqn{k} successive  updates were performed,
+#'   then   the   \code{matrix}   has   either   \eqn{k+1}   rows   (if
+#'   \code{cleverCovTheta}  was  set  to  \code{FALSE} in  the  call  to
+#'   \code{tmle.npvi})   or    \code{2k+1}   rows   (otherwise).    The
 #'   \code{matrix} has 14 columns: \itemize{ \item{\code{"eps"},   values of the
 #'   unique fluctuation  parameter   (if  \code{cleverCovTheta}  was  set to
-#'   \code{FALSE} in  the call  to \code{tmle.npvi}),  or values of the 
-#'   parameter involved in the fluctuation of the   joint  distribution  of 
-#'   \eqn{(X,W)}   during  each  update (otherwise).  } \item{\code{"lli"}, 
-#'   increases in likelihood yielded  by  each  update  (if 
-#'   \code{cleverCovTheta}  was  set  to \code{FALSE}  in the  call  to 
-#'   \code{tmle.npvi}),  or increases in likelihood yielded by the fluctuation 
-#'   of the joint distribution of \eqn{(X,W)} during each update (otherwise).} 
-#'   \item{\code{"mic1"},   empirical means  of the  first component of the 
-#'   efficient influence  curve at each step of the TMLE    procedure.} 
+#'   \code{FALSE} in  the call  to \code{tmle.npvi}),  or values of the
+#'   parameter involved in the fluctuation of the   joint  distribution  of
+#'   \eqn{(X,W)}   during  each  update (otherwise).  } \item{\code{"lli"},
+#'   increases in likelihood yielded  by  each  update  (if
+#'   \code{cleverCovTheta}  was  set  to \code{FALSE}  in the  call  to
+#'   \code{tmle.npvi}),  or increases in likelihood yielded by the fluctuation
+#'   of the joint distribution of \eqn{(X,W)} during each update (otherwise).}
+#'   \item{\code{"mic1"},   empirical means  of the  first component of the
+#'   efficient influence  curve at each step of the TMLE    procedure.}
 #'   \item{\code{"epsT"},   values of  the fluctuation parameter involved in the
-#'   fluctuation of the conditional distribution of \eqn{Y}  given \eqn{(X,W)} 
-#'   during each  update (if \code{cleverCovTheta} was  set to \code{TRUE} in 
-#'   the call to  \code{tmle.npvi}), or \code{NA}    (otherwise).} 
-#'   \item{\code{"lliT"},  successive increases in likelihood yielded by  the 
-#'   fluctuation of  the  conditional distribution  of \eqn{Y}    given 
-#'   \eqn{(X,W)}    during    each   update    (if \code{cleverCovTheta}  was 
-#'   set  to  \code{TRUE} in  the  call  to \code{tmle.npvi}), or \code{NA} 
-#'   (otherwise).} \item{\code{"mic2"},  empirical means  of the  second 
-#'   component of the efficient influence  curve at each step of the TMLE 
-#'   procedure.} \item{\code{"psi"},   increasingly targeted estimators 
-#'   \eqn{\Psi(P_n^k)} of  the  parameter  of  interest. The last one is the 
-#'   TMLE.  Their  computation involves  simulation  of  \code{B}  iid  copies 
-#'   of \eqn{(X,W)} under \eqn{P_n^k}. }\item{\code{"psi.sd"},  estimated 
-#'   standard deviations of the   increasingly targeted  estimators of  the 
-#'   parameter of interest. The last one corresponds to the TMLE. The 
-#'   computation involves  the  same \code{B}  iid copies  of \eqn{(X,W)} as 
-#'   above.} \item{\code{"psiPn"}, same as  \code{"psi"} except that the 
-#'   *observed* \eqn{(X_i,W_i)} are used  instead of  simulated copies  drawn 
-#'   from \eqn{P_n^k}.   If  weights  were  user-supplied  through  argument 
-#'   \code{weights}, then the  *observed* \eqn{(X_i,W_i)}  are weighted 
-#'   accordingly. Of course, \code{"psi"} must be favored.} 
-#'   \item{\code{"psiPn.sd"},  same  as  \code{"psi.sd"}  except  that 
+#'   fluctuation of the conditional distribution of \eqn{Y}  given \eqn{(X,W)}
+#'   during each  update (if \code{cleverCovTheta} was  set to \code{TRUE} in
+#'   the call to  \code{tmle.npvi}), or \code{NA}    (otherwise).}
+#'   \item{\code{"lliT"},  successive increases in likelihood yielded by  the
+#'   fluctuation of  the  conditional distribution  of \eqn{Y}    given
+#'   \eqn{(X,W)}    during    each   update    (if \code{cleverCovTheta}  was
+#'   set  to  \code{TRUE} in  the  call  to \code{tmle.npvi}), or \code{NA}
+#'   (otherwise).} \item{\code{"mic2"},  empirical means  of the  second
+#'   component of the efficient influence  curve at each step of the TMLE
+#'   procedure.} \item{\code{"psi"},   increasingly targeted estimators
+#'   \eqn{\Psi(P_n^k)} of  the  parameter  of  interest. The last one is the
+#'   TMLE.  Their  computation involves  simulation  of  \code{B}  iid  copies
+#'   of \eqn{(X,W)} under \eqn{P_n^k}. }\item{\code{"psi.sd"},  estimated
+#'   standard deviations of the   increasingly targeted  estimators of  the
+#'   parameter of interest. The last one corresponds to the TMLE. The
+#'   computation involves  the  same \code{B}  iid copies  of \eqn{(X,W)} as
+#'   above.} \item{\code{"psiPn"}, same as  \code{"psi"} except that the
+#'   *observed* \eqn{(X_i,W_i)} are used  instead of  simulated copies  drawn
+#'   from \eqn{P_n^k}.   If  weights  were  user-supplied  through  argument
+#'   \code{weights}, then the  *observed* \eqn{(X_i,W_i)}  are weighted
+#'   accordingly. Of course, \code{"psi"} must be favored.}
+#'   \item{\code{"psiPn.sd"},  same  as  \code{"psi.sd"}  except  that
 #'   the*observed*  \eqn{(X_i,W_i)} are used instead of  simulated copies drawn
 #'   from \eqn{P_n^k}. If  weights  were  user-supplied  through  argument
 #'   \code{weights}, then the  *observed* \eqn{(X_i,W_i)}  are weighted
 #'   accordingly. Of course, \code{"psi.sd"} must be favored.}
 #'   \item{\code{"mic"},   empirical  means  of  the  efficient influence curve
-#'   at each step of the TMLE procedure. If  weights  were  user-supplied 
+#'   at each step of the TMLE procedure. If  weights  were  user-supplied
 #'   through  argument \code{weights}, then the empirical mean is  weighted
 #'   accordingly. This column is the sum of the \code{"mic1"} and \code{"mic2"}
 #'   columns.} \item{\code{"div"},  total variation  distances between each pair
 #'   of successive distributions constructed in  the course of the TMLE
-#'   procedure. } \item{\code{"sic"},  estimated standard deviations   of  the 
+#'   procedure. } \item{\code{"sic"},  estimated standard deviations   of  the
 #'   efficient influence curve at each step of the TMLE procedure.}
 #'   \item{\code{"phi"},    non-parametric     substitution    estimator    of
 #'   \eqn{\phi=\Phi(P)}            where            \deqn{\Phi(P) =
@@ -255,7 +255,7 @@ setMethodS3("getConfLevel", "NPVI", function(this, ...) {
 #'   \Phi} at each step of the TMLE procedure.}}
 #' @export getHistory
 #' @export getHistory.NPVI
-#' @S3method getHistory NPVI 
+#' @S3method getHistory NPVI
 setMethodS3("getHistory", "NPVI", function(
   this,
   ...
@@ -272,13 +272,13 @@ setMethodS3("getHistory", "NPVI", function(
   ### \itemize{
   ###       \item{\code{"eps"},   values of  the unique
   ###        fluctuation  parameter   (if  \code{cleverCovTheta}  was  set  to
-  ###        \code{FALSE} in  the call  to \code{tmle.npvi}),  or  
+  ###        \code{FALSE} in  the call  to \code{tmle.npvi}),  or
   ###        values of the  parameter involved in the fluctuation of
   ###        the   joint  distribution  of  \eqn{(X,W)}   during  each  update
   ###       (otherwise).  }
   ###     \item{\code{"lli"},     increases in likelihood
   ###      yielded  by  each  update  (if  \code{cleverCovTheta}  was  set  to
-  ###      \code{FALSE}  in the  call  to  \code{tmle.npvi}),  or 
+  ###      \code{FALSE}  in the  call  to  \code{tmle.npvi}),  or
   ###      increases in likelihood yielded by the fluctuation of the
   ###     joint distribution of \eqn{(X,W)} during each update (otherwise).}
   ###        \item{\code{"mic1"},   empirical means  of the  first
@@ -298,7 +298,7 @@ setMethodS3("getHistory", "NPVI", function(
   ###     component of the efficient influence  curve at each step of the TMLE
   ###     procedure.}
   ###   \item{\code{"psi"},   increasingly targeted
-  ###     estimators \eqn{\Psi(P_n^k)} of  the  parameter  of  interest. The last one is the TMLE.  Their  computation  
+  ###     estimators \eqn{\Psi(P_n^k)} of  the  parameter  of  interest. The last one is the TMLE.  Their  computation
   ###       involves  simulation  of  \code{B}  iid  copies  of
   ###    \eqn{(X,W)} under \eqn{P_n^k}. }
   ### \item{\code{"psi.sd"},  estimated standard deviations of
@@ -338,7 +338,7 @@ setMethodS3("getHistory", "NPVI", function(
 setMethodS3("updateHistory", "NPVI", function(this, ...) {
   history <- tmle.npvi::getHistory.NPVI(this);
   psi <- getPsi(this);
-  psi.sd <- getPsiSd(this);  
+  psi.sd <- getPsiSd(this);
   epsilon <- getEpsilon(this);
   logLikIncr <- getLogLikIncr(this);
   epsilonTheta <- getEpsilonTheta(this);
@@ -352,14 +352,14 @@ setMethodS3("updateHistory", "NPVI", function(this, ...) {
 
   phi <- getPhi(this)
   sicAlt <- getSicAlt(this)
-  
+
   currStep <- c(epsilon, logLikIncr, mic[1], epsilonTheta, logLikIncrTheta, mic[2], psi, psi.sd, psiPn, psiPn.sd, mic[3], div, sic, phi, sicAlt);
   step <- getStep(this);
   rownames.history <- rownames(history);
   history <- rbind(history, matrix(currStep, 1, length(currStep)));
   rownames(history) <- c(rownames.history,
                          paste("step", as.character(step), sep=""));
-  
+
   this$.history <- history;
 })
 
@@ -374,12 +374,12 @@ setMethodS3("getPsi", "NPVI", function(#Returns Current Estimator
   ##seealso<< tmle.npvi, getHistory, getPsiSd
   this$.psi;
   ### Retrieves  the current value  of the estimator \eqn{\Psi(P_n^k)}  of the
-  ### parameter  of interest. Its computation involves  simulation of a large number of 
+  ### parameter  of interest. Its computation involves  simulation of a large number of
   ### iid copies of \eqn{(X,W)} under \eqn{P_n^k}.
 })
 
-setMethodS3("getPsiSd", "NPVI", function(#Returns Current Estimated Standard Deviation of the Estimator 
-### Returns the current value of the estimated standard deviation of the current estimator. 
+setMethodS3("getPsiSd", "NPVI", function(#Returns Current Estimated Standard Deviation of the Estimator
+### Returns the current value of the estimated standard deviation of the current estimator.
     this,
 ### An object of class \code{TMLE.NPVI}.
     ...
@@ -389,8 +389,8 @@ setMethodS3("getPsiSd", "NPVI", function(#Returns Current Estimated Standard Dev
   ##seealso<< tmle.npvi, getHistory, getPsi
   this$.psi.sd;
   ### Retrieves  the estimated standard deviation of the current estimator \eqn{\Psi(P_n^k)}  of the
-  ### parameter  of interest. Its computation involves  simulation of a large number of 
-  ### iid copies of \eqn{(X,W)} under \eqn{P_n^k}.  
+  ### parameter  of interest. Its computation involves  simulation of a large number of
+  ### iid copies of \eqn{(X,W)} under \eqn{P_n^k}.
 })
 
 setMethodS3("getPhi", "NPVI", function(this, ...) {
@@ -401,11 +401,11 @@ setMethodS3("getPhi", "NPVI", function(this, ...) {
   X <- fX(obs)
   Y <- fY(obs)
   sX2 <- sum(X^2 * obsWeights)
-  ## phi: estimator of phi_0 
+  ## phi: estimator of phi_0
   sum(X*Y * obsWeights)/sX2
 })
 
-setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation of the Estimator 
+setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation of the Estimator
 ### Returns the current value of the estimated standard deviation of the current estimator.
                                        this,
 ### An object of class \code{TMLE.NPVI}.
@@ -427,7 +427,7 @@ setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation
   ##     D_i = (sum_j w_ij * eic_ij)/w_i
   ## (b) sum_i w_i * D_i^2 - (sum_i w_i * D_i)^2
   ##     = sum_i w_i * D_i^2 - (sum_ij w_ij * eic_ij)^2
-  
+
   mic <- sum(eic * obsWeights);
   ## old version, without 'id':
   ## vic <- sum((eic^2) * obsWeights) - mic^2;
@@ -441,7 +441,7 @@ setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation
   ## vic <- sum(VIC) - mic^2;
   ## hence:
   vic <- sum(VIC) - (2-sum(obsWeights))*mic^2;
-  
+
   sqrt(vic);
 ### Computes  the  estimated  standard  deviation  of  the  current  estimator
 ### \eqn{\Psi(P_n^k)}  of the  parameter of  interest  under the  form of  the
@@ -459,7 +459,7 @@ setMethodS3("getSicAlt", "NPVI", function(this, ...) {
   Y <- fY(obs);
   eic <- getEfficientInfluenceCurve(this);
   eic <- eic[, 3];
-  ## phi: estimator of phi_0 
+  ## phi: estimator of phi_0
   phi <- getPhi(this);
   ## sicAlt: estimated standard deviation to perform test of "psi_0 = phi_0"
   sX2 <- sum(X^2 * obsWeights);
@@ -470,7 +470,7 @@ setMethodS3("getSicAlt", "NPVI", function(this, ...) {
   ## old version:
   ## vicAlt <- sum((eicAlt^2) * obsWeights) - micAlt^2;
   ## sicAlt <- sqrt(vicAlt); ## older version: sicAlt <- sd(eic[, 3]-infCurvePhi)
-  
+
   ## new version:
   ## cf 'getSic' for an explanation
   VICalt <- tapply(1:length(eicAlt), id, function(ij) {
@@ -507,19 +507,19 @@ setMethodS3("setDivergence", "NPVI", function(this, div, ...) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Argument 'div':
   div <- Arguments$getNumeric(div)
-  
+
   this$.div <- div;
 })
 
 #' Sets the confidence level of a \code{TMLE.NPVI} object
-#' 
+#'
 #' Sets the confidence level of a \code{TMLE.NPVI} object
-#' 
+#'
 #' @name setConfLevel
 #' @export setConfLevel
 #' @export setConfLevel.NPVI
 #' @aliases setConfLevel.NPVI
-#' @S3method setConfLevel NPVI 
+#' @S3method setConfLevel NPVI
 setMethodS3("setConfLevel", "NPVI", function(
 ### Sets the confidence level of a \code{TMLE.NPVI} object.
     this,
@@ -531,13 +531,13 @@ setMethodS3("setConfLevel", "NPVI", function(
     ) {
   ##alias<< setConfLevel
   ##seealso<< as.character.NPVI
-  
+
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Argument 'confLevel':
   conf.level <- Arguments$getNumeric(confLevel, range=c(0, 1))
-  
+
   this$.conf.level <- conf.level;
 })
 
@@ -605,14 +605,14 @@ setMethodS3("getId", "NPVI", function(this, ...) {
 })
 
 #' Retrieves the Observations
-#' 
+#'
 #' Retrieves the \code{matrix} of observations involved in the TMLE procedure.
-#' 
+#'
 #' @name getObs
 #' @param this An object of class \code{TMLE.NPVI}
-#' @param tabulate A \code{logical}, to  specify whether it is the original 
+#' @param tabulate A \code{logical}, to  specify whether it is the original
 #'   data set that is retrieved (if \code{FALSE}) or a  tabulated version of it
-#'   (otherwise), for internal use only.  If \code{tabulate} is missing then 
+#'   (otherwise), for internal use only.  If \code{tabulate} is missing then
 #'   the value attached to the input object is used
 #' @param \dots Not used
 #' @return Either the original data set involved in the TMLE procedure or a tabulated version of it
@@ -659,7 +659,7 @@ setMethodS3("getHTheta", "NPVI", function(this, tabulate, ...) {
   g <- getG(this, tabulate)
   sigma2 <- getSigma2(this)
   fX <- getFX(this, tabulate);
-    
+
   HTheta <- function(XW) {
     X <- fX(cbind(XW, Y=NA))
     W <- XW[, "W"]
@@ -684,15 +684,14 @@ setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
 
 
 #' Prints an NPVI object
-#' 
+#'
 #' Prints an NPVI object
-#'  
+#'
 #' @name as.character
 #' @param this An object of class \code{TMLE.NPVI}
 #' @param \dots Not used
 #' @return An object of class 'Summary'
 #' @aliases as.character.NPVI
-#' @export as.character
 #' @export as.character.NPVI
 #' @S3method as.character NPVI
 setMethodS3("as.character", "NPVI", function(
@@ -707,8 +706,8 @@ setMethodS3("as.character", "NPVI", function(
   flag <- attr(this, "flag")
   if (!is.null(flag)) {
     s <- c(s, flag, "")
-  } 
-  
+  }
+
   ## sample size
   n <- nrow(getObs(this))
   nc <- length(unique(getId(this)))
@@ -716,12 +715,12 @@ setMethodS3("as.character", "NPVI", function(
   s <- c(s, "")
 
   ## weights sum up to one?
-  obsWeights <- getObsWeights(this) 
+  obsWeights <- getObsWeights(this)
   if (!attr(obsWeights, "sum to one")) {
     s <- c(s, "The user-supplied weights 'weights' do not sum up to one")
     s <- c(s, "")
   }
-  
+
   ## psi
   s <- c(s, sprintf("Estimator of psi:\t\t%s", signif(getPsi(this), 3)));
 
@@ -729,10 +728,10 @@ setMethodS3("as.character", "NPVI", function(
   sic <- getSic(this)
   s <- c(s, sprintf("Estimated standard error:\t%s", signif(sic, 3)))
   s <- c(s, "")
-  
+
   ## number of iterations
   step <- getStep(this)
-  
+
   ## convergence ?
   conv <- getConv(this)
   if (!is.na(conv)) {
@@ -751,23 +750,23 @@ setMethodS3("as.character", "NPVI", function(
     divLab <- attr(div, "label")
     psi <- getPsiTol(this)
     psiLab <- attr(psi, "label")
-    
+
     msg2 <- paste("Convergence criteria: ",
-                  "\n- ", micLab, "\t\t< ", mic, 
-                  "\n- ", divLab, "\t\t< ", div, 
+                  "\n- ", micLab, "\t\t< ", mic,
+                  "\n- ", divLab, "\t\t< ", div,
                   "\n- ", psiLab, "\t\t< ", psi, sep="")
     rm(psi, mic, div)
     s <- c(s, msg2, msg)
     s <- c(s, "")
   }
-  
+
   ## confidence intervals
   psi <- getPsi(this)
   alpha <- 1-getConfLevel(this)
   CI <- psi+c(-1, 1)*sic*qnorm(1-alpha/2)/sqrt(nc)
   CI <- signif(CI, 3)
   s <- c(s, sprintf("%s-confidence interval:\t[%s, %s]", 1-alpha, CI[1], CI[2]))
-  
+
   ## tests
   ts1 <- sqrt(nc)*(psi-0)/sic
   pval1 <- 2*(1-pnorm(abs(ts1)))
@@ -791,9 +790,9 @@ setMethodS3("updateSigma2", "NPVI", function(this, dev, ...) {
   ## Argument 'dev':
   dev <- Arguments$getNumeric(dev);
 
-  eps <- getEpsilon(this);  
+  eps <- getEpsilon(this);
   sigma2 <- getSigma2(this);
-  
+
   sigma21 <- sigma2 + eps*dev;
   ## sigma21 is positive because 'eps' is upper bounded by 1/supremum of
   ## absolute value of efficient influence curve
@@ -813,7 +812,7 @@ setMethodS3("updateEfficientInfluenceCurve", "NPVI", function(this, ..., verbose
   fY <- getFY(this)
   sigma2 <- getSigma2(this);
   psi <- getPsi(this);
-  
+
   thetaXW <- theta(obs[, c("X", "W")]);
   W <- obs[, "W", drop=FALSE]
   theta0W <- theta0(W);
@@ -822,7 +821,7 @@ setMethodS3("updateEfficientInfluenceCurve", "NPVI", function(this, ..., verbose
 
   X <- fX(obs)
   Y <- fY(obs)
-          
+
   D1 <- X * (thetaXW - theta0W - X * psi);
   D2 <- (Y - thetaXW) * (X - muW/gW*(X==0));
   verbose && summary(verbose, D1);
@@ -847,7 +846,7 @@ setMethodS3("estimateEpsilon", "NPVI", function(this, cleverCovTheta, bound=1e-1
 
   ## Argument 'obsWeights'
   obsWeights <- getObsWeights(this);
-  
+
   eic <- getEfficientInfluenceCurve(this, verbose=verbose);
   if (cleverCovTheta) {
     eic <- eic[, "eic1"]
@@ -855,7 +854,7 @@ setMethodS3("estimateEpsilon", "NPVI", function(this, cleverCovTheta, bound=1e-1
     eic <- eic[, "eic"];
   }
   verbose && summary(verbose, eic);
-  
+
   if (sum(abs(eic)==Inf, na.rm=TRUE)>0) {
     throw("Infinite values in estimated efficient influence curve");
     ## eic[abs(eic)==Inf] <- NA;
@@ -872,7 +871,7 @@ setMethodS3("estimateEpsilon", "NPVI", function(this, cleverCovTheta, bound=1e-1
   if (theMin<=0 & theMax>=0) {
     interval <- c(-1/(1.001*theMax), -1/(1.001*theMin))
   }
-  
+
   logLik <- function(epsilon) {
     sum(log(1 + epsilon * eic) * obsWeights);
   }
@@ -899,18 +898,18 @@ setMethodS3("estimateEpsilonTheta", "NPVI", function(this, ..., verbose=FALSE) {
 
   ## Argument 'obsWeights'
   obsWeights <- getObsWeights(this);
-  
+
   theta <- getTheta(this);
   H <- getHTheta(this);
 
   XW <- obs[, c("X", "W")]
   HXW <- H(XW)
   residuals <- fY(obs)-theta(XW)
-  
+
   eps <- sum(residuals*HXW * obsWeights)/sum(HXW^2 * obsWeights);
   feps <- eps*sum(residuals*HXW * obsWeights)  - (eps^2) * sum(HXW^2 * obsWeights)/2
   attr(eps, "feps") <- feps
-  
+
   eps
 })
 
@@ -975,7 +974,7 @@ setMethodS3("updateWeightsW", "NPVI", function(this, effICW, ...) {
 
   if (!is.null(effICW)) {
     obs <- getObs(this)
-    eps <- getEpsilon(this);  
+    eps <- getEpsilon(this);
     weightsW <- getWeightsW(this)*(1+eps*effICW(obs[, "W"]))
 
     setWeightsW(this, weightsW)
@@ -1002,7 +1001,7 @@ setMethodS3("updateConv", "NPVI", function(x, B, ...) {
 
   conv <- FALSE
   msg <- NULL
-  
+
   ## Assessing values of scaled 'mic'
   if (!is.na(mic.tol)) {
     mic <- hist[2, "mic"]
@@ -1015,7 +1014,7 @@ setMethodS3("updateConv", "NPVI", function(x, B, ...) {
       msg <- c(msg, msg1)
     }
   }
-  
+
   ## Testing value of 'div'
   if (!is.na(div.tol)) {
     div <- hist[2, "div"]
@@ -1046,7 +1045,7 @@ setMethodS3("updateConv", "NPVI", function(x, B, ...) {
     msg <- "Convergence not reached (yet)"
   }
 
-  
+
   attr(conv, "msg") <- msg
   this$.conv <- conv
 })
