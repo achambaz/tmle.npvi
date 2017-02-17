@@ -27,6 +27,24 @@ SL.glm.condExpX2givenW <- function(Y, X, newX, family, obsWeights, ...) {
 
 
 
+
+
+
+
+
+
+#' SL Wrapper for Estimation of Cond. Expect. of X^2 Given W
+#'
+#' Prediction algorithm wrapper for SuperLearner, for the estimation of the
+#' conditional expectation of \eqn{X^2} given \eqn{W}.
+#'
+#' @param object A fitted object as given by \code{SL.glm.condExpX2givenW}.
+#' @param newdata The predictor variables for which predictions are wished.
+#' @param \dots Not used.
+#' @return A vector of predictions for \code{newdata} derived from the fitted
+#' object \code{object}.
+#' @export
+#'
 predict.SL.glm.condExpX2givenW <- function(object, newdata, ...) {
     out <- predict(object = object$object, newdata = newdata,
                    type = "response")
@@ -60,6 +78,24 @@ SL.glm.condExpXYgivenW <- function(Y, X, newX, family, obsWeights, ...) {
 }
 
 
+
+
+
+
+
+
+#' SL Wrapper for Estimation of Cond. Expect. of XY Given W
+#'
+#' Prediction algorithm wrapper for SuperLearner, for the estimation of the
+#' conditional expectation of \eqn{XY} given \eqn{W}.
+#'
+#' @param object A fitted object as given by \code{SL.glm.condExpXYgivenW}.
+#' @param newdata The predictor variables for which predictions are wished.
+#' @param \dots Not used.
+#' @return A vector of predictions for \code{newdata} derived from the fitted
+#' object \code{object}.
+#' @export
+#'
 predict.SL.glm.condExpXYgivenW <- function(object, newdata, ...) {
     out <- predict(object = object$object, newdata = newdata,
                    type = "response")
@@ -95,7 +131,24 @@ SL.glm.g <- function(Y, X, newX, family, obsWeights, ...) {
     return(out)
 }
 
+
+
+
+
+
+
+#' SL Wrapper for Estimation of Cond. Prob. of X=0 Given W
+#'
+#' Prediction algorithm wrapper for SuperLearner, for the estimation of the
+#' conditional probability of X=0 given W
+#'
+#' @param object A fitted object as given by \code{SL.glm.g}.
+#' @param newdata The predictor variables for which predictions are wished.
+#' @param \dots Not used.
+#' @return A vector of predictions for \code{newdata} derived from the fitted
+#' object \code{object}.
 #' @export
+#'
 predict.SL.glm.g <- function(object, newdata, ...) {
     out <- predict(object = object$object, newdata = newdata,
                    type = "response")
@@ -132,6 +185,20 @@ SL.glm.theta <- function(Y, X, newX, family, obsWeights, ...) {
 ## environment(predict.SL.glm.theta) <- asNamespace("SuperLearner")
 
 
+
+
+#' SL Wrapper for Estimation of Cond. Expect. of Y Given (X,W)
+#'
+#' Prediction algorithm wrapper for SuperLearner, for the estimation of the
+#' conditional expectation of \eqn{Y} given \eqn{X,W}.
+#'
+#' @param object A fitted object as given by \code{SL.glm.theta}.
+#' @param newdata The predictor variables for which predictions are wished.
+#' @param \dots Not used.
+#' @return A vector of predictions for \code{newdata} derived from the fitted
+#' object \code{object}.
+#' @export
+#'
 predict.SL.glm.theta <- function(object, newdata, ...) {
     out <- predict(object = object$object, newdata = newdata,
                    type = "response")

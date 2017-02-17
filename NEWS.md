@@ -3,7 +3,7 @@ Package: tmle.npvi
 
 Version: 0.11.5 [2017-02-17]
 
-o Now importing from "SuperLearner".
+o Now importing from "SuperLearner" + corresponding updates to NAMESPACE
 
 Version: 0.11.4 [2017-02-17]
 
