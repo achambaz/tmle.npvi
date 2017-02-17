@@ -1,7 +1,7 @@
 Package: tmle.npvi
 Type: Package
 Title: Targeted Learning of a NP Importance of a Continuous Exposure
-Version: 0.11.4
+Version: 0.11.5
 Date: 2017-02-17
 Author: Antoine Chambaz, Pierre Neuvial
 Maintainer: Pierre Neuvial <pierre.neuvial@math.cnrs.fr>
@@ -19,6 +19,7 @@ Imports:
     R.oo,
     MASS,
     Matrix,
+    SuperLearner (>= 2.0),
     geometry
 Suggests:
     BiocStyle,
@@ -26,7 +27,6 @@ Suggests:
     h2o (>= 3.0.1.3),
     nnls,
     randomForest (>= 4.5-35),
-    SuperLearner (>= 2.0),
     polspline (>= 1.1.4),
     gam (>= 1.03),
     knitr,

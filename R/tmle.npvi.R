@@ -252,6 +252,7 @@
 #' abline(h=confInt0, col=2)
 #'
 #' @importFrom stats model.matrix
+#' @importFrom SuperLearner SuperLearner
 #' @importFrom SuperLearner All
 #' @export
 tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
@@ -343,7 +344,14 @@ tmle.npvi. <- function(obs,
     }
 
     if (flavor=="superLearning") {
-        ## requireNamespace("SuperLearner")
+        req <- requireNamespace("SuperLearner", quietly=TRUE)
+        if (!req) {
+            msg <- paste("there is no package called 'SuperLearner'",
+                         "Please install package 'SuperLearner' in order to use flavor 'superLearning'!",
+                         "install.packages('SuperLearner')",
+                         sep="\n")
+            stop(msg)
+        }
         ## requireNamespace("randomForest")
         ## requireNamespace("polspline")
         ## SL.glm <- SuperLearner::SL.glm
@@ -358,7 +366,7 @@ tmle.npvi. <- function(obs,
         }
         if (nodes==1) {
             SuperLearner. <- function(...) {
-                SuperLearner::SuperLearner(cvControl=cvControl, ...)
+                SuperLearner(cvControl=cvControl, ...)
             }
         } else {
             tf <- tempfile("snitch.Rout")

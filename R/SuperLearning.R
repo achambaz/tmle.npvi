@@ -1,4 +1,5 @@
 #' @importFrom stats as.formula glm
+#' @importFrom SuperLearner SL.glm SL.randomForest SL.gam SL.polymars
 SL.glm.condExpX2givenW <- function(Y, X, newX, family, obsWeights, ...) {
     varNames <- names(X)
     if (length(varNames)>20) {
@@ -11,10 +12,10 @@ SL.glm.condExpX2givenW <- function(Y, X, newX, family, obsWeights, ...) {
         theFormula <- paste("Y ~", theFormula, "+", theFormula2, sep="")
     } else {
         theFormula <- paste("Y ~", theFormula, sep="")
-    } 
+    }
     ## formula.glm.condExpX2givenW <- as.formula(Y~W+I(W^2));
     formula.glm.condExpX2givenW <- as.formula(theFormula);
-    
+
     fit.glm <- glm(formula.glm.condExpX2givenW, data = X, family = family,
                    weights = obsWeights)
     pred <- predict(fit.glm, newdata = newX, type = "response")
@@ -27,7 +28,7 @@ SL.glm.condExpX2givenW <- function(Y, X, newX, family, obsWeights, ...) {
 
 
 predict.SL.glm.condExpX2givenW <- function(object, newdata, ...) {
-    out <- predict(object = object$object, newdata = newdata, 
+    out <- predict(object = object$object, newdata = newdata,
                    type = "response")
     return(out)
 }
@@ -48,7 +49,7 @@ SL.glm.condExpXYgivenW <- function(Y, X, newX, family, obsWeights, ...) {
     }
     ## formula.glm.condExpXYgivenW <- as.formula(Y~W+I(W^2));
     formula.glm.condExpXYgivenW <- as.formula(theFormula);
-    
+
     fit.glm <- glm(formula.glm.condExpXYgivenW, data = X, family = family,
                    weights = obsWeights)
     pred <- predict(fit.glm, newdata = newX, type = "response")
@@ -60,7 +61,7 @@ SL.glm.condExpXYgivenW <- function(Y, X, newX, family, obsWeights, ...) {
 
 
 predict.SL.glm.condExpXYgivenW <- function(object, newdata, ...) {
-    out <- predict(object = object$object, newdata = newdata, 
+    out <- predict(object = object$object, newdata = newdata,
                    type = "response")
     return(out)
 }
@@ -82,9 +83,9 @@ SL.glm.g <- function(Y, X, newX, family, obsWeights, ...) {
     }
     ## formula.glm.g <- as.formula(Y~W+I(W^2));
     formula.glm.g <- as.formula(theFormula);
-    
-    
-    
+
+
+
     fit.glm <- glm(formula.glm.g, data = X, family = family,
                    weights = obsWeights)
     pred <- predict(fit.glm, newdata = newX, type = "response")
@@ -94,8 +95,9 @@ SL.glm.g <- function(Y, X, newX, family, obsWeights, ...) {
     return(out)
 }
 
+#' @export
 predict.SL.glm.g <- function(object, newdata, ...) {
-    out <- predict(object = object$object, newdata = newdata, 
+    out <- predict(object = object$object, newdata = newdata,
                    type = "response")
     return(out)
 }
@@ -116,8 +118,8 @@ SL.glm.theta <- function(Y, X, newX, family, obsWeights, ...) {
     }
     ## formula.glm.theta <- as.formula(Y~X*W);
     formula.glm.theta <- as.formula(theFormula);
-    
-    fit.glm <- glm(formula.glm.theta, data = X, family = family, 
+
+    fit.glm <- glm(formula.glm.theta, data = X, family = family,
                    weights = obsWeights)
     pred <- predict(fit.glm, newdata = newX, type = "response")
     fit <- list(object = fit.glm)
@@ -131,7 +133,7 @@ SL.glm.theta <- function(Y, X, newX, family, obsWeights, ...) {
 
 
 predict.SL.glm.theta <- function(object, newdata, ...) {
-    out <- predict(object = object$object, newdata = newdata, 
+    out <- predict(object = object$object, newdata = newdata,
                    type = "response")
     return(out)
 }
