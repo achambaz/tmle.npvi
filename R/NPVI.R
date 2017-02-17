@@ -683,15 +683,26 @@ setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
 })
 
 
-#' Prints an NPVI object
+#' Returns a Description of a NPVI object
 #'
-#' Prints an NPVI object
+#' Returns a short string describing the NPVI object.
+#'
 #'
 #' @name as.character
-#' @param this An object of class \code{TMLE.NPVI}
-#' @param \dots Not used
-#' @return An object of class 'Summary'
-#' @aliases as.character.NPVI
+#' @aliases as.character.NPVI as.character
+#' @param x An object of class \code{TMLE.NPVI}.
+#' @param \dots Not used.
+#' @return A character string summarizing the content of the object. The
+#' summary contains: \itemize{ \item The sample size of the data set involved in
+#' the TMLE procedure. \item The value of the TMLE and its estimated standard
+#' error. \item A reminder of the tuning of the stopping criteria, and a report
+#' on the convergence of the TMLE procedure (see \code{\link{tmle.npvi}}).
+#' \item A confidence interval with default level of 95\% (the level can be
+#' changed by using \code{\link{setConfLevel}}). \item The \eqn{p}-value of the
+#' two-sided test of ``\eqn{\Psi(P_0)=0}''. \item The \eqn{p}-value of the
+#' two-sided test of ``\eqn{\Psi(P_0)=\Phi(P_0)}'', with the estimated value of
+#' \eqn{\Phi(P_0)}. }
+#' @aliases as.character.NPVI as.character
 #' @export as.character.NPVI
 #' @S3method as.character NPVI
 setMethodS3("as.character", "NPVI", function(
