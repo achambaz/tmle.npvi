@@ -252,6 +252,7 @@
 #' abline(h=confInt0, col=2)
 #'
 #' @importFrom stats model.matrix
+#' @importFrom SuperLearner All
 #' @export
 tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
                       flavor=c("learning", "superLearning", "h2oEnsembleLearning"),

@@ -312,7 +312,7 @@ getSample <- structure(
       verbose && str(verbose, idx);
       if (length(idx)) {
         mu <- as.matrix(O[3, c("X", "Y"), drop=FALSE]);
-        verbose && R.utils::cat(verbose, "mu:");
+        verbose && cat(verbose, "mu:");
         verbose && print(verbose, mu);
         XY <- mvrnorm(length(idx), mu=mu, Sigma=Sigma3);
         X[idx] <- XY[, 1];

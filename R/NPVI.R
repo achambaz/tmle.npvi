@@ -1,6 +1,6 @@
 #' @importFrom R.methodsS3 setMethodS3 throw
 #' @importFrom R.oo setConstructorS3 R.oo extend Object getHistory
-#' @importFrom R.utils Arguments enter exit less
+#' @importFrom R.utils Arguments enter exit less cat
 #' @importFrom stats quantile gaussian binomial sd update optimize
 #' @importFrom utils head str tail
 #' 
@@ -683,6 +683,18 @@ setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
 })
 
 
+#' Prints an NPVI object
+#' 
+#' Prints an NPVI object
+#'  
+#' @name as.character
+#' @param this An object of class \code{TMLE.NPVI}
+#' @param \dots Not used
+#' @return An object of class 'Summary'
+#' @aliases as.character.NPVI
+#' @export as.character
+#' @export as.character.NPVI
+#' @S3method as.character NPVI
 setMethodS3("as.character", "NPVI", function(
     x,
     ...
