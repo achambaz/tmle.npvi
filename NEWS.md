@@ -1,6 +1,10 @@
 Package: tmle.npvi
 ===================
 
+Version: 0.11.4 [2017-02-17]
+
+o Fixes in NAMESPACE (now importing 'R.utils::cat' and exporting 'as.character')
+
 Version: 0.11.3 [2017-02-16]
 o Most of the documentation is now generated from roxygen2 and not inlinedocs
 o Added man files to version control
