@@ -153,12 +153,11 @@ msg <- c(msg, "\\toptimal 95\%-confidence interval is: ",
 cat(msg)
 
 }
-\author{
-Antoine Chambaz, Pierre Neuvial
-}
 \references{
 Chambaz, A., Neuvial, P., & van der Laan, M. J. (2012).
 Estimation of a non-parametric variable importance measure of a continuous
 exposure. Electronic journal of statistics, 6, 1059--1099.
 }
-
+\author{
+Antoine Chambaz, Pierre Neuvial
+}

@@ -7,9 +7,9 @@
 h2o.glm.alpha.05(..., alpha = 0.5)
 }
 \arguments{
-\item{alpha}{Parameter \code{alpha} of \code{h2o.glm}, set to \code{0.5}.}
-
 \item{\dots}{All parameters of \code{h2o.glm} except \code{alpha}.}
+
+\item{alpha}{Parameter \code{alpha} of \code{h2o.glm}, set to \code{0.5}.}
 }
 \value{
 Creates a H2OModel object of the right type.
@@ -18,10 +18,9 @@ Creates a H2OModel object of the right type.
 Fit a generalized linear model, with parameter \code{alpha} set to
 \code{0.5}.
 }
-\author{
-Antoine Chambaz, Pierre Neuvial
-}
 \seealso{
 h2o.glm
 }
-
+\author{
+Antoine Chambaz, Pierre Neuvial
+}

@@ -21,4 +21,3 @@ object \code{object}.
 Prediction algorithm wrapper for SuperLearner, for the estimation of the
 conditional probability of X=0 given W
 }
-

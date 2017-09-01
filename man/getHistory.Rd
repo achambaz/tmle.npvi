@@ -4,6 +4,9 @@
 \alias{getHistory}
 \alias{getHistory.NPVI}
 \title{Returns History of TMLE Procedure}
+\usage{
+\method{getHistory}{NPVI}(this, ...)
+}
 \arguments{
 \item{this}{An object of class \code{TMLE.NPVI}}
 
@@ -73,4 +76,3 @@ A \code{numeric}  \code{matrix} which encapsulates a summary
 \description{
 Returns the 'history' of the TMLE procedure
 }
-

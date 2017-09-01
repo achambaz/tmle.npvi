@@ -28,4 +28,3 @@ from class 'lm' or 'rpart'. It is mainly for internal use.
 \author{
 Antoine Chambaz, Pierre Neuvial
 }
-

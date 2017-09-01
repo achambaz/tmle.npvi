@@ -7,14 +7,14 @@
 h2o.randomForest.1000x100(..., ntrees = 1000, nbins = 100)
 }
 \arguments{
+\item{\dots}{All parameters of \code{h2o.randomForest} except \code{ntrees}
+and \code{nbins}.}
+
 \item{ntrees}{Parameter \code{ntrees} of \code{h2o.randomForest}, set to
 \code{1000}.}
 
 \item{nbins}{Parameter \code{nbins} of \code{h2o.randomForest}, set to
 \code{100}.}
-
-\item{\dots}{All parameters of \code{h2o.randomForest} except \code{ntrees}
-and \code{nbins}.}
 }
 \value{
 Creates a H2OModel object of the right type.
@@ -23,10 +23,9 @@ Creates a H2OModel object of the right type.
 Builds a random forest model on an H2OFrame, with parameter \code{ntrees}
 and \code{nbins} set to \code{1000} and \code{100}.
 }
-\author{
-Antoine Chambaz, Pierre Neuvial
-}
 \seealso{
 h2o.randomForest
 }
-
+\author{
+Antoine Chambaz, Pierre Neuvial
+}

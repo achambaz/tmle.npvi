@@ -164,7 +164,7 @@
 #' \code{getObs} to retrieve it.} \item{psi}{The TMLE of the parameter of
 #' interest.  Use the \code{method} \code{getPsi} to retrieve it.}
 #' \item{psi.sd}{The estimated standard deviation of the TMLE of the parameter
-#' of interest. Use the \code{method} \code{getPsiSd} to retrieve it.}
+#' of interest. Use the \code{method} \code{getSic} to retrieve it.}
 #' @author Antoine Chambaz, Pierre Neuvial
 #' @seealso getSample, getHistory
 #' @references Chambaz, A., Neuvial, P., & van der Laan, M. J. (2012).

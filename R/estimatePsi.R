@@ -42,7 +42,10 @@ estimatePsi <- function(theta, theta0, fX, obs, sigma2, weights, ..., verbose=FA
 
   ## not valid if 'obsWeights' does not sum up to one...
   ## var.psi1 <- sum((argument^2)*obsWeights) - mean.psi1^2;
-  ## hence:
+  ## instead,
+  ## sum_b (Z_b - sum_beta Z_beta*w_beta )^2*w_b
+  ## = sum_b Z_b^2*w_b - 2*(sum_b Z_b*w_b) + (sum_b w_b)*(sum_b Z_b*w_b),
+  ## hence
   var.psi1 <- sum((argument^2)*obsWeights) - (2-sum(obsWeights))*mean.psi1^2;
 ### CAUTION
 ### CAUTION: dubious interpretation of 'var.psi1' when it is computed

@@ -20,10 +20,9 @@ fitted object \code{object}.
 \description{
 h2oEnsembleLearning wrapper for nonnegative least squares metalearning
 }
-\author{
-Antoine Chambaz, Pierre Neuvial
-}
 \seealso{
 SL.nnls, method.NNLS
 }
-
+\author{
+Antoine Chambaz, Pierre Neuvial
+}

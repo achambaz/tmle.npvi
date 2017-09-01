@@ -21,4 +21,3 @@ object \code{object}.
 Prediction algorithm wrapper for SuperLearner, for the estimation of the
 conditional expectation of \eqn{Y} given \eqn{X,W}.
 }
-

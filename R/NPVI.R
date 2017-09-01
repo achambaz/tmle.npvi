@@ -363,6 +363,20 @@ setMethodS3("updateHistory", "NPVI", function(this, ...) {
   this$.history <- history;
 })
 
+#' Returns Current Estimator
+#'
+#' Returns the value of the current estimator, a \code{numeric}.
+#'
+#' @name getPsi
+#' @param this An object of class \code{TMLE.NPVI}
+#' @param \dots Not used
+#' @return  Retrieves the current  value of the estimator  \eqn{Psi(P_n^k)} of
+#'   the parameter of interest. Its computation involves simulation of a large
+#'   number of iid copies of \eqn{(X,W)} under \eqn{P_n^k}.
+#' @aliases getPsi.NPVI
+#' @export getPsi
+#' @export getPsi.NPVI
+#' @S3method getPsi NPVI
 setMethodS3("getPsi", "NPVI", function(#Returns Current Estimator
 ### Returns the current value of the estimator.
     this,
@@ -405,6 +419,22 @@ setMethodS3("getPhi", "NPVI", function(this, ...) {
   sum(X*Y * obsWeights)/sX2
 })
 
+
+#' Returns the Estimated Standard Deviation of the Estimator
+#'
+#' Returns the current estimate of the standard deviation of the current estimator.
+#'
+#' @name getSic
+#' @param this An object of class \code{TMLE.NPVI}
+#' @param \dots Not used
+#' @return Returns  an estimate  of the  standard deviation  of the  current
+#'   estimator \eqn{\Psi(P_n^k)} of  the parameter of interest  under the form
+#'   of the square root of the empirical variance of the influence function at
+#'   \eqn{P_n^k}.
+#' @aliases getSic.NPVI
+#' @export getSic
+#' @export getSic.NPVI
+#' @S3method getSic NPVI
 setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation of the Estimator
 ### Returns the current value of the estimated standard deviation of the current estimator.
                                        this,
