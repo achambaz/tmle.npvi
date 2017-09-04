@@ -8,3 +8,25 @@ bibentry(bibtype = "Manual",
          year = year,
          note = note,
          url = "http://CRAN.R-project.org/package=tmle.npvi")
+
+bibentry(bibtype = "Article",
+         title = "Estimation of a non-parametric variable importance measure of a continuous exposure",
+         author = c(person("Antoine", "Chambaz"),
+                    person("Mark J.", "van der Laan"),
+                    person("Pierre", "Neuvial")),
+         journal = "Electronic Journal of Statistics",
+         year = 2012,
+         volume = 6,
+         pages = 1059,
+         url = "https://projecteuclid.org/euclid.ejs/1340369355")
+
+
+bibentry(bibtype = "Article",
+         title = "tmle.npvi: targeted, integrative search of associations between DNA copy number and gene expression, accounting for DNA methylation",
+         author = c(person("Antoine", "Chambaz"),
+                    person("Pierre", "Neuvial")),
+         journal = "Bioinformatics (Applications Note)",
+         year = 2015,
+         volume = 18,
+         pages = 3054-6,
+         url = "https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btv320")
