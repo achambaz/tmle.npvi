@@ -253,9 +253,8 @@ setMethodS3("getConfLevel", "NPVI", function(this, ...) {
 #'   of \eqn{\psi} which neglects \eqn{W}. } \item{\code{"sicAlt"},  estimated
 #'   standard deviations   of  the  efficient influence curve of \eqn{\Psi -
 #'   \Phi} at each step of the TMLE procedure.}}
-#' @export getHistory
+#' @export
 #' @export getHistory.NPVI
-#' @S3method getHistory NPVI
 setMethodS3("getHistory", "NPVI", function(
   this,
   ...
@@ -373,23 +372,10 @@ setMethodS3("updateHistory", "NPVI", function(this, ...) {
 #' @return  Retrieves the current  value of the estimator  \eqn{Psi(P_n^k)} of
 #'   the parameter of interest. Its computation involves simulation of a large
 #'   number of iid copies of \eqn{(X,W)} under \eqn{P_n^k}.
-#' @aliases getPsi.NPVI
+#' @aliases getPsi
 #' @export getPsi
-#' @export getPsi.NPVI
-#' @S3method getPsi NPVI
-setMethodS3("getPsi", "NPVI", function(#Returns Current Estimator
-### Returns the current value of the estimator.
-    this,
-### An object of class \code{TMLE.NPVI}.
-    ...
-### Not used.
-    ) {
-  ##alias<< getPsi
-  ##seealso<< tmle.npvi, getHistory, getPsiSd
+setMethodS3("getPsi", "NPVI", function(this, ...) {
   this$.psi;
-  ### Retrieves  the current value  of the estimator \eqn{\Psi(P_n^k)}  of the
-  ### parameter  of interest. Its computation involves  simulation of a large number of
-  ### iid copies of \eqn{(X,W)} under \eqn{P_n^k}.
 })
 
 setMethodS3("getPsiSd", "NPVI", function(#Returns Current Estimated Standard Deviation of the Estimator
@@ -433,8 +419,6 @@ setMethodS3("getPhi", "NPVI", function(this, ...) {
 #'   \eqn{P_n^k}.
 #' @aliases getSic.NPVI
 #' @export getSic
-#' @export getSic.NPVI
-#' @S3method getSic NPVI
 setMethodS3("getSic", "NPVI", function(#Returns the Estimated Standard Deviation of the Estimator
 ### Returns the current value of the estimated standard deviation of the current estimator.
                                        this,
@@ -546,19 +530,14 @@ setMethodS3("setDivergence", "NPVI", function(this, div, ...) {
 #' Sets the confidence level of a \code{TMLE.NPVI} object
 #'
 #' @name setConfLevel
+#' @param this An object of class \code{TMLE.NPVI}
+#' @param confLevel A \code{numeric}, confidence interval level
+#' @param ... Not used
+#' @export 
 #' @export setConfLevel
 #' @export setConfLevel.NPVI
 #' @aliases setConfLevel.NPVI
-#' @S3method setConfLevel NPVI
-setMethodS3("setConfLevel", "NPVI", function(
-### Sets the confidence level of a \code{TMLE.NPVI} object.
-    this,
-### An object of class \code{TMLE.NPVI}.
-    confLevel,
-### A \code{numeric}, confidence interval level.
-    ...
-### Not used.
-    ) {
+setMethodS3("setConfLevel", "NPVI", function(this, confLevel, ...) {
   ##alias<< setConfLevel
   ##seealso<< as.character.NPVI
 
@@ -647,9 +626,9 @@ setMethodS3("getId", "NPVI", function(this, ...) {
 #' @param \dots Not used
 #' @return Either the original data set involved in the TMLE procedure or a tabulated version of it
 #' @aliases getObs.NPVI
+#' @export
 #' @export getObs
 #' @export getObs.NPVI
-#' @S3method getObs NPVI
 setMethodS3("getObs", "NPVI", function(
     this,
     tabulate,
@@ -733,8 +712,7 @@ setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
 #' two-sided test of ``\eqn{\Psi(P_0)=\Phi(P_0)}'', with the estimated value of
 #' \eqn{\Phi(P_0)}. }
 #' @aliases as.character.NPVI as.character
-#' @export as.character.NPVI
-#' @S3method as.character NPVI
+#' @export
 setMethodS3("as.character", "NPVI", function(
     x,
     ...

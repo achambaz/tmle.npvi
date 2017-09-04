@@ -7,6 +7,13 @@
 \usage{
 \method{setConfLevel}{NPVI}(this, confLevel, ...)
 }
+\arguments{
+\item{this}{An object of class \code{TMLE.NPVI}}
+
+\item{confLevel}{A \code{numeric}, confidence interval level}
+
+\item{...}{Not used}
+}
 \description{
 Sets the confidence level of a \code{TMLE.NPVI} object
 }
