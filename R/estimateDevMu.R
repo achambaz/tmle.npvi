@@ -65,7 +65,7 @@ estimateDevMu <- function(muW, obs, weights, id,
     obsD <- as.data.frame(obs)
     ZdevMu <- (obsD[, "X"] - muW) * eic1;
     obsD$Y <- ZdevMu
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+    data <- h2o::as.h2o(obsD)
 
     ##
     ## CAUTION: provide 'id' as soon as this argument is supported
@@ -79,7 +79,7 @@ estimateDevMu <- function(muW, obs, weights, id,
 
     devMu <- function(W) {
       Wd <- as.data.frame(W)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
+      newdata <- h2o::as.h2o(Wd)
       predict(fitDevMu, newdata=newdata)$pred;
     }
   }

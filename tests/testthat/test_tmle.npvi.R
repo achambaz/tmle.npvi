@@ -1,5 +1,4 @@
 library("tmle.npvi")
-library("stats")
 
 context("Flavors of the function tmle.npvi")
 
@@ -28,37 +27,22 @@ colnames(V) <- paste("V", 1:3, sep="")
 obs <- cbind(V, obs)
 
 ## Caution! MAKING '0' THE REFERENCE VALUE FOR 'X'
-X0 <- O[2,2]
-obsC <- obs
-obsC[, "X"] <- obsC[, "X"] - X0
-obs <- obsC
+obs[, "X"] <- obs[, "X"] - O[2,2]
 
-## True psi and confidence intervals (case 'f=identity')      
-sim <- getSample(1e4, O, lambda0, p=p, omega=omega, sigma2=1, Sigma3=S)
-truePsi <- sim$psi
-
-confInt0 <- truePsi + c(-1, 1)*qnorm(.975)*sqrt(sim$varIC/nrow(sim$obs))
-confInt <- truePsi + c(-1, 1)*qnorm(.975)*sqrt(sim$varIC/nrow(obs))
-cat("\nCase f=identity:\n")
-msg <- paste("\ttrue psi is: ", signif(truePsi, 3), "\n", sep="")
-msg <- paste(msg, "\t95%-confidence interval for the approximation is: ",
-             signif(confInt0, 3), "\n", sep="")
-msg <- paste(msg, "\toptimal 95%-confidence interval is: ",
-             signif(confInt, 3), "\n", sep="")
-
-
-test_that("Flavor 'learning' terminates", {
-    npvi <- tmle.npvi(obs, f=identity, flavor="learning", B=5e4, nMax=10)
+test_that("Flavor 'learning' gives expected results", {
+    expect_equal_to_reference(tmle.npvi(obs, f=identity, flavor="learning", B=5e4, nMax=10),
+                              "learning.rds")
 })
 
-
-test_that("Flavor 'superLearning' terminates", {
-    npviSL <- tmle.npvi(obs, f=identity, flavor="superLearning", B=5e4, nMax=10)
+test_that("Flavor 'superLearning' gives expected results", {
+    expect_equal_to_reference(tmle.npvi(obs, f=identity, flavor="superLearning", B=5e4, nMax=10),
+                              "superLearning.rds")
 })
 
-
-test_that("Flavor 'h2oEnsembleLearning' terminates", {
-    skip("Not working currently--NAMESPACE issues")
-    npviSL <- tmle.npvi(obs, f=identity, flavor="h2oEnsembleLearning", B=5e4, nMax=10)
+test_that("Flavor 'h2oEnsembleLearning' gives expected results", {
+#    skip("Not working currently--update in h2o/h2oEnsemble?")
+    npvi <- tmle.npvi(obs, f=identity, flavor="h2oEnsembleLearning", B=5e4, nMax=10)
+#    expect_equal_to_reference(tmle.npvi(obs, f=identity, flavor="h2oEnsembleLearning", B=5e4, nMax=10),
+#                              "h2oEnsembleLearning.rds")
 })
 

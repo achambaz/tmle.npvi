@@ -8,7 +8,8 @@ requireNamespace("SuperLearner")
 ## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm", "SL.DSA")
 ## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.glmnet");
 ## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm")
-SL.library <- c("SL.glm", "SL.randomForest", "SL.gam")
+## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam")
+SL.library <- c("SL.glm", "SL.gam")
 
 requireNamespace("SuperLearner")
 ## library(e1071)

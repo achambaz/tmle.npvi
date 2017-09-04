@@ -7,14 +7,14 @@
 h2o.deeplearning.Tanh(..., hidden = c(200, 200, 200), activation = "Tanh")
 }
 \arguments{
+\item{\dots}{All parameters of \code{h2o.deeplearning} except \code{hidden}
+and \code{activation}.}
+
 \item{hidden}{Parameter \code{hidden} of \code{h2o.deeplearning}, set to
 \code{c(200, 200, 200)}.}
 
 \item{activation}{Parameter \code{activation} of \code{h2o.deeplearning},
 set to "Rectifier".}
-
-\item{\dots}{All parameters of \code{h2o.deeplearning} except \code{hidden}
-and \code{activation}.}
 }
 \value{
 Creates a H2OModel object of the right type.
@@ -24,10 +24,9 @@ Performs Deep Learning neural networks on an H2OFrame, with parameters
 \code{activation}] and \code{hidden} set to "Tanh" and \code{c(200, 200,
 200)}.
 }
-\author{
-Antoine Chambaz, Pierre Neuvial
-}
 \seealso{
 h2o.deeplearning
 }
-
+\author{
+Antoine Chambaz, Pierre Neuvial
+}

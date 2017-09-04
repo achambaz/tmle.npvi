@@ -4,6 +4,9 @@
 \alias{getObs}
 \alias{getObs.NPVI}
 \title{Retrieves the Observations}
+\usage{
+\method{getObs}{NPVI}(this, tabulate, ...)
+}
 \arguments{
 \item{this}{An object of class \code{TMLE.NPVI}}
 
@@ -20,4 +23,3 @@ Either the original data set involved in the TMLE procedure or a tabulated versi
 \description{
 Retrieves the \code{matrix} of observations involved in the TMLE procedure.
 }
-

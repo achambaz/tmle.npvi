@@ -62,7 +62,7 @@ estimateMuAux <- function(obs, weights, id,
     EL.library.muAux <- learnMuAux;
     obsD <- as.data.frame(obs)
     obsD <- obsD[idx, ]
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+    data <- h2o::as.h2o(obsD)
 
     ##
     ## CAUTION: provide 'id' as soon as this argument is supported
@@ -75,7 +75,7 @@ estimateMuAux <- function(obs, weights, id,
                               weights_column=obsWeights)
     muAux <- function(W) {
       Wd <- as.data.frame(W)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
+      newdata <- h2o::as.h2o(Wd)
       predict(fitMuAux, newdata=newdata)$pred;
     }
   }

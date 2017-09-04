@@ -286,9 +286,6 @@ abline(h=confInt, col=4)
 abline(h=confInt0, col=2)
 
 }
-\author{
-Antoine Chambaz, Pierre Neuvial
-}
 \references{
 Chambaz, A., Neuvial, P., & van der Laan, M. J. (2012).
 Estimation of a non-parametric variable importance measure of a continuous
@@ -301,4 +298,6 @@ methylation.  Bioinformatics 31(18):3054--3056.
 \seealso{
 getSample, getHistory
 }
-
+\author{
+Antoine Chambaz, Pierre Neuvial
+}

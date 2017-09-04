@@ -47,7 +47,7 @@ estimateG <- function(obs, weights, id,
     fitG <- SuperLearner.(Y=(obsD[, "X"]==0)+0, X=extractW(obsD), ## obsD[, "W", drop=FALSE]
                           obsWeights=weights, id=id,
                           SL.library=SL.library.g, verbose=logSL,
-                          family=binomial(), ...)
+                          family=quasibinomial(), ...)
     g <- function(W) {
       Wd <- as.data.frame(W)
       predict(fitG, newdata=Wd)$pred
@@ -56,7 +56,7 @@ estimateG <- function(obs, weights, id,
     EL.library.g <- learnG;
     obsD <- as.data.frame(obs)
     obsD$Y <- as.factor(as.integer(obsD[, "X"]==0)) ## forces binary classification
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+    data <- h2o::as.h2o(obsD)
 
     ##
     ## CAUTION: provide 'id' as soon as this argument is supported
@@ -64,12 +64,12 @@ estimateG <- function(obs, weights, id,
     
     fitG <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),
                           training_frame=data,
-                          family="binomial",
+                          family="quasibinomial",
                           learner=EL.library.g,
                           weights_column=weights)
     g <- function(W) {
       Wd <- as.data.frame(W)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
+      newdata <- h2o::as.h2o(Wd)
       predict(fitG, newdata=newdata)$pred
     }  
   }

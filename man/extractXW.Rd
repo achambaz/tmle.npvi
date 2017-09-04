@@ -23,4 +23,3 @@ Mainly for internal use.
 \author{
 Antoine Chambaz, Pierre Neuvial
 }
-

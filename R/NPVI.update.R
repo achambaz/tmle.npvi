@@ -226,7 +226,7 @@ setMethodS3("update", "NPVI", function(object,
       obsD <- as.data.frame(obsT)
       ##
       obsD$Y <- obsD[, "X"]^2
-      data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+      data <- h2o::as.h2o(obsD)
 
       ##
       ## CAUTION: provide 'id' as soon as this argument is supported
@@ -239,7 +239,7 @@ setMethodS3("update", "NPVI", function(object,
                                           weights_column=obsWeights)
       ##
       obsD$Y <- obsD[, "Y"]*obsD[, "X"]
-      data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+      data <- h2o::as.h2o(obsD)
       
       fitCondExpXYgivenW <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),
                                           training_frame=data,
@@ -249,12 +249,12 @@ setMethodS3("update", "NPVI", function(object,
 
       condExpX2givenW <- function(W) {
         Wd <- as.data.frame(W)
-        newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
+        newdata <- h2o::as.h2o(Wd)
         predict(fitCondExpX2givenW, newdata=newdata)$pred
       }
       condExpXYgivenW <- function(W) {
         Wd <- as.data.frame(W)
-        newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
+        newdata <- h2o::as.h2o(Wd)
         predict(fitCondExpXYgivenW, newdata=newdata)$pred
       }
  

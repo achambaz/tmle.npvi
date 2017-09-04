@@ -30,15 +30,16 @@ learnCondExpX2givenW <- function#Estimation of Cond. Expect. of X^2 Given W
   } else {
     theFormula <- paste("I(X^2) ~", theFormula, sep="")
   } 
-  formula <- as.formula(theFormula)
-  ## formula <- as.formula(I(X^2)~W+I(W^2));
+  formula <- stats::as.formula(theFormula)
+  ## formula <- stats::as.formula(I(X^2)~W+I(W^2));
   
-  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
+  gaussian <- stats::gaussian
+  fit <- stats::glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
   if (light) {
-    fit <- getLightFit(fit);
+    fit <- tmle.npvi::getLightFit(fit);
   }
   foo <- function(W) {
-    predict(fit, newdata=data.frame(W), type="response");
+    stats::predict(fit, newdata=data.frame(W), type="response");
   }
   attr(foo, 'fit') <- fit;
   return(foo)
@@ -78,15 +79,16 @@ learnCondExpXYgivenW <- function#Estimation of Cond. Expect. of XY Given W
   } else {
     theFormula <- paste("I(X*Y) ~", theFormula, sep="")
   } 
-  formula <- as.formula(theFormula)  
-  ## formula <- as.formula(I(X*Y)~W+I(W^2));
+  formula <- stats::as.formula(theFormula)  
+  ## formula <- stats::as.formula(I(X*Y)~W+I(W^2));
 
-  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
+  gaussian <- stats::gaussian
+  fit <- stats::glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
   if (light) {
-    fit <- getLightFit(fit);
+    fit <- tmle.npvi::getLightFit(fit);
   }
   foo <- function(W) {
-    predict(fit, newdata=data.frame(W), type="response");
+    stats::predict(fit, newdata=data.frame(W), type="response");
   }
   attr(foo, 'fit') <- fit;
   return(foo)
@@ -143,16 +145,17 @@ verbose=FALSE,
   } else {
     theFormula <- paste("Z ~", theFormula, sep="")
   } 
-  formula <- as.formula(theFormula)
-  ## formula <- as.formula(Z~W+I(W^2));
+  formula <- stats::as.formula(theFormula)
+  ## formula <- stats::as.formula(Z~W+I(W^2));
 
-  fit <- glm(formula, data=as.data.frame(obsZ), weights=weights, family=gaussian);
+  gaussian <- stats::gaussian
+  fit <- stats::glm(formula, data=as.data.frame(obsZ), weights=weights, family=gaussian);
   rm(X, Z, obsZ);
   if (light) {
-    fit <- getLightFit(fit);
+    fit <- tmle.npvi::getLightFit(fit);
   }
   foo <- function(W) {
-    predict(fit, newdata=data.frame(W), type="response");
+    stats::predict(fit, newdata=data.frame(W), type="response");
   }
   attr(foo, 'fit') <- fit;
 
@@ -209,18 +212,18 @@ learnDevMu <- function#Estimation of Cond. Expect. of (X-muW)*effIC1 Given W
   } else {
     theFormula <- paste("Z ~", theFormula, sep="")
   } 
-  formula <- as.formula(theFormula)
-  ## formula <- as.formula(Z~W+I(W^2));
+  formula <- stats::as.formula(theFormula)
+  ## formula <- stats::as.formula(Z~W+I(W^2));
 
-
-  fit <- glm(formula, data=as.data.frame(obsZ), weights=weights, family=gaussian);
+  gaussian <- stats::gaussian
+  fit <- stats::glm(formula, data=as.data.frame(obsZ), weights=weights, family=gaussian);
   rm(Z, obsZ);
   if (light) {
-    fit <- getLightFit(fit);
+    fit <- tmle.npvi::getLightFit(fit);
   }
   
   foo <- function(W) {
-    predict(fit, newdata=data.frame(W), type="response");
+    stats::predict(fit, newdata=data.frame(W), type="response");
   }
   attr(foo, 'fit') <- fit;
 
@@ -273,19 +276,19 @@ verbose=FALSE,
   } else {
     theFormula <- paste("I((Y-Z)^2) ~ X+", theFormula, sep="")
   } 
-  formula <- as.formula(theFormula)
-  ## formula <- as.formula(I((Y-Z)^2)~X*W);
+  formula <- stats::as.formula(theFormula)
+  ## formula <- stats::as.formula(I((Y-Z)^2)~X*W);
   
   ## family <- Gamma(link="log");
-  family <- gaussian();
-  fit <- glm(formula, data=as.data.frame(obsZ), weights=weights, family=family);
+  family <- stats::gaussian();
+  fit <- stats::glm(formula, data=as.data.frame(obsZ), weights=weights, family=family);
   rm(obsZ)
   if (light) {
-    fit <- getLightFit(fit);
+    fit <- tmle.npvi::getLightFit(fit);
   }
   
   foo <- function(XW) {
-    predict(fit, newdata=as.data.frame(XW), type="response");
+    stats::predict(fit, newdata=as.data.frame(XW), type="response");
   }
 
   attr(foo, 'fit') <- fit;
@@ -335,17 +338,17 @@ learnG <- function#Estimation of Cond. Prob. of X=x_0 Given W
   } else {
     theFormula <- paste("I(X==theX0) ~", theFormula, sep="")
   }
-  formula <- as.formula(theFormula)
-  ## formula <- as.formula(I(X==theX0)~W);
+  formula <- stats::as.formula(theFormula)
+  ## formula <- stats::as.formula(I(X==theX0)~W);
 
-    
-  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family="binomial");
+  binomial <- stats::quasibinomial  ## to avoid "object 'binomial' of mode 'function' was not found"
+  fit <- stats::glm(formula, data=as.data.frame(obs), weights=weights, family="binomial");
   if (light) {
-    fit <- getLightFit(fit);
+    fit <- tmle.npvi::getLightFit(fit);
   }
   foo <- function(W) {
-    ## predict(fit, newdata=data.frame(W=W), type="response")
-    predict(fit, newdata=data.frame(W), type="response")
+    ## stats::predict(fit, newdata=data.frame(W=W), type="response")
+    stats::predict(fit, newdata=data.frame(W), type="response")
   }
   attr(foo, 'fit') <- fit;
 
@@ -389,16 +392,16 @@ learnMuAux <- function#Estimation of Cond. Expect. of X Given (X!=x_0, W)
   } else {
     theFormula <- paste("X ~", theFormula, sep="")
   }
-  formula <- as.formula(theFormula)
-  ## formula <- as.formula(X~W+I(W^2));
+  formula <- stats::as.formula(theFormula)
+  ## formula <- stats::as.formula(X~W+I(W^2));
 
-
-  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
+  gaussian <- stats::gaussian
+  fit <- stats::glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
   if (light) {
-    fit <- getLightFit(fit);
+    fit <- tmle.npvi::getLightFit(fit);
   }
   foo <- function(W) {
-    predict(fit, newdata=data.frame(W), type="response");
+    stats::predict(fit, newdata=data.frame(W), type="response");
   }
   attr(foo, 'fit') <- fit;
   
@@ -441,16 +444,16 @@ learnTheta <- function#Estimation of Cond. Expect. of Y given (X,W)
   } else {
     theFormula <- paste("Y ~ X+", theFormula, sep="")
   } 
-  formula <- as.formula(theFormula);
-  ## formula <- as.formula(Y~X*W);
+  formula <- stats::as.formula(theFormula);
+  ## formula <- stats::as.formula(Y~X*W);
 
-  
-  fit <- glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
+  gaussian <- stats::gaussian
+  fit <- stats::glm(formula, data=as.data.frame(obs), weights=weights, family=gaussian);
   if (light) {
-    fit <- getLightFit(fit);
+    fit <- tmle.npvi::getLightFit(fit);
   }
   foo <- function(XW) {
-    predict(fit, newdata=as.data.frame(XW), type="response");
+    stats::predict(fit, newdata=as.data.frame(XW), type="response");
   }
   attr(foo, 'fit') <- fit;
 

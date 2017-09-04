@@ -56,7 +56,7 @@ estimateTheta <- function(obs, weights, id,
   } else if (flavor=="h2oEnsembleLearning") {
     EL.library.theta <- learnTheta;
     obsD <- as.data.frame(obs)
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+    data <- h2o::as.h2o(obsD)
 
     ##
     ## CAUTION: provide 'id' as soon as this argument is supported
@@ -70,7 +70,7 @@ estimateTheta <- function(obs, weights, id,
 
     theta <- function(XW) {
       XWd <- as.data.frame(XW)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), XWd)
+      newdata <- h2o::as.h2o(XWd)
       predict(fitTheta, newdata=newdata)$pred
     }    
   }

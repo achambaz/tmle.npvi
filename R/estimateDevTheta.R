@@ -64,7 +64,7 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
     obsD <- as.data.frame(obs)
     ZdevTheta <- (obsD[, "Y"]-thetaXW)^2;
     obsD$Y <- ZdevTheta
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+    data <- h2o::as.h2o(obsD)
 
     ##
     ## CAUTION: provide 'id' as soon as this argument is supported
@@ -78,7 +78,7 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
     
     devTheta <- function(XW) {
       XWd <- as.data.frame(XW)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), XWd)
+      newdata <- h2o::as.h2o(XWd)
       predict(fitDevTheta, newdata=newdata)$pred
     }
   }

@@ -64,7 +64,7 @@ estimateDevG <- function(gW, obs, weights, id,
     obsD <- as.data.frame(obs)
     ZdevG <- eic1 * ( (obsD[, "X"]==0) - gW );
     obsD$Y <- ZdevG
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
+    data <- h2o::as.h2o(obsD)
 
     ##
     ## CAUTION: provide 'id' as soon as this argument is supported
@@ -78,7 +78,7 @@ estimateDevG <- function(gW, obs, weights, id,
 
     devG <- function(W) {
       Wd <- as.data.frame(W)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
+      newdata <- h2o::as.h2o(Wd)
       predict(fitDevG, newdata=newdata)$pred
     }
   }

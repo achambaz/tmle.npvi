@@ -358,7 +358,7 @@ tmle.npvi. <- function(obs,
         ## SL.randomForest <- SuperLearner::SL.randomForest
         ## SL.gam <- SuperLearner::SL.gam
         if (is.null(cvControl)) {
-            warning("Setting 'V=10' in 'SuperLearner.'")
+            message("Setting 'V=10' in 'SuperLearner.'")
             cvControl <- SuperLearner::SuperLearner.CV.control(V=10L)
         } else {
             cvControl <- Arguments$getInteger(cvControl, c(2, Inf))
@@ -384,7 +384,7 @@ tmle.npvi. <- function(obs,
     if (flavor=="h2oEnsembleLearning") {
         ## requireNamespace("h2oEnsemble")
         if (is.null(cvControl)) {
-            warning("Setting 'V=10' in 'SuperLearner.'")
+            message("Setting 'V=10' in 'SuperLearner.'")
             cvControl <- list(V=10L)
         } else {
             V <- Arguments$getInteger(cvControl, c(2, Inf))
@@ -395,7 +395,7 @@ tmle.npvi. <- function(obs,
         }
         localH2O <-  h2o::h2o.init(nthreads=nodes)
         attr(SuperLearner., "H2OConnection") <- localH2O
-        on.exit(h2o::h2o.shutdown(localH2O, prompt=FALSE))
+        on.exit(h2o::h2o.shutdown(prompt=FALSE))
     }
     if (flavor=="learning") {
         SuperLearner. <- NULL
