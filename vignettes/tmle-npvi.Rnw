@@ -39,8 +39,6 @@ BiocStyle::latex()
 
 \date{Package version \Sexpr{packageDescription("tmle.npvi")$Version}\\Date \Sexpr{packageDescription("tmle.npvi")$Date}}
 
-
-
 \begin{document}
 
 \maketitle
@@ -52,8 +50,11 @@ The caution symbol \textdbend marks important details.
 
 \section{Citing \Rpackage{tmle.npvi}}
 
-If    you    use     the    \Rpackage{tmle.npvi}    package,    please    cite
-\cite{chambaz12estimation}.
+If    you    use     the    \Rpackage{tmle.npvi}    package,    please    cite \cite{chambaz12estimation} and \cite{chambaz15targeted}. The statistical method is described in \cite{chambaz12estimation}, and its implementation is described in \cite{chambaz15targeted}. To retrieve the corresponding BibTeX entries, please run:
+
+<<citation, echo=TRUE, eval=FALSE>>=
+print(citation("tmle.npvi"), bibtex=TRUE)
+@
 
 \section{The non-parametric variable importance parameter}
 
@@ -333,8 +334,9 @@ abline(h=confInt0, col="red")
 \label{subsec:tcga}
 
 The package  includes real data, namely  expression, DNA copy  number, and DNA
-methylation  data of 150  genes for  463 breast  cancer samples  from publicly
-available TCGA data~\cite{TCGA12}.
+methylation  data of 150 genes from chromosome 17 for  463 breast  cancer samples  from publicly
+available TCGA data~\cite{TCGA12}. A genome-wide analysis of the same data set is briefly presented in \cite{chambaz15targeted}.
+
 <<tcga>>=
 data(tcga2012brca)
 @
@@ -412,6 +414,7 @@ system.file("testScripts/tcga2012brca/04.propZero.R",
             package="tmle.npvi")
 @
 
+
 \section{Session information}
 \label{sec:session-information}
 
@@ -427,6 +430,11 @@ Chambaz, A., Neuvial, P., and van~der Laan, M.~J. (2012).
 \newblock Estimation of a non-parametric variable importance measure of a
   continuous exposure.
 \newblock {\em Electronic Journal of Statistics}, 6:1059--1099.
+
+\bibitem[Chambaz and Neuvial, 2015]{chambaz15targeted}
+Chambaz, A. and Neuvial, P. (2015).
+\newblock tmle.npvi: targeted, integrative search of associations between DNA copy number and gene expression, accounting for DNA methylation.
+\newblock {\em Bioinformatics}, 18:3054-6.
 
 \bibitem[Polley and van~der Laan, 2011]{R:SL}
 Polley, E. and van~der Laan, M.~J. (2011).
