@@ -270,7 +270,7 @@ tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
     flavor <- match.arg(flavor)
     tmle <- try(tmle.npvi.(obs=obs, f=f, weights=weights, id=id,
                            nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, cvControl=cvControl,
-                           parsimonious=parsimoniuous, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
+                           parsimonious=parsimonious, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
                            trueGMu=trueGMu, iter=iter,
                            stoppingCriteria=stoppingCriteria,
                            familyY=familyY,
