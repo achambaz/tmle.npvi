@@ -1,11 +1,11 @@
 setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning"),
-                                     cvControl=NULL,
                                      learnG=NULL,
                                      learnMuAux=NULL,
                                      learnTheta=NULL,
                                      bound=1e-1, B=1e4,
                                      light=TRUE, 
                                      trueGMu=NULL,
+                                     cvControl=NULL,
                                      SuperLearner.=NULL,
                                      ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -66,6 +66,13 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
     }
   }
 
+  ## Argument 'cvControl'
+  if (flavor=="superLearning") {
+    if (is.null(cvControl)) {
+      throw("Argument 'cvControl' should have the same form as the output of 'SuperLearner::SuperLearner.CV.control'")
+    }
+  }  
+  
   ## Argument 'SuperLearner.'
   if (flavor=="superLearning") {
     if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
@@ -95,10 +102,12 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
   if (!useTrueGMu) {
     g <- estimateG(obs, weights=obsWeights, id=id,
                    flavor=flavor, learnG=learnG, light=light,
+                   cvControl=cvControl,
                    SuperLearner.=SuperLearner.,
                    ..., verbose=verbose);
     muAux <- estimateMuAux(obs, weights=obsWeights, id=id,
                            flavor=flavor, learnMuAux=learnMuAux, light=light,
+                           cvControl=cvControl,
                            SuperLearner.=SuperLearner.,
                            ..., verbose=verbose);
   } else {
@@ -111,6 +120,7 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning")
   theta <- estimateTheta(obs, weights=obsWeights, id=id,
                          flavor=flavor, learnTheta=learnTheta, light=light,
                          familyY=familyY,
+                         cvControl=cvControl,
                          SuperLearner.=SuperLearner.,
                          ..., verbose=verbose);
   initializeTheta(this, theta);

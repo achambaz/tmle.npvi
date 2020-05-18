@@ -1,6 +1,6 @@
 estimateG <- function(obs, weights, id,
                       flavor=c("learning", "superLearning"), learnG,
-                      light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
+                      light=TRUE, cvControl=NULL, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -25,6 +25,14 @@ estimateG <- function(obs, weights, id,
     throw("Argument 'learnG' should be of mode '", learnMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  ## Argument 'cvControl'
+  if (flavor!="learning") {
+    if (is.null(cvControl)) {
+      throw("Argument 'cvControl' should have the same form as the output of 'SuperLearner.CV.control'")
+    }
+  }
+
+  
   ## Argument 'SuperLearner.'
   if (flavor!="learning") {
     if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
@@ -45,6 +53,7 @@ estimateG <- function(obs, weights, id,
 
     fitG <- SuperLearner.(Y=(obsD[, "X"]==0)+0, X=extractW(obsD), ## obsD[, "W", drop=FALSE]
                           obsWeights=weights, id=id,
+                          cvControl=cvControl,
                           SL.library=SL.library.g, verbose=logSL,
                           family=binomial(), ...)
     g <- function(W) {

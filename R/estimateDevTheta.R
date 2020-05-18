@@ -1,7 +1,7 @@
 estimateDevTheta <- function(thetaXW, obs, weights, id,
                              flavor=c("learning", "superLearning"),
                              learnDevTheta,
-                             light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
+                             light=TRUE, cvControl=NULL, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -30,6 +30,13 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
     throw("Argument 'learnDevTheta' should be of mode '", learnDevMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  ## Argument 'cvControl'
+  if (flavor!="learning") {
+    if (is.null(cvControl)) {
+      throw("Argument 'cvControl' should have the same form as the output of 'SuperLearner.CV.control'")
+    }
+  }
+  
   ## Argument 'SuperLearner.'
   if (flavor!="learning") {
     if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
@@ -51,6 +58,7 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
 
     fitDevTheta <- SuperLearner.(Y=ZdevTheta, X=extractXW(obsD),  ## obsD[, c("X", "W")]
                                  obsWeights=obsWeights, id=id,
+                                 cvControl=cvControl,
                                  SL.library=SL.library.devTheta, verbose=logSL,
                                  family=gaussian(), ...);
     

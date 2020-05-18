@@ -2,7 +2,7 @@ estimateTheta <- function(obs, weights, id,
                           flavor=c("learning", "superLearning"),
                           learnTheta,
                           familyY=c("gaussian", "binomial"),
-                          light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
+                          light=TRUE, cvControl=NUlL, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -29,6 +29,13 @@ estimateTheta <- function(obs, weights, id,
 
   ## Argument 'familyY':
   familyY <- match.arg(familyY);
+
+  ## Argument 'cvControl'
+  if (flavor!="learning") {
+    if (is.null(cvControl)) {
+      throw("Argument 'cvControl' should have the same form as the output of 'SuperLearner.CV.control'")
+    }
+  }
   
   ## Argument 'SuperLearner.'
   if (flavor!="learning") {
@@ -51,6 +58,7 @@ estimateTheta <- function(obs, weights, id,
     fitTheta <- SuperLearner.(Y=obsD[, "Y"], X=extractXW(obsD), ## obsD[, c("X", "W")]
                               obsWeights=obsWeights, id=id,
                               SL.library=SL.library.theta, verbose=logSL,
+                              cvControl=cvControl,
                               family=familyY, ...)
     theta <- function(XW) {
       XWd <- as.data.frame(XW)

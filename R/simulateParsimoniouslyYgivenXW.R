@@ -10,7 +10,7 @@ simulateParsimoniouslyYgivenXW <- function(T, Y) {
 
     test <- (min(Y)<=min(T) & max(T)<=max(Y))
     if (!test) {## if parsimonious method fails
-        throw("Parsimonious conditional simulation of Y given (X, W) only works when 'theta' takes its values in 'range(Y)'\nPlease use options 'thetamin' and 'thetamax' in the construction of the 'NPVI' object")
+        throw("Parsimonious conditional simulation of Y given (X, W) only works when 'theta' takes its values in 'range(Y)'\nPlease use arguments 'thetamin' and 'thetamax' in the construction of the 'NPVI' object")
     } else {
         simulationSchemes <- getSimulationScheme(T, Y)
         V <- (runif(length(T)) >= simulationSchemes[, "p1"]) + 1
@@ -42,7 +42,8 @@ getSimulationScheme <- function(T, Y) {
     ## labelled 'i'
     sortedY <- sort(Y, index.return=TRUE)
     index <- findInterval(suT,
-                          sortedY$x)
+                          sortedY$x,
+                          rightmost.closed=TRUE) ## to work for binary Y too
     Yinf.value <- sortedY$x[index]
     Ysup.value <- sortedY$x[index+1]
     Yinf.index <- sortedY$ix[index]

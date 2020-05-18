@@ -362,9 +362,10 @@ tmle.npvi. <- function(obs,
           }
         }
         if (nodes==1) {
-            SuperLearner. <- function(...) {
-                SuperLearner(cvControl=cvControl, ...)
-            }
+          ## SuperLearner. <- function(...) {
+          ##   SuperLearner(cvControl=cvControl, ...)
+          ## }
+          SuperLearner. <- function(...) {SuperLearner(method = "method.NNLS2", ...)}
         } else {
             tf <- tempfile("snitch.Rout")
             cl <- parallel::makeCluster(nodes, type="PSOCK", outfile=tf) # can use different types here
@@ -373,8 +374,11 @@ tmle.npvi. <- function(obs,
             SL.library <- unique(unlist(tmle.npvi::superLearningLib))
             parallel::clusterSetRNGStream(cl, iseed=2343)
             parallel::clusterExport(cl, SL.library)
+            ## SuperLearner. <- function(...) {
+            ##     SuperLearner::snowSuperLearner(cluster=cl, cvControl=cvControl, ...)
+            ## }
             SuperLearner. <- function(...) {
-                SuperLearner::snowSuperLearner(cluster=cl, cvControl=cvControl, ...)
+              SuperLearner::snowSuperLearner(cluster=cl, ...)
             }
         }
     }
@@ -442,6 +446,7 @@ tmle.npvi. <- function(obs,
          bound=bound, B=B,
          light=light,
          trueGMu=trueGMu,
+         cvControl=cvControl,
          SuperLearner.=SuperLearner.,
          verbose=verbose);
     ## rm(learnG);
@@ -463,6 +468,7 @@ tmle.npvi. <- function(obs,
                learnCondExpXYgivenW=lib$learnCondExpXYgivenW,
                bound=bound, B=B, cleverCovTheta=cleverCovTheta,
                exact=exact, trueGMu=trueGMu,
+               cvControl=cvControl,
                SuperLearner.=SuperLearner.,
                verbose=verbose);
 

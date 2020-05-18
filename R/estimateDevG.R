@@ -1,7 +1,7 @@
 estimateDevG <- function(gW, obs, weights, id,
                          eic1, flavor=c("learning", "superLearning"),
                          learnDevG,
-                         light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
+                         light=TRUE, cvControl=NULL, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -32,6 +32,13 @@ estimateDevG <- function(gW, obs, weights, id,
     throw("Argument 'learnDevG' should be of mode '", learnDevMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  ## Argument 'cvControl'
+  if (flavor!="learning") {
+    if (is.null(cvControl)) {
+      throw("Argument 'cvControl' should have the same form as the output of 'SuperLearner.CV.control'")
+    }
+  }
+  
   ## Argument 'SuperLearner.'
   if (flavor!="learning") {
     if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
@@ -52,6 +59,7 @@ estimateDevG <- function(gW, obs, weights, id,
 
     fitDevG <- SuperLearner.(Y=ZdevG, X=extractW(obsD), ## obsD[, "W", drop=FALSE]
                              obsWeights=obsWeights, id=id,
+                             cvControl=cvControl,
                              SL.library=SL.library.devG, verbose=logSL,
                              family=gaussian(), ...)
     devG <- function(W) {

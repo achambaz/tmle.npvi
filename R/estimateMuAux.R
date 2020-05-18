@@ -1,7 +1,7 @@
 estimateMuAux <- function(obs, weights, id,
                           flavor=c("learning", "superLearning"),
                           learnMuAux,
-                          light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
+                          light=TRUE, cvControl=NULL, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -26,6 +26,13 @@ estimateMuAux <- function(obs, weights, id,
     throw("Argument 'learnMuAux' should be of mode '", learnMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  ## Argument 'cvControl'
+  if (flavor!="learning") {
+    if (is.null(cvControl)) {
+      throw("Argument 'cvControl' should have the same form as the output of 'SuperLearner.CV.control'")
+    }
+  }
+  
   ## Argument 'SuperLearner.'
   if (flavor!="learning") {
     if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
@@ -37,7 +44,8 @@ estimateMuAux <- function(obs, weights, id,
   ## Argument 'verbose'
   verbose <- Arguments$getVerbose(verbose);
 
-  idx <- which(obs[, "X"] != 0);
+  idx <- obs[, "X"] != 0;
+  IDX <- cbind(old.idx=1:length(idx), new.idx=cumsum(idx));
   
   if (flavor=="learning") {
     muAux <- learnMuAux(obs[idx, ], obsWeights[idx], light=light, ...);
@@ -47,10 +55,20 @@ estimateMuAux <- function(obs, weights, id,
     obsD <- as.data.frame(obs)
     ## WW <- obsD[idx, "W", drop=FALSE]
     WW <- extractW(obsD[idx, ])
-
+    
+    if (!is.null(cvControl$validRows)) {
+      validRows <- cvControl$validRows
+      validRows <- lapply(validRows, function(xx) {
+        keep <- IDX[, "old.idx"] %in% xx & idx
+        IDX[keep, "new.idx"]
+      })
+      cvControl$validRows <- validRows
+    }
+    
     fitMuAux <- SuperLearner.(Y=obsD[idx, "X"], X=WW,
                               obsWeights=obsWeights[idx], id=id[idx],
                               SL.library=SL.library.muAux, verbose=logSL,
+                              cvControl = cvControl,
                               family=gaussian(), ...);
     verbose && print(verbose, fitMuAux);
     muAux <- function(W) {
