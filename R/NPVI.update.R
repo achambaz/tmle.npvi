@@ -1,6 +1,6 @@
 #' @importFrom stats predict
 setMethodS3("update", "NPVI", function(object,
-                                       flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+                                       flavor=c("learning", "superLearning"),
                                        cvControl=NULL,
                                        learnDevG=NULL,
                                        learnDevMu=NULL,
@@ -22,8 +22,7 @@ setMethodS3("update", "NPVI", function(object,
   flavor <- match.arg(flavor);
   learnDevMode <- switch(flavor,
                          learning="function",
-                         superLearning="character",
-                         h2oEnsembleLearning="character");
+                         superLearning="character");
   
   ## Argument 'learnDevG'
   mode <- mode(learnDevG);
@@ -220,51 +219,7 @@ setMethodS3("update", "NPVI", function(object,
       ##
       verbose && cat(verbose, "E(XY|W):");
       verbose && print(verbose, summary(condExpXYgivenW(extractW(obsD))));
-    } else if (flavor=="h2oEnsembleLearning") {
-      EL.library.condExpX2givenW <- learnCondExpX2givenW; 
-      EL.library.condExpXYgivenW <- learnCondExpXYgivenW; 
-      obsD <- as.data.frame(obsT)
-      ##
-      obsD$Y <- obsD[, "X"]^2
-      data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
-
-      ##
-      ## CAUTION: provide 'id' as soon as this argument is supported
-      ##
-      
-      fitCondExpX2givenW <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),
-                                          training_frame=data,
-                                          family="gaussian",
-                                          learner=EL.library.condExpX2givenW,
-                                          weights_column=obsWeights)
-      ##
-      obsD$Y <- obsD[, "Y"]*obsD[, "X"]
-      data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
-      
-      fitCondExpXYgivenW <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),
-                                          training_frame=data,
-                                          family="gaussian",
-                                          learner=EL.library.condExpXYgivenW,
-                                          weights_column=obsWeights)
-
-      condExpX2givenW <- function(W) {
-        Wd <- as.data.frame(W)
-        newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
-        predict(fitCondExpX2givenW, newdata=newdata)$pred
-      }
-      condExpXYgivenW <- function(W) {
-        Wd <- as.data.frame(W)
-        newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
-        predict(fitCondExpXYgivenW, newdata=newdata)$pred
-      }
- 
-      verbose && cat(verbose, "E(X^2|W):");
-      verbose && print(verbose, summary(condExpX2givenW(extractW(obsD))));
-      ##
-      verbose && cat(verbose, "E(XY|W):");
-      verbose && print(verbose, summary(condExpXYgivenW(extractW(obsD))));
-    }
-    
+    }     
     ## pasted from 'estimateEpsilon'
     theMin <- min(eic1)
     theMax <- max(eic1)

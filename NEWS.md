@@ -1,6 +1,11 @@
 Package: tmle.npvi
 ===================
 
+Version: 0.12.0 [2020-05-18]
+o Removing flavor "h2oEnsembleLearning" for super learning.
+o Adding "familyY" argument, in case 'Y' is binary.
+o Removing '@S3method'
+
 Version: 0.11.5 [2017-02-17]
 
 o Now importing from "SuperLearner" + corresponding updates to NAMESPACE

@@ -1,4 +1,4 @@
-setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning"),
                                      cvControl=NULL,
                                      learnG=NULL,
                                      learnMuAux=NULL,
@@ -16,8 +16,7 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning",
   flavor <- match.arg(flavor);
   learnMode <- switch(flavor,
                       learning="function",
-                      superLearning="character",
-                      h2oEnsembleLearning="character");
+                      superLearning="character");
   
   ## Argument 'learnG'
   mode <- mode(learnG);
@@ -37,6 +36,8 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning",
     throw("Argument 'learnTheta' should be of mode '", learnMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  familyY <- getFamilyY(this)
+  
   ## Argument 'bound':
   bound <- Arguments$getNumeric(bound);
   if (bound<=0) {
@@ -109,6 +110,7 @@ setMethodS3("init", "NPVI", function(this, flavor=c("learning", "superLearning",
 
   theta <- estimateTheta(obs, weights=obsWeights, id=id,
                          flavor=flavor, learnTheta=learnTheta, light=light,
+                         familyY=familyY,
                          SuperLearner.=SuperLearner.,
                          ..., verbose=verbose);
   initializeTheta(this, theta);

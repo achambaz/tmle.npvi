@@ -1,5 +1,5 @@
 estimateDevG <- function(gW, obs, weights, id,
-                         eic1, flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+                         eic1, flavor=c("learning", "superLearning"),
                          learnDevG,
                          light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -24,8 +24,7 @@ estimateDevG <- function(gW, obs, weights, id,
   flavor <- match.arg(flavor);
   learnDevMode <- switch(flavor,
                          learning="function",
-                         superLearning="character",
-                         h2oEnsembleLearning="character");
+                         superLearning="character");
 
   ## Argument 'learnDevG'
   mode <- mode(learnDevG);
@@ -59,29 +58,7 @@ estimateDevG <- function(gW, obs, weights, id,
       Wd <- as.data.frame(W)
       predict(fitDevG, newdata=Wd)$pred
     }
-  } else if (flavor=="h2oEnsembleLearning") {
-    EL.library.devG <- learnDevG;
-    obsD <- as.data.frame(obs)
-    ZdevG <- eic1 * ( (obsD[, "X"]==0) - gW );
-    obsD$Y <- ZdevG
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
-
-    ##
-    ## CAUTION: provide 'id' as soon as this argument is supported
-    ##
-    
-    fitDevG <- SuperLearner.(y="Y", x=colnames(extractW(obsD)),
-                             training_frame=data,
-                             family="gaussian",
-                             learner=EL.library.devG,
-                             weights_column=obsWeights)
-
-    devG <- function(W) {
-      Wd <- as.data.frame(W)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
-      predict(fitDevG, newdata=newdata)$pred
-    }
-  }
+  } 
   verbose && cat(verbose, "devG(W):");
   verbose && print(verbose, summary(devG(extractW(obs))));
 

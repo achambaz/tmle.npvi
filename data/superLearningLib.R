@@ -3,12 +3,12 @@ requireNamespace("SuperLearner")
 ## setting the different libraries to use when 'flavor' is "superLearning"
 ## -----------------------------------------------------------------------
 
-## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm", "SL.DSA", "SL.glmnet");
-## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm", "SL.glmnet");
-## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm", "SL.DSA")
-## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.glmnet");
-## SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", "SL.svm")
-SL.library <- c("SL.glm", "SL.randomForest", "SL.gam")
+## SL.library <- c("SL.glm", "SL.ranger", "SL.gam", "SL.svm", "SL.DSA", "SL.glmnet");
+## SL.library <- c("SL.glm", "SL.ranger", "SL.gam", "SL.svm", "SL.glmnet");
+## SL.library <- c("SL.glm", "SL.ranger", "SL.gam", "SL.svm", "SL.DSA")
+## SL.library <- c("SL.glm", "SL.ranger", "SL.gam", "SL.glmnet");
+## SL.library <- c("SL.glm", "SL.ranger", "SL.gam", "SL.svm")
+SL.library <- c("SL.glm", "SL.ranger", "SL.gam")
 
 requireNamespace("SuperLearner")
 ## library(e1071)

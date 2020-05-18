@@ -1,5 +1,5 @@
 estimateTheta <- function(obs, weights, id,
-                          flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+                          flavor=c("learning", "superLearning"),
                           learnTheta,
                           familyY=c("gaussian", "binomial"),
                           light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
@@ -19,8 +19,7 @@ estimateTheta <- function(obs, weights, id,
   flavor <- match.arg(flavor);
   learnMode <- switch(flavor,
                       learning="function",
-                      superLearning="character",
-                      h2oEnsembleLearning="character");
+                      superLearning="character");
 
   ## Argument 'learnTheta'
   mode <- mode(learnTheta);
@@ -57,26 +56,6 @@ estimateTheta <- function(obs, weights, id,
       XWd <- as.data.frame(XW)
       predict(fitTheta, newdata=XWd)$pred
     }
-  } else if (flavor=="h2oEnsembleLearning") {
-    EL.library.theta <- learnTheta;
-    obsD <- as.data.frame(obs)
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
-
-    ##
-    ## CAUTION: provide 'id' as soon as this argument is supported
-    ##
-    
-    fitTheta <- SuperLearner.(y="Y", x=colnames(extractXW(obsD)),
-                              training_frame=data,
-                              family="gaussian",
-                              learner=EL.library.theta,
-                              weights_column=obsWeights)
-
-    theta <- function(XW) {
-      XWd <- as.data.frame(XW)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), XWd)
-      predict(fitTheta, newdata=newdata)$pred
-    }    
   }
   verbose && cat(verbose, "theta(X,W):");
   verbose && print(verbose, summary(theta(extractXW(obs)))); ## obs[, c("X", "W")]

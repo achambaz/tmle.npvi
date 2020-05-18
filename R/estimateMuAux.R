@@ -1,5 +1,5 @@
 estimateMuAux <- function(obs, weights, id,
-                          flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+                          flavor=c("learning", "superLearning"),
                           learnMuAux,
                           light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -18,8 +18,7 @@ estimateMuAux <- function(obs, weights, id,
   flavor <- match.arg(flavor);
   learnMode <- switch(flavor,
                       learning="function",
-                      superLearning="character",
-                      h2oEnsembleLearning="character");
+                      superLearning="character");
 
   ## Argument 'learnMuAux'
   mode <- mode(learnMuAux);
@@ -57,26 +56,6 @@ estimateMuAux <- function(obs, weights, id,
     muAux <- function(W) {
       Wd <- as.data.frame(W)
       predict(fitMuAux, newdata=Wd)$pred;
-    }
-  } else if (flavor=="h2oEnsembleLearning") {
-    EL.library.muAux <- learnMuAux;
-    obsD <- as.data.frame(obs)
-    obsD <- obsD[idx, ]
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
-
-    ##
-    ## CAUTION: provide 'id' as soon as this argument is supported
-    ##
-    
-    fitMuAux <- SuperLearner.(y="X", x=colnames(extractW(obsD)),
-                              training_frame=data,
-                              family="gaussian",
-                              learner=EL.library.muAux,
-                              weights_column=obsWeights)
-    muAux <- function(W) {
-      Wd <- as.data.frame(W)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), Wd)
-      predict(fitMuAux, newdata=newdata)$pred;
     }
   }
   verbose && cat(verbose, "mu'(W):");

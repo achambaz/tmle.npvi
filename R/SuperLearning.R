@@ -1,5 +1,5 @@
 #' @importFrom stats as.formula glm
-#' @importFrom SuperLearner SL.glm SL.randomForest SL.gam SL.polymars
+#' @importFrom SuperLearner SL.glm SL.ranger SL.gam SL.polymars
 SL.glm.condExpX2givenW <- function(Y, X, newX, family, obsWeights, ...) {
     varNames <- names(X)
     if (length(varNames)>20) {

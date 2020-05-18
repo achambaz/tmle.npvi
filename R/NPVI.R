@@ -727,7 +727,7 @@ setMethodS3("as.character", "NPVI", function(
   s <- sprintf("%s object:", class(this)[1]);
   s <- c(s, "")
 
-  ##   switched to from 'superLearning' or 'h2oEnsembleLearning' to 'learning'?
+  ##   switched to from 'superLearning'  to 'learning'?
   flag <- attr(this, "flag")
   if (!is.null(flag)) {
     s <- c(s, flag, "")

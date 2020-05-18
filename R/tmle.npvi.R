@@ -31,18 +31,12 @@
 #' If \code{lib} is an empty list (\code{list()}, default value) then the
 #' default algorithms for the chosen \code{flavor} are loaded
 #' (\code{learningLib} when \code{flavor} is set to "learning" or
-#' \code{superLearningLib} when \code{flavor} is set to "superLearning" or
-#' \code{h2oEnsembleLearningLib} when \code{flavor} is set to
-#' "h2oEnsembleLearning").  A valid \code{lib} argument must mimick the
-#' structure of either \code{learningLib} or \code{superLearningLib} or
-#' \code{h2oEnsembleLearning} depending on \code{flavor}.
+#' \code{superLearningLib} when \code{flavor} is set to "superLearning").  A valid \code{lib} argument must mimick the
+#' structure of either \code{learningLib} or \code{superLearningLib} on \code{flavor}.
 #'
 #' The "superLearning" \code{flavor} requires the \code{SuperLearner} package
-#' and, by default, the \code{polspline}, codegam, and \code{randomForest}
+#' and, by default, the \code{polspline}, codegam, and \code{ranger}
 #' packages.
-#'
-#' The "h2oEnsembleLearning" \code{flavor} requires the \code{SuperLearner} and
-#' \code{h2oEnsemble} packages.
 #'
 #' If \code{parsimonious} is set to 'TRUE' (recommended) then the packages
 #' \code{sgeostat} and \code{geometry} are required.
@@ -81,24 +75,18 @@
 #' @param flavor Indicates whether the construction of the relevant features of
 #' \eqn{P_n^0} and \eqn{P_n^k}, the (non-targeted yet) initial and (targeted)
 #' successive updated estimators of the true distribution of \eqn{(W,X,Y)}
-#' relies on the Super Learning methodology (options "superLearning" or
-#' "h2oEnsembleLearning") or not (option "learning", default value).  In the
-#' former case, the \code{SuperLearner} package is loaded, as well as the
-#' \code{h2oEnsemble} package when \code{flavor} is set to
-#' "h2oEnsembleLearning".
+#' relies on the Super Learning methodology (options "superLearning") or not (option "learning", default value).  In the
+#' former case, the \code{SuperLearner} package is loaded.
 #' @param lib A \code{list} providing the function \code{tmle.npvi} with the
 #' necessary algorithms involved in the estimation of the features of interest.
 #' If empty (default) then the default algorithms are used. See \code{Details}.
 #' @param nodes An \code{integer}, which indicates how many nodes should be
 #' involved in the computation of the TMLE when it relies on the
-#' "superLearning" or "h2oEnsembleLearning" \code{flavor}.  Defaults to
+#' "superLearning" \code{flavor}.  Defaults to
 #' \code{1}.  If larger than \code{1}, then the \code{parallel} package is
 #' loaded and a cluster with \code{nodes} nodes is created and exploited.
-#' @param cvControl 'NULL' (default value) or an \code{integer} indicating how
-#' many folds are involved in the Super Learning procedure.  If \code{flavor}
-#' and \code{cvControl} are simultaneously set to "superLearning" or
-#' "h2oEnsembleLearning" and \code{NULL} then the Super Learning procedure
-#' relies on 10-fold cross-validation.
+#' @param cvControl The output of a call to \code{SuperLearner::SuperLearner.CV.control()}, or 'NULL' (default value) in which case this is equivalent to providing the output of \code{SuperLearner::SuperLearner.CV.control()}. If \code{flavor}
+#' is  set to "superLearning", then   fine-tunes the super learning procedure.
 #' @param parsimonious A logical indicating whether the simulation of the conditional
 #' distribution of \eqn{X} given \eqn{W} under \eqn{P_n^k} (the initial
 #' estimator if \eqn{k=0} or its \eqn{k}th update if \eqn{k \ge 1}) should be
@@ -257,7 +245,7 @@
 #' @importFrom SuperLearner All
 #' @export
 tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
-                      flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+                      flavor=c("learning", "superLearning"),
                       lib=list(),  nodes=1L,  cvControl=NULL,
                       parsimonious=TRUE,
                       cleverCovTheta=FALSE, bound=1, B=1e5, trueGMu=NULL,  iter=5L,
@@ -285,7 +273,7 @@ tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
                            familyY=familyY,
                            gmin=gmin, gmax=gmax,
                            mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light)
-        attr(tmle, "flag") <- "Flavor 'superLearning' or 'h2oEnsembleLearning' failed, carried out flavor 'learning' instead."
+        attr(tmle, "flag") <- "Flavor 'superLearning' failed, carried out flavor 'learning' instead."
     }
     return(tmle)
 }
@@ -296,7 +284,7 @@ tmle.npvi. <- function(obs,
                        weights=NULL,
                        id=NULL,
                        nMax=30L,
-                       flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+                       flavor=c("learning", "superLearning"),
                        lib=list(),
                        nodes=1L,
                        cvControl=NULL,
@@ -344,8 +332,6 @@ tmle.npvi. <- function(obs,
         ## get our library:
         if (flavor=="superLearning") {
             lib <- tmle.npvi::superLearningLib
-        } else if (flavor=="h2oEnsembleLearning") {
-            lib <- tmle.npvi::h2oEnsembleLearningLib
         } else {
             lib <- tmle.npvi::learningLib
         }
@@ -360,17 +346,20 @@ tmle.npvi. <- function(obs,
                          sep="\n")
             stop(msg)
         }
-        ## requireNamespace("randomForest")
+        ## requireNamespace("ranger")
         ## requireNamespace("polspline")
         ## SL.glm <- SuperLearner::SL.glm
-        ## SL.randomForest <- SuperLearner::SL.randomForest
+        ## SL.ranger <- SuperLearner::SL.ranger
         ## SL.gam <- SuperLearner::SL.gam
         if (is.null(cvControl)) {
             warning("Setting 'V=10' in 'SuperLearner.'")
-            cvControl <- SuperLearner::SuperLearner.CV.control(V=10L)
+            cvControl <- SuperLearner::SuperLearner.CV.control()
         } else {
-            cvControl <- Arguments$getInteger(cvControl, c(2, Inf))
-            cvControl <- SuperLearner::SuperLearner.CV.control(V=cvControl)
+          test <- identical(sort(names(cvControl)),
+                            sort(names(SuperLearner::SuperLearner.CV.control())))
+          if (!test) {
+            throw("Argument 'cvControl' is not valid.")
+          }
         }
         if (nodes==1) {
             SuperLearner. <- function(...) {
@@ -389,23 +378,7 @@ tmle.npvi. <- function(obs,
             }
         }
     }
-    if (flavor=="h2oEnsembleLearning") {
-        ## requireNamespace("h2oEnsemble")
-        if (is.null(cvControl)) {
-            warning("Setting 'V=10' in 'SuperLearner.'")
-            cvControl <- list(V=10L)
-        } else {
-            V <- Arguments$getInteger(cvControl, c(2, Inf))
-            cvControl <- list(V=V)
-        }
-        SuperLearner. <- function(...) {
-            h2oEnsemble::h2o.ensemble(cvControl=cvControl, metalearner="SL.nnls", ...)
-        }
-        localH2O <-  h2o::h2o.init(nthreads=nodes)
-        attr(SuperLearner., "H2OConnection") <- localH2O
-        on.exit(h2o::h2o.shutdown(localH2O, prompt=FALSE))
-    }
-    if (flavor=="learning") {
+   if (flavor=="learning") {
         SuperLearner. <- NULL
         if (nodes>1) {
             warning("Parallel computing not available with 'learning' option")

@@ -1,5 +1,5 @@
 estimateDevTheta <- function(thetaXW, obs, weights, id,
-                             flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
+                             flavor=c("learning", "superLearning"),
                              learnDevTheta,
                              light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -22,8 +22,7 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
   flavor <- match.arg(flavor);
   learnDevMode <- switch(flavor,
                          learning="function",
-                         superLearning="character",
-                         h2oEnsembleLearning="character");
+                         superLearning="character");
 
   ## Argument 'learnDevTheta'
   mode <- mode(learnDevTheta);
@@ -59,30 +58,7 @@ estimateDevTheta <- function(thetaXW, obs, weights, id,
       XWd <- as.data.frame(XW)
       predict(fitDevTheta, newdata=XWd)$pred
     }
-  } else if (flavor=="h2oEnsembleLearning") {
-    EL.library.devTheta <- learnDevTheta;
-    obsD <- as.data.frame(obs)
-    ZdevTheta <- (obsD[, "Y"]-thetaXW)^2;
-    obsD$Y <- ZdevTheta
-    data <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), obsD)
-
-    ##
-    ## CAUTION: provide 'id' as soon as this argument is supported
-    ##
-    
-    fitDevTheta <- SuperLearner.(y="Y", x=colnames(extractXW(obsD)),
-                                 training_frame=data,
-                                 family="gaussian",
-                                 learner=EL.library.devTheta,
-                                 weights_column=obsWeights)
-    
-    devTheta <- function(XW) {
-      XWd <- as.data.frame(XW)
-      newdata <- h2o::as.h2o(attr(SuperLearner., "H2OConnection"), XWd)
-      predict(fitDevTheta, newdata=newdata)$pred
-    }
-  }
-
+  } 
   verbose && cat(verbose, "devTheta(XW):");
   verbose && print(verbose, summary(devTheta(extractXW(obs))));
 
