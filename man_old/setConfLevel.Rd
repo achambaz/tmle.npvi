@@ -4,7 +4,9 @@
 \alias{setConfLevel}
 \alias{setConfLevel.NPVI}
 \title{Sets the confidence level of a \code{TMLE.NPVI} object}
+\usage{
+\method{setConfLevel}{NPVI}(this, confLevel, ...)
+}
 \description{
 Sets the confidence level of a \code{TMLE.NPVI} object
 }
-

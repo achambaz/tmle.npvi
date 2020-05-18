@@ -90,7 +90,7 @@ setMethodS3("update", "NPVI", function(object,
   id <- getId(this);
   Xq <- getXq(this);
   Yq <- getYq(this);
-  family <- getFamily(this);
+  parsimonious <- getParsimonious(this);
   tabulate <- getTabulate(this)
   g <- getG(this);
   mu <- getMu(this);
@@ -115,7 +115,7 @@ setMethodS3("update", "NPVI", function(object,
                          theta=theta, Y=Yq,
                          weights=obsWeights,
                          weightsW=weightsW,
-                         family=family)
+                         parsimonious=parsimonious)
     ## taken from 'updateEfficientInfluenceCurve'
     thetaXW <- theta(obsB[, c("X", "W")]);
     theta0W <- theta0(obsB[, "W", drop=FALSE]);

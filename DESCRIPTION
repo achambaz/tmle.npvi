@@ -1,14 +1,15 @@
 Package: tmle.npvi
 Type: Package
 Title: Targeted Learning of a NP Importance of a Continuous Exposure
-Version: 0.11.5
-Date: 2017-02-17
+Version: 0.12.0
+Date: 2020-05-18
 Author: Antoine Chambaz, Pierre Neuvial
 Maintainer: Pierre Neuvial <pierre.neuvial@math.cnrs.fr>
 Description: Targeted minimum loss estimation (TMLE) of a non-parametric
     variable importance measure of a continuous exposure 'X' on an outcome 'Y',
     taking baseline covariates 'W' into account.
 License: GPL
+Encoding: UTF-8
 LazyLoad: yes
 LazyData: yes
 Depends:
@@ -32,4 +33,4 @@ Suggests:
     knitr,
 VignetteBuilder: knitr
 Remotes: h2oai/h2o-3/h2o-r/ensemble/h2oEnsemble-package
-RoxygenNote: 5.0.1
+RoxygenNote: 7.1.0

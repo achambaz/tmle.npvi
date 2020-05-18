@@ -4,9 +4,18 @@
 \alias{getSample}
 \title{Generates Simulated Data}
 \usage{
-getSample(n, O, lambda0, p = rep(1/3, 3), omega = rep(1/2, 3),
-  Sigma1 = matrix(c(1, 1/sqrt(2), 1/sqrt(2), 1), 2, 2), sigma2 = omega[2]/5,
-  Sigma3 = Sigma1, f = identity, verbose = FALSE)
+getSample(
+  n,
+  O,
+  lambda0,
+  p = rep(1/3, 3),
+  omega = rep(1/2, 3),
+  Sigma1 = matrix(c(1, 1/sqrt(2), 1/sqrt(2), 1), 2, 2),
+  sigma2 = omega[2]/5,
+  Sigma3 = Sigma1,
+  f = identity,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{n}{An \code{integer}, the number of observations to be generated.}
@@ -128,12 +137,12 @@ truePsi1 <- sim01$psi
 
 confInt01 <- truePsi1+c(-1, 1)*qnorm(.975)*sqrt(sim01$varIC/nrow(sim01$obs))
 confInt1 <- truePsi1+c(-1, 1)*qnorm(.975)*sqrt(sim01$varIC/nrow(obs))
-msg <- "\\nCase f=identity:\\n"
-msg <- c(msg, "\\ttrue psi is: ", paste(signif(truePsi1, 3)), "\\n")
-msg <- c(msg, "\\t95\%-confidence interval for the approximation is: ",
-         paste(signif(confInt01, 3)), "\\n")
-msg <- c(msg, "\\toptimal 95\%-confidence interval is: ",
-         paste(signif(confInt1, 3)), "\\n")
+msg <- "\nCase f=identity:\n"
+msg <- c(msg, "\ttrue psi is: ", paste(signif(truePsi1, 3)), "\n")
+msg <- c(msg, "\t95\%-confidence interval for the approximation is: ",
+         paste(signif(confInt01, 3)), "\n")
+msg <- c(msg, "\toptimal 95\%-confidence interval is: ",
+         paste(signif(confInt1, 3)), "\n")
 cat(msg)
 
 ## True psi and confidence intervals (case 'f=atan')
@@ -144,21 +153,20 @@ truePsi2 <- sim02$psi;
 confInt02 <- truePsi2+c(-1, 1)*qnorm(.975)*sqrt(sim02$varIC/nrow(sim02$obs))
 confInt2 <- truePsi2+c(-1, 1)*qnorm(.975)*sqrt(sim02$varIC/nrow(obs))
 
-msg <- "\\nCase f=atan:\\n"
-msg <- c(msg, "\\ttrue psi is: ", paste(signif(truePsi2, 3)), "\\n")
-msg <- c(msg, "\\t95\%-confidence interval for the approximation is: ",
-         paste(signif(confInt02, 3)), "\\n")
-msg <- c(msg, "\\toptimal 95\%-confidence interval is: ",
-         paste(signif(confInt2, 3)), "\\n")
+msg <- "\nCase f=atan:\n"
+msg <- c(msg, "\ttrue psi is: ", paste(signif(truePsi2, 3)), "\n")
+msg <- c(msg, "\t95\%-confidence interval for the approximation is: ",
+         paste(signif(confInt02, 3)), "\n")
+msg <- c(msg, "\toptimal 95\%-confidence interval is: ",
+         paste(signif(confInt2, 3)), "\n")
 cat(msg)
 
-}
-\author{
-Antoine Chambaz, Pierre Neuvial
 }
 \references{
 Chambaz, A., Neuvial, P., & van der Laan, M. J. (2012).
 Estimation of a non-parametric variable importance measure of a continuous
 exposure. Electronic journal of statistics, 6, 1059--1099.
 }
-
+\author{
+Antoine Chambaz, Pierre Neuvial
+}

@@ -9,8 +9,9 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
                                   f=identity, nMax=10L,
                                   gmin=0.01, gmax=1-gmin, mumin=-Inf,
                                   mumax=Inf, thetamin=-Inf, thetamax=Inf,
-                                  family=c("parsimonious", "gaussian"), tabulate=TRUE,
+                                  parsimonious=TRUE, tabulate=TRUE,
                                   stoppingCriteria=list(mic=0.03, div=0.01, psi=0.1),
+                                  familyY = c("gaussian", "binomial"),
                                   conf.level=0.95,
                                   ...,
                                   verbose=FALSE) {
@@ -66,8 +67,8 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
     throw("Argument 'thetamin' must be smaller than argument 'thetamax'.")
   }
 
-  ## Argument 'family'
-  family <- match.arg(family)
+  ## Argument 'parsimonious'
+  parsimonious <- Arguments$getLogical(parsimonious)
 
   ## Argument 'tabulate'
   tabulate <- Arguments$getLogical(tabulate)
@@ -80,6 +81,9 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
   psi.tol <- Arguments$getNumeric(stoppingCriteria$psi)
   attr(psi.tol, "label") <- "change between successive values of \"psi\""
 
+  ## Argument 'familyY'
+  familyY <- match.arg(familyY)
+  
   ## Argument 'conf.level'
   conf.level <- Arguments$getNumeric(conf.level, c(0, 1))
 
@@ -90,10 +94,10 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
     throw("Unknown arguments: ", argsStr);
   }
 
-  if (tabulate & family=="gaussian") {
-    throw("Unauthorized, because cannot tabulate all functions if family is 'gaussian'.")
+  if (tabulate & !parsimonious) {
+    throw("Unauthorized, because cannot tabulate all functions if 'parsimonious' is  'FALSE'.")
   }
-  if (!tabulate & family=="parsimonious") {
+  if (!tabulate & parsimonious) {
     throw("Unauthorized, because not implemented (it is a sub-optimal combination of options).")
   }
 
@@ -150,10 +154,11 @@ setConstructorS3("NPVI", function(obs=matrix(nrow=0, ncol=3, dimnames=list(NULL,
          .sigma2=NA, .psi=NA, .psi.sd=NA, .psiPn=NA, .psiPn.sd=NA,
          .gmin=gmin, .gmax=gmax, .mumin=mumin, .mumax=mumax,
          .thetamin=thetamin, .thetamax=thetamax,
-         .family=family, .tabulate=tabulate, .epsilon=NA,
+         .parsimonious=parsimonious, .tabulate=tabulate, .epsilon=NA,
          .epsilonTheta=NA, .logLikIncr=NA, .logLikIncrTheta=NA, .div=NA,
          .efficientInfluenceCurve=matrix(NA, 0, 3), .history=history, .step=0,
          .stoppingCriteria=list(mic=mic.tol, div=div.tol, psi=psi.tol),
+         .familyY=familyY,
          .conv=conv, .conf.level=conf.level
          );
 })
@@ -255,7 +260,6 @@ setMethodS3("getConfLevel", "NPVI", function(this, ...) {
 #'   \Phi} at each step of the TMLE procedure.}}
 #' @export getHistory
 #' @export getHistory.NPVI
-#' @S3method getHistory NPVI
 setMethodS3("getHistory", "NPVI", function(
   this,
   ...
@@ -519,7 +523,6 @@ setMethodS3("setDivergence", "NPVI", function(this, div, ...) {
 #' @export setConfLevel
 #' @export setConfLevel.NPVI
 #' @aliases setConfLevel.NPVI
-#' @S3method setConfLevel NPVI
 setMethodS3("setConfLevel", "NPVI", function(
 ### Sets the confidence level of a \code{TMLE.NPVI} object.
     this,
@@ -619,7 +622,6 @@ setMethodS3("getId", "NPVI", function(this, ...) {
 #' @aliases getObs.NPVI
 #' @export getObs
 #' @export getObs.NPVI
-#' @S3method getObs NPVI
 setMethodS3("getObs", "NPVI", function(
     this,
     tabulate,
@@ -637,15 +639,28 @@ setMethodS3("getObs", "NPVI", function(
   obs
 })
 
-setMethodS3("getFamily", "NPVI", function(this, ...) {
-  this$.family;
+setMethodS3("getParsimonious", "NPVI", function(this, ...) {
+  this$.parsimonious;
 })
 
-setMethodS3("setFamily", "NPVI", function(this, family=c("parsimonious", "gaussian"), ...) {
+
+setMethodS3("setParsimonious", "NPVI", function(this, parsimonious=TRUE, ...) {
   ## Argument
-  family <- match.arg(family);
-  this$.family <- family;
+  parsimonious <- Arguments$getLogical(parsimonious)
+  this$.parsimonious <- parsimonious;
 })
+
+setMethodS3("getFamilyY", "NPVI", function(this, ...) {
+  this$.familyY;
+})
+
+
+setMethodS3("setFamilyY", "NPVI", function(this, familyY=c("gaussian", "binomial"), ...) {
+  ## Argument
+  familyY <- match.arg(familyY)
+  this$.familyY <- familyY;
+})
+
 
 setMethodS3("getTabulate", "NPVI", function(this, ...) {
   this$.tabulate;
@@ -704,7 +719,6 @@ setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
 #' \eqn{\Phi(P_0)}. }
 #' @aliases as.character.NPVI as.character
 #' @export as.character.NPVI
-#' @S3method as.character NPVI
 setMethodS3("as.character", "NPVI", function(
     x,
     ...

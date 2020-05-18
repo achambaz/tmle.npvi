@@ -1,6 +1,6 @@
 simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(value=NA, index=NA),
                          weights=rep(1/length(W), length(W)),
-                         weightsW=rep(1, length(W)), family=c("parsimonious", "gaussian"), verbose=FALSE) {
+                         weightsW=rep(1, length(W)), parsimonious=TRUE, verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,15 +51,15 @@ simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(v
     }
   }
   
-  ## Argument 'family':
-  family <- match.arg(family);
+  ## Argument 'parsimonious':
+  parsimonious <- Arguments$getLogical(parsimonious)
 
   ## Argument 'Y'
   Y.value <- Arguments$getNumerics(Y$value);
   Y.index <- Arguments$getNumerics(Y$index);
   if (!is.null(theta)) {
-    if (any(is.na(Y.value)) & family=="gaussian") {
-      throw("Argument 'Y$value' of mode 'numerics' should be provided when 'family' is 'gaussian'.")
+    if (any(is.na(Y.value)) & !parsimonious) {
+      throw("Argument 'Y$value' of mode 'numerics' should be provided when 'parsimonious' is 'FALSE'.")
     }
   }
 
@@ -91,9 +91,9 @@ simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(v
   gWB <- g(WB)
   ##
   U <- (runif(B) >= gWB)
-  if (family=="gaussian") {
+  if (!parsimonious) {
     XB[!U] <- 0
-  } else if (family=="parsimonious") {
+  } else if (parsimonious) {
     ## old:
     ## XB[!U] <- whichXisZero[1] ## first index of row with X equal to 0
     ## new:
@@ -105,7 +105,7 @@ simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(v
 
   ##
   parameters <- list(meanGW=meanGW, muWB=muWB, gWB=gWB, U=U)
-  if (family=="gaussian") {
+  if (!parsimonious) {
     ## Note: here, 'tabulate' is necessarily FALSE
     ## hence 'W' are actual observations and not indices
     if (FALSE) {
@@ -125,7 +125,7 @@ simulateData <- function(B, W, X, Xq, g, mu, muAux, sigma2, theta=NULL, Y=list(v
     if (!is.null(theta)) {
       YB <- rnorm(B, mean=theta(cbind(X=XB, W=WB)), sd=sd(Y.value))
     }
-  } else if (family=="parsimonious") {
+  } else if (parsimonious) {
     indices <- simulateParsimoniouslyXgivenW(WB[U], min(obsX), max(obsX),
                                              Xq, condMeanX, sigma2, parameters)
     ## ## CAUTION

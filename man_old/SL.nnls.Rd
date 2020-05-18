@@ -33,10 +33,9 @@ A fitted object.
 SuperLearner-API wrapper function to support NNLS for metalearning when
 using h2oEnsembleLearning
 }
-\author{
-Antoine Chambaz, Pierre Neuvial
-}
 \seealso{
 predict.SL.nnls, method.NNLS
 }
-
+\author{
+Antoine Chambaz, Pierre Neuvial
+}

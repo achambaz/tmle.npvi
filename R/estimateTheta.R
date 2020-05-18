@@ -1,6 +1,7 @@
 estimateTheta <- function(obs, weights, id,
                           flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                           learnTheta,
+                          familyY=c("gaussian", "binomial"),
                           light=TRUE, SuperLearner.=NULL, ..., verbose=FALSE) {
   ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ## Validate arguments
@@ -27,6 +28,9 @@ estimateTheta <- function(obs, weights, id,
     throw("Argument 'learnTheta' should be of mode '", learnMode, "', not '", mode, "' for flavor: ", flavor);
   }
 
+  ## Argument 'familyY':
+  familyY <- match.arg(familyY);
+  
   ## Argument 'SuperLearner.'
   if (flavor!="learning") {
     if (is.null(SuperLearner.) || mode(SuperLearner.)!="function") {
@@ -39,7 +43,7 @@ estimateTheta <- function(obs, weights, id,
   verbose <- Arguments$getVerbose(verbose);
 
   if (flavor=="learning") {
-    theta <- learnTheta(obs, weights=obsWeights, light=light, ...);
+    theta <- learnTheta(obs, weights=obsWeights, light=light, family=familyY, ...);
   } else if (flavor=="superLearning") {
     logSL <- as.logical(less(verbose, 10));  ## decrease verbosity in SuperLearner
     SL.library.theta <- learnTheta;
@@ -48,7 +52,7 @@ estimateTheta <- function(obs, weights, id,
     fitTheta <- SuperLearner.(Y=obsD[, "Y"], X=extractXW(obsD), ## obsD[, c("X", "W")]
                               obsWeights=obsWeights, id=id,
                               SL.library=SL.library.theta, verbose=logSL,
-                              family=gaussian(), ...)
+                              family=familyY, ...)
     theta <- function(XW) {
       XWd <- as.data.frame(XW)
       predict(fitTheta, newdata=XWd)$pred

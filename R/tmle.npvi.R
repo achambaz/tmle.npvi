@@ -44,7 +44,7 @@
 #' The "h2oEnsembleLearning" \code{flavor} requires the \code{SuperLearner} and
 #' \code{h2oEnsemble} packages.
 #'
-#' If \code{family} is set to "parsimonious" (recommended) then the packages
+#' If \code{parsimonious} is set to 'TRUE' (recommended) then the packages
 #' \code{sgeostat} and \code{geometry} are required.
 #'
 #' @aliases tmle.npvi. tmle.npvi
@@ -76,8 +76,8 @@
 #' reasonable computational time) indicating the maximum number of observed
 #' values of \eqn{X\neq 0} which are used to create the supports of the
 #' conditional distributions of \eqn{X} given \eqn{W} and \eqn{X\neq0} involved
-#' in the simulation under \eqn{P_n^k} when \code{family} is set to
-#' "parsimonious".
+#' in the simulation under \eqn{P_n^k} when \code{parsimonious} is set to
+#' 'TRUE'.
 #' @param flavor Indicates whether the construction of the relevant features of
 #' \eqn{P_n^0} and \eqn{P_n^k}, the (non-targeted yet) initial and (targeted)
 #' successive updated estimators of the true distribution of \eqn{(W,X,Y)}
@@ -99,12 +99,12 @@
 #' and \code{cvControl} are simultaneously set to "superLearning" or
 #' "h2oEnsembleLearning" and \code{NULL} then the Super Learning procedure
 #' relies on 10-fold cross-validation.
-#' @param family Indicates whether the simulation of the conditional
+#' @param parsimonious A logical indicating whether the simulation of the conditional
 #' distribution of \eqn{X} given \eqn{W} under \eqn{P_n^k} (the initial
 #' estimator if \eqn{k=0} or its \eqn{k}th update if \eqn{k \ge 1}) should be
-#' based on a weighted version of the empirical measure (case "parsimonious",
+#' based on a weighted version of the empirical measure (case 'TRUE',
 #' default value and faster execution) or on a Gaussian model (case
-#' "gaussian").
+#' 'FALSE').
 #' @param cleverCovTheta A \code{logical}, indicating whether the one-step (if
 #' \code{FALSE}, default value) or the two-step (if \code{TRUE}) updating
 #' procedure should be carried out.
@@ -125,6 +125,7 @@
 #' @param stoppingCriteria A \code{list} providing tuning parameters for the
 #' stopping criteria.  Defaults to \code{list(mic=0.01, div=0.01, psi=0.1)},
 #' see \code{Details}.
+#' @param familyY A \code{character} indicating whether \eqn{Y} is quantitative (case "gaussian") or binary (case "binomial").
 #' @param gmin A positive \code{numeric}, lower-bound on the range of values of
 #' the estimated probabilities \eqn{P_n^k(X=0|W)} that \eqn{X} be equal to its
 #' reference value \code{0} given \eqn{W}. Defaults to \code{5e-2}, and must be
@@ -258,9 +259,10 @@
 tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
                       flavor=c("learning", "superLearning", "h2oEnsembleLearning"),
                       lib=list(),  nodes=1L,  cvControl=NULL,
-                      family=c("parsimonious",   "gaussian"),
+                      parsimonious=TRUE,
                       cleverCovTheta=FALSE, bound=1, B=1e5, trueGMu=NULL,  iter=5L,
                       stoppingCriteria=list(mic=0.01,  div=0.01,  psi=0.1),
+                      familyY=c("gaussian", "binomial"),
                       gmin=5e-2,   gmax=.95,
                       mumin=quantile(f(obs[obs[,  "X"]!=0,   "X"]),  type=1, probs=0.01),
                       mumax=quantile(f(obs[obs[, "X"]!=0, "X"]),  type=1, probs=0.99),
@@ -268,16 +270,20 @@ tmle.npvi <- function(obs, f=identity, weights=NULL, id=NULL, nMax=30L,
     flavor <- match.arg(flavor)
     tmle <- try(tmle.npvi.(obs=obs, f=f, weights=weights, id=id,
                            nMax=nMax, flavor=flavor, lib=lib, nodes=nodes, cvControl=cvControl,
-                           family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
+                           parsimonious=parsimoniuous, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
                            trueGMu=trueGMu, iter=iter,
-                           stoppingCriteria=stoppingCriteria, gmin=gmin, gmax=gmax,
+                           stoppingCriteria=stoppingCriteria,
+                           familyY=familyY,
+                           gmin=gmin, gmax=gmax,
                            mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light))
     failed <- inherits(tmle, "try-error")
     if (flavor!="learning" & failed) {
         tmle <- tmle.npvi.(obs=obs, f=f, weights=weights, id=id,
                            nMax=nMax, flavor="learning", lib=tmle.npvi::learningLib, nodes=1L,
-                           cvControl=cvControl, family=family, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
-                           trueGMu=trueGMu, iter=iter, stoppingCriteria=stoppingCriteria, gmin=gmin, gmax=gmax,
+                           cvControl=cvControl, parsimonious=parsimonious, cleverCovTheta=cleverCovTheta, bound=bound, B=B,
+                           trueGMu=trueGMu, iter=iter, stoppingCriteria=stoppingCriteria,
+                           familyY=familyY,
+                           gmin=gmin, gmax=gmax,
                            mumin=mumin, mumax=mumax, verbose=verbose, tabulate=tabulate, exact=exact, light=light)
         attr(tmle, "flag") <- "Flavor 'superLearning' or 'h2oEnsembleLearning' failed, carried out flavor 'learning' instead."
     }
@@ -294,13 +300,14 @@ tmle.npvi. <- function(obs,
                        lib=list(),
                        nodes=1L,
                        cvControl=NULL,
-                       family=c("parsimonious", "gaussian"),
+                       parsimonious=TRUE,
                        cleverCovTheta=FALSE,
                        bound=1,
                        B=1e5,
                        trueGMu=NULL,
                        iter=5L,
                        stoppingCriteria=list(mic=0.01, div=0.01, psi=0.1),
+                       familyY=c("gaussian", "binomial"),
                        gmin=5e-2,
                        gmax=.95,
                        mumin=quantile(f(obs[obs[, "X"]!=0, "X"]), type=1, probs=0.01),
@@ -325,7 +332,8 @@ tmle.npvi. <- function(obs,
     flavor <- match.arg(flavor)
     nMax <- Arguments$getInteger(nMax, c(10, Inf))
     nodes <- Arguments$getInteger(nodes)
-    family <- match.arg(family)
+    parsimonious <- Arguments$getLogical(parsimonious)
+    familyY <- match.arg(familyY)
 
     if (B<5e4) {
         warning("Parameter 'B' may be too small; try a larger 'B'")
@@ -446,7 +454,8 @@ tmle.npvi. <- function(obs,
     }
 
     npvi <- NPVI(obs=obs, obsWeights=obsWeights, id=id,
-                 f=f, nMax=nMax, family=family, tabulate=tabulate,
+                 f=f, nMax=nMax, parsimonious=parsimonious, tabulate=tabulate,
+                 familyY=familyY,
                  gmin=gmin, gmax=gmax,
                  mumin=mumin, mumax=mumax,
                  thetamin=min(obs[, "Y"]), thetamax=max(obs[, "Y"]),

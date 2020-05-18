@@ -10,7 +10,7 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   verbose <- Arguments$getVerbose(verbose);
 
   ## Retrieve parameters
-  family <- getFamily(this)
+  parsimonious <- getParsimonious(this)
   fX <- getFX(this)
   obs <- getObs(this)
   obsWeights <- getObsWeights(this)
@@ -30,7 +30,7 @@ setMethodS3("updatePsi", "NPVI", function(this, B, ..., verbose=FALSE) {
   verbose && enter(verbose, "Simulating ", B, " observations");
   obsB <- simulateData(B, W, X, Xq, g, mu, muAux, sigma2,
                        weights=obsWeights,
-                       weightsW=weightsW, family=family, verbose=verbose)
+                       weightsW=weightsW, parsimonious=parsimonious, verbose=verbose)
   verbose && str(verbose, obsB);
   verbose && exit(verbose);
 
