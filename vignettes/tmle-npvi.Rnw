@@ -17,15 +17,15 @@ fig.path='fig/'
 
 
 <<style:knitr, eval=TRUE, echo=FALSE, results="asis">>=
-BiocStyle::latex()
+#BiocStyle::latex()
 @
 
 
 \addtolength{\parskip}{\baselineskip}
 
 % \newcommand{\Robject}[1]{{\texttt{#1}}}
-% \newcommand{\Rfunction}[1]{{\texttt{#1}}}
-% \newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
 % \newcommand{\Rclass}[1]{{\textit{#1}}}
 % \newcommand{\Rfunarg}[1]{{\textit{#1}}}
 % \sloppy
@@ -312,7 +312,6 @@ abline(h=confInt0, col="red")
 @
 
 \begin{figure}
-  \centering
   \includegraphics[width=6cm]{confInt-1}
   \caption{A visual summary of  the TMLE procedure contained in \texttt{npvi}.
     The black  dots represent  the successive values  of $\Psi_{f}(P_{n}^{k})$

@@ -195,10 +195,8 @@ setMethodS3("getConfLevel", "NPVI", function(this, ...) {
 #' Returns History of TMLE Procedure
 #'
 #' Returns the 'history' of the TMLE procedure
-#' @name getHistory
 #' @param this An object of class \code{TMLE.NPVI}
 #' @param \dots Not used
-#' @aliases getHistory.NPVI
 #' @return A \code{numeric}  \code{matrix} which encapsulates a summary
 #'   of the  TMLE procedure.  If \eqn{k} successive  updates were performed,
 #'   then   the   \code{matrix}   has   either   \eqn{k+1}   rows   (if
@@ -258,8 +256,10 @@ setMethodS3("getConfLevel", "NPVI", function(this, ...) {
 #'   of \eqn{\psi} which neglects \eqn{W}. } \item{\code{"sicAlt"},  estimated
 #'   standard deviations   of  the  efficient influence curve of \eqn{\Psi -
 #'   \Phi} at each step of the TMLE procedure.}}
-#' @export getHistory
-#' @export getHistory.NPVI
+#' 
+#' @aliases getHistory
+#' @export getHistory.NPVI getHistory
+#' @export 
 setMethodS3("getHistory", "NPVI", function(
   this,
   ...
@@ -519,10 +519,9 @@ setMethodS3("setDivergence", "NPVI", function(this, div, ...) {
 #'
 #' Sets the confidence level of a \code{TMLE.NPVI} object
 #'
-#' @name setConfLevel
-#' @export setConfLevel
-#' @export setConfLevel.NPVI
-#' @aliases setConfLevel.NPVI
+#' @aliases setConfLevel
+#' @export setConfLevel.NPVI setConfLevel
+#' @export
 setMethodS3("setConfLevel", "NPVI", function(
 ### Sets the confidence level of a \code{TMLE.NPVI} object.
     this,
@@ -611,7 +610,6 @@ setMethodS3("getId", "NPVI", function(this, ...) {
 #'
 #' Retrieves the \code{matrix} of observations involved in the TMLE procedure.
 #'
-#' @name getObs
 #' @param this An object of class \code{TMLE.NPVI}
 #' @param tabulate A \code{logical}, to  specify whether it is the original
 #'   data set that is retrieved (if \code{FALSE}) or a  tabulated version of it
@@ -619,9 +617,10 @@ setMethodS3("getId", "NPVI", function(this, ...) {
 #'   the value attached to the input object is used
 #' @param \dots Not used
 #' @return Either the original data set involved in the TMLE procedure or a tabulated version of it
-#' @aliases getObs.NPVI
-#' @export getObs
-#' @export getObs.NPVI
+#'
+#' @aliases getObs
+#' @export getObs.NPVI getObs
+#' @export 
 setMethodS3("getObs", "NPVI", function(
     this,
     tabulate,
@@ -703,8 +702,6 @@ setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
 #' Returns a short string describing the NPVI object.
 #'
 #'
-#' @name as.character
-#' @aliases as.character.NPVI as.character
 #' @param x An object of class \code{TMLE.NPVI}.
 #' @param \dots Not used.
 #' @return A character string summarizing the content of the object. The
@@ -717,8 +714,10 @@ setMethodS3("setSigma2", "NPVI", function(this, sigma2, ...) {
 #' two-sided test of ``\eqn{\Psi(P_0)=0}''. \item The \eqn{p}-value of the
 #' two-sided test of ``\eqn{\Psi(P_0)=\Phi(P_0)}'', with the estimated value of
 #' \eqn{\Phi(P_0)}. }
-#' @aliases as.character.NPVI as.character
-#' @export as.character.NPVI
+#'
+#' @aliases as.character
+#' @export as.character.NPVI 
+#' @export 
 setMethodS3("as.character", "NPVI", function(
     x,
     ...

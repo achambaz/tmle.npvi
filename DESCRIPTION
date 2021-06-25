@@ -30,4 +30,4 @@ Suggests:
     gam (>= 1.03),
     knitr,
 VignetteBuilder: knitr
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
